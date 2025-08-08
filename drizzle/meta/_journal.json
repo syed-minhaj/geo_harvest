@@ -8,6 +8,20 @@
       "when": 1754622787910,
       "tag": "0000_shallow_nuke",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1754636246872,
+      "tag": "0001_cool_riptide",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1754636481042,
+      "tag": "0002_ambitious_nova",
+      "breakpoints": true
     }
   ]
 }
