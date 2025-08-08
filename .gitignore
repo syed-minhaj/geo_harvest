@@ -44,7 +44,3 @@ certificates
 app/actions
 app/components
 app/utils
-db
-drizzle
-drizzle.config.ts
-app/lib
