@@ -13,6 +13,7 @@ export default function Providers({ children }: { children: ReactNode }) {
 
     return (
         <AuthUIProvider
+            basePath="/app/auth"
             authClient={authClient}
             navigate={router.push}
             replace={router.replace}
