@@ -4,8 +4,6 @@ import { AuthUIProvider } from "@daveyplate/better-auth-ui"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import type { ReactNode } from "react"
-import { Toaster } from "./ui/sonner";
-
 import { authClient } from "../lib/auth-client"
 
 export default function Providers({ children }: { children: ReactNode }) {
@@ -13,9 +11,11 @@ export default function Providers({ children }: { children: ReactNode }) {
 
     return (
         <AuthUIProvider
+            basePath="/app/auth"
             authClient={authClient}
             navigate={router.push}
             replace={router.replace}
+            redirectTo="/app"
             onSessionChange={() => {
                 router.refresh()
             }}
