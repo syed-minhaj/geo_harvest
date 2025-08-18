@@ -3,7 +3,7 @@ import {
   text,
   timestamp,
   boolean,
-  integer,
+  index,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -20,7 +20,10 @@ export const user = pgTable("user", {
   updatedAt: timestamp("updated_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
-});
+} , (table) => [
+    index("userId_idx").on(table.id),
+    index("userEmail_idx").on(table.email),
+]);
 
 export const session = pgTable("session", {
   id: text("id").primaryKey(),
