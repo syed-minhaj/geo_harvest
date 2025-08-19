@@ -1,8 +1,11 @@
+"use client"
 import {UserButton} from "@daveyplate/better-auth-ui"
 import Logo from "./navbar/logo";
-import ThemeSwitcher from "./ThemeSwitch";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Button } from "./ui/button";
+
+const ThemeSwitcher = dynamic(() => import("./navbar/ThemeSwitch"), { ssr: false });
 
 export   function Navbar() {
 
