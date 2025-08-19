@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import  '../style/themeToggle.css';
+import  '../../style/themeToggle.css';
 
 const ThemeSwitcher = () => {
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
