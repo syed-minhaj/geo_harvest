@@ -15,7 +15,7 @@ export default function AppLayout({
                 <Navbar />
                 {children}
             </Providers>
-            <Toaster />
+            <Toaster position="top-center"/>
         </main>
     );
 }
