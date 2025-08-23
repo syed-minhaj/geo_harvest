@@ -32,8 +32,8 @@ const Logo = () => {
                 </g>
             </g>
             <defs>
-                <filter id="filter0_d_42_39" x="0" y="0" width="92.9048" height="53" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                <filter id="filter0_d_42_39" x="0" y="0" width="92.9048" height="53" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix"/>
                     <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
                         <feOffset/>
                         <feGaussianBlur stdDeviation="2"/>
