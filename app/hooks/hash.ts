@@ -7,7 +7,7 @@ export function useHash(defaultHash : string) {
     useEffect(() => {
         const updateHashConst = () => {
             setHash(window.location.hash.slice(1))
-            if (window.location.hash.slice(1) == "") {
+            if (window.location.hash.slice(1) == "" && defaultHash != "") {
                 updateHash(defaultHash)
             }
         }
@@ -17,7 +17,9 @@ export function useHash(defaultHash : string) {
     }, [])
 
     const updateHash = (newHash : string) => {
-        window.location.hash = newHash
+        const currentScrollY = window.scrollY;
+        window.location.hash = newHash;
+        window.scrollTo(0, currentScrollY);
     }
 
     return {hash , updateHash}
