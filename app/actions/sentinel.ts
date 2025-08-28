@@ -130,7 +130,7 @@ export async function sentinel_catalog({coordinates} : {coordinates : number[][]
         return{
             "collections": ["sentinel-2-l2a"],
             "datetime": `${from7daysAgo}/${today}`,
-            "limit": 1,
+            "limit": 10,
             // "sort": [
             //     { "field": "date", "direction": "desc" }
             // ],
