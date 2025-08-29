@@ -1,0 +1,99 @@
+"use client"
+import {  CreateField } from '@/app/actions/field';
+import dynamic from 'next/dynamic';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { Input } from '@/app/components/ui/input';
+import { Button } from '@/app/components/ui/button';
+import { Separator } from '@/app/components/ui/separator';
+import { Select, SelectContent, SelectValue , SelectTrigger, SelectGroup, SelectLabel, SelectItem } from '@/app/components/ui/select';
+import { Crop as CropType , Variety as VarietyType } from '@/db/schema';
+import { availableCrops } from '@/data/crop';
+
+const MapClient = dynamic(() => import("./components/MapClient"), { ssr: false });
+
+export default function CreateFieldPage() {
+    
+    const [coordinates, setCoordinates] = useState<number[][] | null>(null);
+    const [name , setName] = useState<string >("");
+    const [crop, setCrop] = useState<CropType | undefined>();
+    const [variety, setVariety] = useState<string | undefined>();
+    const [plantedDate, setPlantedDate] = useState<string | undefined>();
+    const [isCreating , setisCreating] = useState<boolean>(false);
+
+    async function Submit () {
+        if(coordinates && name && crop && variety && plantedDate){
+            setisCreating(true);
+            await CreateField({name : name, coordinates : coordinates , fcrop : {name : crop , variety : variety ,plantedDate : new Date(plantedDate)} }).then((res) => {
+                if(res.err){
+                    toast.error(res.err);
+                    return;
+                }
+                toast.success("Successfully created");
+            });
+        }else{
+            toast.error("Please fill all details ");
+        }
+        setisCreating(false);
+    }
+    return (
+        <main className="min-h-screen flex flex-col  gap-4 p-4 w-full">
+            <div className='w-full lg:h-[27rem] flex flex-col lg:flex-row-reverse gap-4'>
+                <div className='w-full h-[27rem] lg:w-1/3 lg:h-full bg-gray-600 rounded-[0.75rem]'>fdds</div>
+                <MapClient setCordinates={setCoordinates} />
+            </div>
+            <div className='flex flex-col sm:flex-row gap-4 '>
+                <h3 className='text-xl font-bold font-josefin-sans w-fit'>Name of field : </h3>
+                <Input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder='e.g. Field1' className='sm:w-[20rem]'/>
+            </div>
+            <Separator  />
+            <div className='flex flex-col gap-4'>
+                <h2 className='text-2xl font-bold font-josefin-sans'>Crops </h2>
+                <div className='flex flex-col sm:flex-row gap-4'>
+                    <Select disabled={isCreating} value={crop} onValueChange={(e) => {setCrop(e as CropType); console.log(e)}}>
+                        <SelectTrigger className="w-full  sm:w-1/4">
+                            <SelectValue placeholder="Select Crop" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Crop</SelectLabel>
+                                {(Object.keys(availableCrops) as CropType[]).map((cropName : CropType) => (
+                                    <SelectItem value={cropName} key={cropName}>
+                                        {cropName}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    {crop ? 
+                        <>
+                        <Select disabled={isCreating} value={variety} onValueChange={(e) => {setVariety(e as VarietyType<typeof crop>)}}>
+                            <SelectTrigger className="w-full sm:w-1/4">
+                                <SelectValue placeholder="Select variety" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>{crop} varity</SelectLabel>
+                                    {(availableCrops[crop]).map((cropName : VarietyType<typeof crop>) => (
+                                        <SelectItem value={cropName} key={cropName}>
+                                            {cropName}
+                                        </SelectItem>
+                                    ))}
+                                    <SelectItem value="other" key="other">Other</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                        <div className='flex flex-row items-center gap-2 w-full sm:w-1/2'>
+                            <h4 className='font-medium font-josefin-sans '>Planted date : </h4>
+                            <Input disabled={isCreating} type="date" value={plantedDate} onChange={(e) => setPlantedDate(e.target.value)}
+                            placeholder='Planted date :' className='flex-1 max-w-1/2'/>
+                        </div>
+                        </>
+                    : null}
+                </div>
+                <Button disabled={isCreating} className='sm:w-fit' onClick={Submit}>Create</Button>
+            </div>
+            <div className='w-full h-[2rem] '></div>
+        </main>
+    )
+}
