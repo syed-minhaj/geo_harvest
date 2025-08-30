@@ -1,0 +1,1 @@
+ALTER TABLE "field" ADD COLUMN "images_date" text[] DEFAULT '{}'::text[] NOT NULL;
