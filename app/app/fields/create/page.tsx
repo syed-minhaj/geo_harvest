@@ -23,6 +23,9 @@ export default function CreateFieldPage() {
 
     async function Submit () {
         if(coordinates && name && crop && variety && plantedDate){
+            toast.loading("Creating field" , {
+                id : "loading",
+            });
             setisCreating(true);
             await CreateField({name : name, coordinates : coordinates , fcrop : {name : crop , variety : variety ,plantedDate : new Date(plantedDate)} }).then((res) => {
                 if(res.err){
@@ -30,6 +33,7 @@ export default function CreateFieldPage() {
                     return;
                 }
                 toast.success("Successfully created");
+                toast.dismiss("loading");
             });
         }else{
             toast.error("Please fill all details ");
