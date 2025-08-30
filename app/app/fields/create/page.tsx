@@ -43,7 +43,7 @@ export default function CreateFieldPage() {
     return (
         <main className="min-h-screen flex flex-col  gap-4 p-4 w-full">
             <div className='w-full lg:h-[27rem] flex flex-col lg:flex-row-reverse gap-4'>
-                <div className='w-full h-[27rem] lg:w-1/3 lg:h-full bg-gray-600 rounded-[0.75rem]'>fdds</div>
+                {/* <div className='w-full h-[27rem] lg:w-1/3 lg:h-full bg-gray-600 rounded-[0.75rem]'>fdds</div> */}
                 <MapClient setCordinates={setCoordinates} />
             </div>
             <div className='flex flex-col sm:flex-row gap-4 '>
