@@ -9,4 +9,4 @@ export type tfield = {
     imagesDates : string[],
 }
 
-export type ImageType = "waterRequirement" | "cropHealth" | "moistuerLevel";
+export type ImageType = "waterRequirement" | "nitrogenRequirement" | "phosphorusRequirement" | "cropStress";
