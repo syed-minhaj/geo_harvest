@@ -12,7 +12,9 @@ export   function Navbar() {
 
     return (
         <nav className="flex flex-row items-center justify-center h-16 px-4 ">
-            <Logo />
+            <Link href={"/app/fields"} >
+                <Logo />
+            </Link>
             <div className="ml-auto gap-4 flex flex-row">
                 <ThemeSwitcher/>
                 <UserButton className="z-80" size={"icon"}  /> 
