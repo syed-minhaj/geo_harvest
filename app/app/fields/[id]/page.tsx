@@ -1,11 +1,9 @@
-import dynamic from 'next/dynamic';
 import { db } from '@/app/lib/drizzle';
 import { auth } from '@/app/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Main from './components/Main';
 
-//const MapClient = dynamic(() => import("./components/MapClient") , { ssr : false});
 
 type PageProps = Promise<{
     id : string
@@ -23,7 +21,7 @@ export default async function FieldPage({params} : {params : PageProps}) {
     const {id} = await params;
     const session = await auth.api.getSession({headers : await headers()});
     if (!session) {
-        redirect("/app/auth/login");
+        redirect("/app/auth/sign-in");
     }
     const field = await getFieldById(id);
     if(!field) {
