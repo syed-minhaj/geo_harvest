@@ -1,8 +1,8 @@
 'use client';
 
-import { MapContainer, TileLayer, Polygon, FeatureGroup  } from 'react-leaflet';
+import { MapContainer, TileLayer, FeatureGroup  } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { LatLngExpression ,LatLngBoundsExpression  } from 'leaflet';
+import { LatLngExpression   } from 'leaflet';
 import { getUserLocation } from '@/app/utils/coordinate';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
@@ -47,7 +47,7 @@ export default function MapClient({setCordinates} : {setCordinates : (c : number
     }
 
     return (
-        <MapContainer center={position} zoom={18} scrollWheelZoom={true} style={{}} className='w-full h-[27rem] rounded-[0.75rem] z-20' >
+        <MapContainer center={position} zoom={18} scrollWheelZoom={true} style={{}} className='w-full lg:w-auto lg:flex-1 h-[27rem] rounded-[0.75rem] z-20' >
             <TileLayer
                 url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                 attribution="© OpenStreetMap contributors"
