@@ -2,7 +2,7 @@ import { pgEnum , pgTable, text, timestamp , customType, varchar, index} from "d
 import { user } from "./auth-schema";
 import { randomUUID } from "crypto";
 import { availableCrops } from "../data/crop";
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 export type Crop = keyof typeof availableCrops;
 export type Variety<C extends Crop> = (typeof availableCrops)[C][number];
@@ -32,6 +32,10 @@ export const field = pgTable("field", {
     index("firldId_idx").on(table.id),
 ]);
 
+export const fieldRelations = relations(field, ({many}) => ({
+    crop : many(crop)
+}))
+
 export const crop = pgTable("crop", {
     id: text("id").primaryKey().$defaultFn(() => randomUUID()),
     name: CropEnum("name").notNull().$type<Crop>(),
@@ -44,6 +48,13 @@ export const crop = pgTable("crop", {
 } , (table) => [
     index("cropId_idx").on(table.id),
 ]);
+
+export const cropRelations = relations(crop, ({one}) => ({
+    field : one(field , {
+        fields : [crop.fieldId],
+        references : [field.id]
+    })
+}))
 
 export function isValidCropVariety<C extends Crop>(
     cropT : C, 
