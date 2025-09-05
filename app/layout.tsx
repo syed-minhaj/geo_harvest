@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono , Josefin_Sans} from "next/font/google";
+import { Albert_Sans, Geist, Geist_Mono , Josefin_Sans} from "next/font/google";
 import "./globals.css";
 import 'leaflet/dist/leaflet.css';
 import NextTopLoader from "nextjs-toploader";
@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 
 const josefinSans = Josefin_Sans({
     variable: "--font-josefin-sans",
+    subsets: ["latin"],
+});
+
+const albertSans = Albert_Sans({
+    variable: "--font-alpet-sans",
     subsets: ["latin"],
 });
 
@@ -37,7 +42,7 @@ export default function RootLayout({
     return (
         <html lang="en" >
             <body
-                className={`${geistSans.variable} ${geistMono.variable} ${josefinSans.variable} antialiased`}
+                className={`${geistSans.variable} ${geistMono.variable} ${josefinSans.variable} ${albertSans.variable} antialiased`}
             >
                 <NextTopLoader color="#004C20" showSpinner={false} />
                 {children}
