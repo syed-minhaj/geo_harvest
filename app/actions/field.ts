@@ -6,6 +6,7 @@ import { Crop as CropName , field , crop } from "@/db/schema";
 import { supabase } from "@/app/lib/supabase";
 import { sentinel_catalog, sentinel_image } from "./sentinel";
 import { eq, sql } from "drizzle-orm";
+import { ImageType } from "../types";
 
 
 type CropType = {
@@ -50,50 +51,30 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
                 })
                 .where(eq(field.id, feildId))
 
-            await sentinel_image({coordinates , date:dates[0] }).then(async (res) => {
-                if(res.err || res.data === null) {
-                    console.log(res.err);
-                    return null;
-                }
-                
-                const { data, error } = await supabase.storage
-                    .from("field")
-                    .upload(`${feildId}/${dates[0]}/moistureLevel.png`, res.data, {
-                        cacheControl: '3600', 
-                        contentType: 'image/png', 
-                        upsert: false, 
-                    });
+                for(const to  of ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"] as ImageType[]) {
 
-                
-                if (error) {
-                    console.error('Error uploading image:', error.message);
-                    return null;
-                } else {
-                    console.log('Image uploaded successfully:', data);
-                    for(const to of ["waterRequirement" , "cropHealth"]) {
+                    await sentinel_image({coordinates , date:dates[0]  , imageType : to , crop : fcrop.name}).then(async (res) => {
+                        if(res.err || res.data === null) {
+                            console.log(res.err);
+                            return null;
+                        }
+                        const { data, error } = await supabase.storage
+                            .from("field")
+                            .upload(`${feildId}/${dates[0]}/${to}.png`, res.data, {
+                                cacheControl: '3600', 
+                                contentType: 'image/png', 
+                                upsert: false, 
+                            });
 
-                        await fetch("http://localhost:3000/api/sentinel/newImage", {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                bucket : "field",
-                                cropId : feildId,
-                                plantedDate : dates[0],
-                                to ,
-                            })
-                        }).then(async (res) => {
-                            if(res.status !== 200) {
-                                console.log(res);
-                                return;
-                            }
-                        })
-                    }
+                        
+                        if (error) {
+                            console.error('Error uploading image:', error.message);
+                            return null;
+                        }
+                    })
                 }
-            })
         })
-        return {err : null}
+        return {err : null , data : {id : feildId}}
     } catch (e :any) {
         console.log(e)
         return {err : "Backend error "}
