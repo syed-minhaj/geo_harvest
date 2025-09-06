@@ -1,5 +1,7 @@
 'use server'
-import { NDMI_SCRIPT } from '@/app/utils/NDMI-Script';
+import { SCRIPT } from '@/app/utils/Script';
+import { ImageType } from '../types';
+import { availableCrops } from '@/data/crop';
 
 async function getToken(){
 
@@ -24,7 +26,8 @@ async function getToken(){
     }
 }
 
-export async function sentinel_image({coordinates , date} : {coordinates : number[][] , date : string}) {
+export async function sentinel_image({coordinates , date , imageType , crop} : 
+    {coordinates : number[][] , date : string , imageType : ImageType , crop : keyof typeof availableCrops}) {
     
     if (!coordinates || coordinates.length === 0 ) {
         return {err : "No coordinates provided" , data: null};
@@ -85,7 +88,7 @@ export async function sentinel_image({coordinates , date} : {coordinates : numbe
             body: JSON.stringify({
                 input: input(geometry , date),
                 output: output,
-                evalscript: NDMI_SCRIPT,
+                evalscript: SCRIPT(imageType , crop),
             }),
         });
         if(!sentinelRes.ok){
@@ -131,9 +134,6 @@ export async function sentinel_catalog({coordinates} : {coordinates : number[][]
             "collections": ["sentinel-2-l2a"],
             "datetime": `${from7daysAgo}/${today}`,
             "limit": 10,
-            // "sort": [
-            //     { "field": "date", "direction": "desc" }
-            // ],
             
             "intersects": geometry 
         };
