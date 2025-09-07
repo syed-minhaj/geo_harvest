@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import '@/app/style/map.css';
 import { tfield } from '@/app/types';
 import { useHash } from '@/app/hooks/hash';
-
+import SwitchDate from './switchDate';
 
 function fromPostgresPolygon(polygonString: string): number[][] {
     const cleanString = polygonString.replace(/^\(\(|\)\)$/g, '');
@@ -28,6 +28,7 @@ export default function MapClient({field} : {field : tfield}) {
     const coordinates = fromPostgresPolygon(field.coordinates);
     const {hash, updateHash} = useHash("")
 
+    const [imagesDate , setImagesDate] = useState<string>(field.imagesDates[0]);
     const [overlayBounds, setOverlayBounds] = useState<LatLngBoundsExpression | null>(null);
     const [position, setPosition] = useState<LatLngExpression | null>(null);
 
@@ -59,20 +60,25 @@ export default function MapClient({field} : {field : tfield}) {
         const north = Math.max(...lats);
         return Math.log2(180/Math.abs(north - south)) + 1
     }
+
+
     return (
-        <MapContainer center={position} zoom={getZoom(coordinates)} scrollWheelZoom={true} style={{}} className='w-full  h-[27rem] rounded-[1.75rem] z-20' >
-            <TileLayer
-                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                attribution="© OpenStreetMap contributors"
-                />
-            {overlayBounds && hash ?
-                <ImageOverlay url={getImageUrl(field.imagesDates[0] , hash)}
-                bounds={overlayBounds} opacity={0.55} />
-                :
-                <Polygon positions={coordinates as LatLngExpression[]} color="white" fillOpacity={0.15} fillColor="white" /> 
-            }
-            <FeatureGroup>
-            </FeatureGroup>
-        </MapContainer>
+        <div className='relative'>    
+            <MapContainer center={position} zoom={getZoom(coordinates)} scrollWheelZoom={true} style={{}} className='w-full  h-[27rem] rounded-[1.75rem] z-20 ' >
+                <TileLayer
+                    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                    attribution="© OpenStreetMap contributors"
+                    />
+                {overlayBounds && hash ?
+                    <ImageOverlay url={getImageUrl(imagesDate , hash)}
+                    bounds={overlayBounds} opacity={0.55} />
+                    :
+                    <Polygon positions={coordinates as LatLngExpression[]} color="white" fillOpacity={0.15} fillColor="white" /> 
+                }
+                <FeatureGroup>
+                </FeatureGroup>
+            </MapContainer>
+            <SwitchDate dates={field.imagesDates} imagesDate={imagesDate} setImagesDate={setImagesDate} />
+        </div>
     );
 }
