@@ -10,9 +10,14 @@ type PageProps = Promise<{
 }>
 
 async function getFieldById(id : string) {
-    return await db.query.field.findFirst({
+    const f = await db.query.field.findFirst({
         where: (field , {eq}) => (eq(field.id , id))
     })
+    if(!f){
+        return null;
+    }
+    f.imagesDates = f.imagesDates.reverse();
+    return f;
 }
 
 
