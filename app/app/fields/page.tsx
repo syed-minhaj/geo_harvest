@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { calculateAreaInAcres } from '@/app/utils/area';
 import { Separator } from '@/app/components/ui/separator';
 import { fromPostgresPolygon } from '@/app/utils/coordinate';
-
 async function getFieldsById(id: string) {
     return await db.query.field.findMany({
         where: (field , {eq}) => (eq(field.ownerId , id)),
@@ -104,12 +103,12 @@ export default async function page() {
                             <span className='opacity-66'>Crop:</span>
                             <span className='font-medium'>{field.crop[0].name}</span>
                         </div>
-                        <div className='flex flex-col w-1/2'>
-                            <span className='opacity-66'>Variety:</span>
-                            {field.crop[0].seedVariety != "other" ? 
-                                <span className='font-medium'>{field.crop[0].seedVariety}</span> : null
-                            }
-                        </div>
+                        {field.crop[0].seedVariety != "other" ? 
+                            <div className='flex flex-col w-1/2'>
+                                <span className='opacity-66'>Variety:</span>
+                                <span className='font-medium'>{field.crop[0].seedVariety}</span> 
+                            </div> : null
+                        }
                     </div>
                     <Separator />
                     <div className='flex flex-col gap-1'>
