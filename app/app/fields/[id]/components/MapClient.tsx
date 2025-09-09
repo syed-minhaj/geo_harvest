@@ -7,9 +7,10 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import { useEffect, useState } from 'react';
 import '@/app/style/map.css';
-import { tfield } from '@/app/types';
+import { ImageType, tfield } from '@/app/types';
 import { useHash } from '@/app/hooks/hash';
 import SwitchDate from './switchDate';
+import { getColorPalette } from '@/data/colorPalette';
 
 function fromPostgresPolygon(polygonString: string): number[][] {
     const cleanString = polygonString.replace(/^\(\(|\)\)$/g, '');
@@ -61,6 +62,8 @@ export default function MapClient({field} : {field : tfield}) {
         return Math.log2(180/Math.abs(north - south)) + 1
     }
 
+    const colors = getColorPalette(hash as ImageType);
+    const gradient = `linear-gradient(to top, ${colors.join(",")})`;
 
     return (
         <div className='relative'>    
@@ -79,6 +82,12 @@ export default function MapClient({field} : {field : tfield}) {
                 </FeatureGroup>
             </MapContainer>
             <SwitchDate dates={field.imagesDates} imagesDate={imagesDate} setImagesDate={setImagesDate} />
+            <div className="absolute right-2 top-0 h-full   shadow-lg rounded-xl p-2 flex flex-col items-center">
+                <div
+                    className="w-3 h-60 rounded-full z-500 my-auto "
+                    style={{ background: gradient }}
+                />
+            </div>
         </div>
     );
 }
