@@ -4,6 +4,7 @@ import { db } from '@/app/lib/drizzle';
 import Link from 'next/link';
 import { calculateAreaInAcres } from '@/app/utils/area';
 import { Separator } from '@/app/components/ui/separator';
+import { fromPostgresPolygon } from '@/app/utils/coordinate';
 
 async function getFieldsById(id: string) {
     return await db.query.field.findMany({
@@ -27,17 +28,6 @@ async function getFieldsById(id: string) {
     });
 }
 
-
-function fromPostgresPolygon(polygonString: string): number[][] {
-    const cleanString = polygonString.replace(/^\(\(|\)\)$/g, '');
-    
-    const coordPairs = cleanString.split('),(');
-    
-    return coordPairs.map(pair => {
-        const [x, y] = pair.split(',').map(Number);
-        return [y, x];
-    });
-}
 
 function pgpolygontosvgPolygon(polygon: string, width = 150, height = 150, padding = 20) {
     // Remove outer parentheses and whitespace
@@ -135,7 +125,7 @@ export default async function page() {
                 </Link>
             ))}
             <Link href="/app/fields/create" className='bg-white dark:bg-secondary/15 rounded-[0.75rem] shadow-sm group p-4 
-            border-2 border-dashed border-gray-300 hover:border-gray-400 hover:shadow-lg flex flex-col gap-2 justify-center'>
+            border-2 border-dashed border-gray-300 dark:border-gray-500 hover:!border-gray-400 hover:shadow-lg flex flex-col gap-2 justify-center'>
                 <span className='text-center text-2xl group-hover:font-semibold leading-none'>+</span>
                 <span className='text-center '>Create a new field</span>
             </Link>
