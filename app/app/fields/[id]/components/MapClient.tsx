@@ -11,17 +11,8 @@ import { ImageType, tfield } from '@/app/types';
 import { useHash } from '@/app/hooks/hash';
 import SwitchDate from './switchDate';
 import { getColorPalette } from '@/data/colorPalette';
+import { fromPostgresPolygon } from '@/app/utils/coordinate';
 
-function fromPostgresPolygon(polygonString: string): number[][] {
-    const cleanString = polygonString.replace(/^\(\(|\)\)$/g, '');
-    
-    const coordPairs = cleanString.split('),(');
-    
-    return coordPairs.map(pair => {
-        const [x, y] = pair.split(',').map(Number);
-        return [y, x];
-    });
-}
 
 
 export default function MapClient({field} : {field : tfield}) {

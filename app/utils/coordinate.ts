@@ -33,4 +33,15 @@ const getUserLocation = () : Promise<{location : location , err : null} | {locat
     })
 }
 
-export {getUserLocation};
+function fromPostgresPolygon(polygonString: string): number[][] {
+    const cleanString = polygonString.replace(/^\(\(|\)\)$/g, '');
+    
+    const coordPairs = cleanString.split('),(');
+    
+    return coordPairs.map(pair => {
+        const [x, y] = pair.split(',').map(Number);
+        return [y, x];
+    });
+}
+
+export {getUserLocation , fromPostgresPolygon};
