@@ -9,6 +9,7 @@ import { Separator } from '@/app/components/ui/separator';
 import { Select, SelectContent, SelectValue , SelectTrigger, SelectGroup, SelectLabel, SelectItem } from '@/app/components/ui/select';
 import { Crop as CropType , Variety as VarietyType } from '@/db/schema';
 import { availableCrops } from '@/data/crop';
+import { useRouter } from 'next/navigation';
 
 const MapClient = dynamic(() => import("./components/MapClient"), { ssr: false });
 
@@ -20,6 +21,8 @@ export default function CreateFieldPage() {
     const [variety, setVariety] = useState<string | undefined>();
     const [plantedDate, setPlantedDate] = useState<string | undefined>();
     const [isCreating , setisCreating] = useState<boolean>(false);
+
+    const router = useRouter();
     
     async function Submit () {
         if(coordinates && name && crop && variety && plantedDate){
@@ -29,11 +32,20 @@ export default function CreateFieldPage() {
             setisCreating(true);
             await CreateField({name : name, coordinates : coordinates , fcrop : {name : crop , variety : variety ,plantedDate : new Date(plantedDate)} }).then((res) => {
                 if(res.err){
+                    toast.dismiss("loading");
                     toast.error(res.err);
                     return;
                 }
-                toast.success("Successfully created");
                 toast.dismiss("loading");
+                toast.success("Successfully created",{
+                    description : "You can now view your field",
+                    action : {
+                        label : "View",
+                        onClick : () => {
+                            router.push(`/app/fields/${res.data?.id}`)
+                        }
+                    }
+                });
             });
         }else{
             toast.error("Please fill all details ");
@@ -71,7 +83,7 @@ export default function CreateFieldPage() {
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    {crop ? 
+                    {crop ?
                         <>
                         <Select disabled={isCreating} value={variety} onValueChange={(e) => {setVariety(e as VarietyType<typeof crop>)}}>
                             <SelectTrigger className="w-full sm:w-1/4">
