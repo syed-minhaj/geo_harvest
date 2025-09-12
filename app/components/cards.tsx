@@ -4,14 +4,14 @@ import { useEffect, useState } from "react"
 import Image from "next/image";
 
 type tCard = {
-    id : number,
-    title : string,
-    content : string,
-    position : string,
-    url : string
+    id: number,
+    title: string,
+    content: string,
+    position: string,
+    url: string
 }
 
-const CardStack = ({cards} : {cards : tCard[]}) => {
+const CardStack = ({ cards } : { cards: tCard[] }) => {
     const [hoveredCard, setHoveredCard] = useState<number | null>(null)
     const [isHydrated, setIsHydrated] = useState(false)
 
@@ -38,48 +38,64 @@ const CardStack = ({cards} : {cards : tCard[]}) => {
     }
 
     return (
-    <div className="hidden w-4/6 md:w-full md:grid grid-cols-4 place-items-center ">
-      {/* Background overlay */}
+        <div 
+            className="w-4/6 md:w-full place-items-center card"
+        >
+            {cards.map((card) => {
+                const isHovered = hoveredCard === card.id
+                const rotation = isHovered ? { x: 0, y: 0 } : { x: 0, y: 20 }
 
-      {cards.map((card) => {
-        const isHovered = hoveredCard === card.id
-        const rotation = isHovered ? { x: 0, y: 0 } : {x : 0, y : 20}
-
-        return (
-          <div
-            key={card.id}
-            className={`cursor-pointer transition-all duration-500 ease-out shadow-2xl hover:z-50`}
-            onMouseEnter={() => handleMouseEnter(card.id)}
-            onMouseLeave={handleMouseLeave}
-            style={{
-              transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale(${isHovered ? 1.05 : 1})`,
-            }}
-          >
-
-            {/* Main card */}
-            <div className="relative w-64 h-90  rounded-2xl  ">
-              {/* Shine effect */}
-              <div
-                className={`absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"}`}
-              />
-              {/* Content on top when hover*/}
-              <div className={`absolute inset-0 p-4 rounded-2xl bg-gray-900/85 transition-opacity duration-300 opacity-0 text-white ${isHovered ? "opacity-100" : ""} `}>
-                <h3 className="text-3xl font-bold my-3 ">{card.title}</h3>
-                <p className="opacity-85 text-lg">{card.content}</p>
-              </div>
-
-              <Image src={card.url} width={256} height={360} alt={card.title}
-              className={`border-1 rounded-[0.75rem] w-64 h-90  shadow-[-4px_4px_25px_1px]  `}/>
-
-            </div>
-          </div>
-        )
-      })}
-
-      {/* Center content */}
-      
-    </div>
-  )
+                return (
+                    <div
+                        key={card.id}
+                        className="cursor-pointer transition-all duration-500 ease-out shadow-2xl relative"
+                        onMouseEnter={() => handleMouseEnter(card.id)}
+                        onMouseLeave={handleMouseLeave}
+                        style={{
+                            transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale(${isHovered ? 1.05 : 1})`,
+                            zIndex: isHovered ? 50 : 1
+                        }}
+                    >
+                        {/* Main card */}
+                        <div className="relative w-64 rounded-2xl overflow-hidden" style={{ height: '360px' }}>
+                            {/* Base Image */}
+                            <Image 
+                                src={card.url} 
+                                width={256} 
+                                height={360} 
+                                alt={card.title}
+                                className="w-full h-full object-cover rounded-2xl border"
+                                style={{ 
+                                    boxShadow: '-4px 4px 25px 1px rgba(0, 0, 0, 0.25)' 
+                                }}
+                            />
+                            
+                            {/* Shine effect */}
+                            <div
+                                className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent transition-opacity duration-300 pointer-events-none"
+                                style={{
+                                    opacity: isHovered ? 1 : 0
+                                }}
+                            />
+                            
+                            {/* Content overlay */}
+                            <div 
+                                className="absolute inset-0 p-4 rounded-2xl text-white flex flex-col justify-start transition-opacity duration-300"
+                                style={{
+                                    backgroundColor: 'rgba(17, 24, 39, 0.85)',
+                                    opacity: isHovered ? 1 : 0,
+                                    visibility: isHovered ? 'visible' : 'hidden'
+                                }}
+                            >
+                                <h3 className="text-3xl font-bold my-3">{card.title}</h3>
+                                <p className="text-lg" style={{ opacity: 0.85 }}>{card.content}</p>
+                            </div>
+                        </div>
+                    </div>
+                )
+            })}
+        </div>
+    )
 }
 
 export default CardStack
