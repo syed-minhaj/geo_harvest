@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Button } from "./components/ui/button";
 import CardStack from "./components/cards";
 import FeatureImage from "./components/featureImages";
+import CardsCover from "./components/cardsCover";
 
 export default function Home() {
 
@@ -66,7 +67,7 @@ export default function Home() {
                 <h3 className="text-4xl md:text-5xl font-light tracking-tight mt-20 mb-5 ">
                     Powered by Sentinel
                 </h3>
-                <CardStack cards={cards}/>
+                <CardsCover cards={cards}/>
                 <FeatureImage cards={cards}/>
             </div>
             <footer className="flex flex-col gap-2 items-center justify-center text-accent mt-20 h-30 w-full bg-foreground">
