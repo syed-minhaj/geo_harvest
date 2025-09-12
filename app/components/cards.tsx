@@ -1,5 +1,6 @@
 "use client"
-import { useState, useEffect } from "react"
+
+import { useState } from "react"
 import Image from "next/image";
 
 type tCard = {
@@ -11,142 +12,61 @@ type tCard = {
 }
 
 const CardStack = ({cards} : {cards : tCard[]}) => {
-    const [hoveredCard, setHoveredCard] = useState<number | null>(null)
-    const [isMounted, setIsMounted] = useState(false)
-    const [isDesktop, setIsDesktop] = useState(false)
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null)
 
-    useEffect(() => {
-        setIsMounted(true)
-        const checkDesktop = () => {
-            setIsDesktop(window.innerWidth >= 768)
-        }
-        
-        checkDesktop()
-        window.addEventListener('resize', checkDesktop)
-        return () => window.removeEventListener('resize', checkDesktop)
-    }, [])
 
-    const handleMouseEnter = (cardId: number) => {
-        setHoveredCard(cardId)
-    }
 
-    const handleMouseLeave = () => {
-        setHoveredCard(null)
-    }
+  const handleMouseEnter = (cardId: number) => {
+    setHoveredCard(cardId)
+  }
 
-    if (!isMounted || !isDesktop) {
-        return null
-    }
+  const handleMouseLeave = () => {
+    setHoveredCard(null)
+  }
 
-    const containerStyle: React.CSSProperties = {
-        width: '100%',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        placeItems: 'center',
-        gap: '1rem'
-    }
+  return (
+    <div className="hidden w-4/6 md:w-full md:grid grid-cols-4 place-items-center ">
+      {/* Background overlay */}
 
-    return (
-        <div style={containerStyle}>
-            {cards.map((card) => {
-                const isHovered = hoveredCard === card.id
-                
-                const cardStyle: React.CSSProperties = {
-                    cursor: 'pointer',
-                    transition: 'all 0.5s ease-out',
-                    position: 'relative',
-                    transform: `perspective(1000px) rotateX(0deg) rotateY(${isHovered ? 0 : 20}deg) scale(${isHovered ? 1.05 : 1})`,
-                    zIndex: isHovered ? 50 : 1,
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-                }
+      {cards.map((card) => {
+        const isHovered = hoveredCard === card.id
+        const rotation = isHovered ? { x: 0, y: 0 } : {x : 0, y : 20}
 
-                const cardContainerStyle: React.CSSProperties = {
-                    position: 'relative',
-                    width: '256px',
-                    height: '384px',
-                    borderRadius: '1rem',
-                    overflow: 'hidden'
-                }
+        return (
+          <div
+            key={card.id}
+            className={`cursor-pointer transition-all duration-500 ease-out shadow-2xl hover:z-50`}
+            onMouseEnter={() => handleMouseEnter(card.id)}
+            onMouseLeave={handleMouseLeave}
+            style={{
+              transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale(${isHovered ? 1.05 : 1})`,
+            }}
+          >
 
-                const shineStyle: React.CSSProperties = {
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    borderRadius: '1rem',
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%)',
-                    opacity: isHovered ? 1 : 0,
-                    transition: 'opacity 0.3s',
-                    pointerEvents: 'none'
-                }
+            {/* Main card */}
+            <div className="relative w-64 h-90  rounded-2xl  ">
+              {/* Shine effect */}
+              <div
+                className={`absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"}`}
+              />
+              {/* Content on top when hover*/}
+              <div className={`absolute inset-0 p-4 rounded-2xl bg-gray-900/85 transition-opacity duration-300 opacity-0 text-white ${isHovered ? "opacity-100" : ""} `}>
+                <h3 className="text-3xl font-bold my-3 ">{card.title}</h3>
+                <p className="opacity-85 text-lg">{card.content}</p>
+              </div>
 
-                const overlayStyle: React.CSSProperties = {
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    padding: '1rem',
-                    borderRadius: '1rem',
-                    backgroundColor: 'rgba(17, 24, 39, 0.9)',
-                    color: 'white',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-start',
-                    opacity: isHovered ? 1 : 0,
-                    visibility: isHovered ? 'visible' : 'hidden',
-                    transition: 'opacity 0.3s, visibility 0.3s'
-                }
+              <Image src={card.url} width={256} height={360} alt={card.title}
+              className={`border-1 rounded-[0.75rem] w-64 h-90  shadow-[-4px_4px_25px_1px]  `}/>
 
-                const titleStyle: React.CSSProperties = {
-                    fontSize: '1.5rem',
-                    fontWeight: 'bold',
-                    marginBottom: '0.75rem',
-                    lineHeight: '1.2'
-                }
+            </div>
+          </div>
+        )
+      })}
 
-                const contentStyle: React.CSSProperties = {
-                    fontSize: '1rem',
-                    opacity: 0.9,
-                    lineHeight: '1.5'
-                }
-
-                const imageStyle: React.CSSProperties = {
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover' as const,
-                    borderRadius: '1rem'
-                }
-                
-                return (
-                    <div
-                        key={card.id}
-                        style={cardStyle}
-                        onMouseEnter={() => handleMouseEnter(card.id)}
-                        onMouseLeave={handleMouseLeave}
-                    >
-                        <div style={cardContainerStyle}>
-                            <Image 
-                                src={card.url} 
-                                width={256} 
-                                height={384} 
-                                alt={card.title}
-                                style={imageStyle}
-                            />
-                            
-                            <div style={shineStyle} />
-                            
-                            <div style={overlayStyle}>
-                                <h3 style={titleStyle}>{card.title}</h3>
-                                <p style={contentStyle}>{card.content}</p>
-                            </div>
-                        </div>
-                    </div>
-                )
-            })}
-        </div>
-    )
+      {/* Center content */}
+      
+    </div>
+  )
 }
 
 export default CardStack
