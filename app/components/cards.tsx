@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image";
 
 type tCard = {
@@ -12,19 +12,32 @@ type tCard = {
 }
 
 const CardStack = ({cards} : {cards : tCard[]}) => {
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null)
+    const [hoveredCard, setHoveredCard] = useState<number | null>(null)
+    const [isHydrated, setIsHydrated] = useState(false)
 
+    useEffect(() => {
+        setIsHydrated(true)
+    }, [])
 
+    const handleMouseEnter = (cardId: number) => {
+        setHoveredCard(cardId)
+    }
 
-  const handleMouseEnter = (cardId: number) => {
-    setHoveredCard(cardId)
-  }
+    const handleMouseLeave = () => {
+        setHoveredCard(null)
+    }
 
-  const handleMouseLeave = () => {
-    setHoveredCard(null)
-  }
+    if (!isHydrated) {
+        return (
+            <div 
+                className="w-full"
+                suppressHydrationWarning={true}
+            >
+            </div>
+        )
+    }
 
-  return (
+    return (
     <div className="hidden w-4/6 md:w-full md:grid grid-cols-4 place-items-center ">
       {/* Background overlay */}
 
