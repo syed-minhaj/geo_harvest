@@ -15,7 +15,6 @@ const CardStack = ({ cards } : { cards: tCard[] }) => {
         <div 
             className="w-4/6 md:w-full place-items-center card"
         >
-            <div className="bg-red-700">fdfs</div>
             {cards.map((card) => {
 
                 return (
@@ -24,7 +23,6 @@ const CardStack = ({ cards } : { cards: tCard[] }) => {
                         className="cardrotate cursor-pointer transition-all duration-500 ease-out shadow-2xl relative group hover:z-50 hover:scale-105  "
                        
                     >
-                        <div className="bg-amber-700">fesaa</div>
                         {/* Main card */}
                         <div className="relative w-64 rounded-2xl overflow-hidden" style={{ height: '360px' }}>
                             {/* Base Image */}
