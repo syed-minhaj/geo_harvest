@@ -145,3 +145,11 @@ body {
         grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
+
+.cardrotate {
+    transform: perspective(1000px) rotateX(0deg) rotateY(20deg);
+}
+
+.cardrotate:hover {
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) ;
+}

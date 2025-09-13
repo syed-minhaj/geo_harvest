@@ -1,6 +1,4 @@
-"use client"
 
-import { useEffect, useState } from "react"
 import Image from "next/image";
 
 type tCard = {
@@ -12,49 +10,18 @@ type tCard = {
 }
 
 const CardStack = ({ cards } : { cards: tCard[] }) => {
-    const [hoveredCard, setHoveredCard] = useState<number | null>(null)
-    const [isHydrated, setIsHydrated] = useState(false)
-
-    useEffect(() => {
-        setIsHydrated(true)
-    }, [])
-
-    const handleMouseEnter = (cardId: number) => {
-        setHoveredCard(cardId)
-    }
-
-    const handleMouseLeave = () => {
-        setHoveredCard(null)
-    }
-
-    if (!isHydrated) {
-        return (
-            <div 
-                className="w-full"
-                suppressHydrationWarning={true}
-            >
-            </div>
-        )
-    }
 
     return (
         <div 
             className="w-4/6 md:w-full place-items-center card"
         >
             {cards.map((card) => {
-                const isHovered = hoveredCard === card.id
-                const rotation = isHovered ? { x: 0, y: 0 } : { x: 0, y: 20 }
 
                 return (
                     <div
                         key={card.id}
-                        className="cursor-pointer transition-all duration-500 ease-out shadow-2xl relative"
-                        onMouseEnter={() => handleMouseEnter(card.id)}
-                        onMouseLeave={handleMouseLeave}
-                        style={{
-                            transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale(${isHovered ? 1.05 : 1})`,
-                            zIndex: isHovered ? 50 : 1
-                        }}
+                        className="cardrotate cursor-pointer transition-all duration-500 ease-out shadow-2xl relative group hover:z-50 hover:scale-105  "
+                       
                     >
                         {/* Main card */}
                         <div className="relative w-64 rounded-2xl overflow-hidden" style={{ height: '360px' }}>
@@ -72,19 +39,16 @@ const CardStack = ({ cards } : { cards: tCard[] }) => {
                             
                             {/* Shine effect */}
                             <div
-                                className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent transition-opacity duration-300 pointer-events-none"
-                                style={{
-                                    opacity: isHovered ? 1 : 0
-                                }}
+                                className="hover:opacity-100 opacity-0 absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent transition-opacity duration-300 pointer-events-none"
+                                
                             />
                             
                             {/* Content overlay */}
                             <div 
-                                className="absolute inset-0 p-4 rounded-2xl text-white flex flex-col justify-start transition-opacity duration-300"
+                                className="absolute inset-0 p-4 rounded-2xl text-white group-hover:flex flex-col justify-start transition-opacity duration-300
+                                            hover:opacity-100 opacity-0 hidden "
                                 style={{
                                     backgroundColor: 'rgba(17, 24, 39, 0.85)',
-                                    opacity: isHovered ? 1 : 0,
-                                    visibility: isHovered ? 'visible' : 'hidden'
                                 }}
                             >
                                 <h3 className="text-3xl font-bold my-3">{card.title}</h3>
