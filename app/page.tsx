@@ -4,6 +4,7 @@ import { Button } from "./components/ui/button";
 import CardStack from "./components/cards";
 import FeatureImage from "./components/featureImages";
 import CardsCover from "./components/cardsCover";
+import Link from "next/link";
 
 export default function Home() {
 
@@ -52,12 +53,16 @@ export default function Home() {
                         The future of agriculture is here.
                     </h3>
                     <div className="flex flex-row gap-4 mt-4 ">
-                        <Button className="bg-amber-500 hover:bg-amber-500/85  ">
-                            Get Started
-                        </Button>
-                        <Button variant="outline" className="">
-                            Learn More
-                        </Button>
+                        <Link href={"/app/fields/create"}>
+                            <Button className="bg-amber-500 hover:bg-amber-500/85  ">
+                                Get Started
+                            </Button>
+                        </Link>
+                        <a href="https://github.com/syed-minhaj/geo_harvest" >
+                            <Button variant="outline" className="">
+                                Learn More
+                            </Button>
+                        </a>
                     </div>
                 </div>
                 <div className="w-full aspect-[960/452] ">
