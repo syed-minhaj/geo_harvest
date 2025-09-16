@@ -16,7 +16,7 @@ const FeatureImage = ({cards} : {cards : tCard[]}) => {
         <div className="w-ful flex md:hidden flex-col items-center gap-4 ">
             {cards.map((card) => {
                 return (
-                    <div className={`flex ${flexdirection(card.id)} justify-between gap-2 w-full`}>
+                    <div key={card.id} className={`flex ${flexdirection(card.id)} justify-between gap-2 w-full`}>
                         <Image src={card.url} width={128} height={180} alt={card.title}
                         className={`border-1 rounded-[0.75rem]   shadow-[-4px_4px_25px_1px]  `}/>
                         <div className={`flex flex-col w-full  `}>
