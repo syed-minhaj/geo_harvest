@@ -3,6 +3,7 @@ export const availableCrops = {
     wheat : ["common wheat (Triticum aestivum)", "durum wheat (Triticum durum)", "club wheat (Triticum compactum)"],
     rice: ["Jasmine Rice" ,"Basmati"],
     cotton: ["Upland Cotton (Gossypium hirsutum)"],
+    other: [""],
 }
 
 export const moistureSensitivity = {
