@@ -18,14 +18,14 @@ export default function CreateFieldPage() {
     const [coordinates, setCoordinates] = useState<number[][] | null>(null);
     const [name , setName] = useState<string >("");
     const [crop, setCrop] = useState<CropType | undefined>();
-    const [variety, setVariety] = useState<string | undefined>();
+    const [variety, setVariety] = useState<string>("other");
     const [plantedDate, setPlantedDate] = useState<string | undefined>();
     const [isCreating , setisCreating] = useState<boolean>(false);
 
     const router = useRouter();
     
     async function Submit () {
-        if(coordinates && name && crop && variety && plantedDate){
+        if(coordinates && name && crop && plantedDate){
             toast.loading("Creating field" , {
                 id : "loading",
             });
@@ -85,22 +85,24 @@ export default function CreateFieldPage() {
                     </Select>
                     {crop ?
                         <>
-                        <Select disabled={isCreating} value={variety} onValueChange={(e) => {setVariety(e as VarietyType<typeof crop>)}}>
-                            <SelectTrigger className="w-full sm:w-1/4">
-                                <SelectValue placeholder="Select variety" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>{crop} varity</SelectLabel>
-                                    {(availableCrops[crop]).map((cropName : VarietyType<typeof crop>) => (
-                                        <SelectItem value={cropName} key={cropName}>
-                                            {cropName}
-                                        </SelectItem>
-                                    ))}
-                                    <SelectItem value="other" key="other">Other</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+                        {crop !== "other" ?
+                            <Select disabled={isCreating} value={variety} onValueChange={(e) => {setVariety(e as VarietyType<typeof crop>)}}>
+                                <SelectTrigger className="w-full sm:w-1/4">
+                                    <SelectValue placeholder="Select variety" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>{crop} varity</SelectLabel>
+                                        {(availableCrops[crop]).map((cropName : VarietyType<typeof crop>) => (
+                                            <SelectItem value={cropName} key={cropName}>
+                                                {cropName}
+                                            </SelectItem>
+                                        ))}
+                                        <SelectItem value="other" key="other">Other</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>: null
+                        }
                         <div className='flex flex-row items-center gap-2 w-full sm:w-1/2'>
                             <h4 className='font-medium font-josefin-sans '>Planted date : </h4>
                             <Input disabled={isCreating} type="date" value={plantedDate} onChange={(e) => setPlantedDate(e.target.value)}
