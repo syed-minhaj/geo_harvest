@@ -5,15 +5,15 @@ import { availableCrops } from '@/data/crop';
 
 async function getToken(){
 
-    const client_id = process.env.SENTINEL_CLIENT_ID;
-    const client_secret = process.env.SENTINEL_CLIENT_SECRET;
+    const client_id = process.env.COPERNICUS_CLIENT_ID;
+    const client_secret = process.env.COPERNICUS_CLIENT_SECRET;
 
     if (!client_id || !client_secret) {
         return {token : null , err : "Missing client id or client secret."};
     }
 
     try {
-        const tokenRes = await fetch('https://services.sentinel-hub.com/oauth/token', {
+        const tokenRes = await fetch('https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `client_id=${client_id}&client_secret=${client_secret}&grant_type=client_credentials`,
@@ -79,7 +79,7 @@ export async function sentinel_image({coordinates , date , imageType , crop} :
 
     try{
 
-        const sentinelRes = await fetch('https://services.sentinel-hub.com/api/v1/process', {
+        const sentinelRes = await fetch('https://sh.dataspace.copernicus.eu/api/v1/process', {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -139,7 +139,7 @@ export async function sentinel_catalog({coordinates} : {coordinates : number[][]
         };
     };
     try{
-        const sentinelRes = await fetch("https://services.sentinel-hub.com/api/v1/catalog/1.0.0/search", {
+        const sentinelRes = await fetch("https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search", {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
