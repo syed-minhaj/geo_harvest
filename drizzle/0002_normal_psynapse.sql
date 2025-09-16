@@ -1,0 +1,1 @@
+ALTER TYPE "public"."Crop" ADD VALUE 'other';
