@@ -1,4 +1,3 @@
-'use server'
 import { SCRIPT } from '@/app/utils/Script';
 import { ImageType } from '../types';
 import { availableCrops } from '@/data/crop';

@@ -4,7 +4,7 @@ import { auth } from "@/app/lib/auth";
 import { db } from "@/app/lib/drizzle";
 import { Crop as CropName , field , crop } from "@/db/schema";
 import { supabase } from "@/app/lib/supabase";
-import { sentinel_catalog, sentinel_image } from "./sentinel";
+import { sentinel_catalog, sentinel_image } from "../utils/sentinel";
 import { eq, sql } from "drizzle-orm";
 import { ImageType } from "../types";
 
