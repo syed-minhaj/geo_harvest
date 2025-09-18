@@ -83,6 +83,45 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
    
 }
 
+export async function DeleteField({id} : {id : string }) {
+    const session = await auth.api.getSession({headers : await headers()});
+    if (!session) {
+        return {err : "Please login to delete a field."}
+    }
+
+    const selectedField = await db.query.field.findFirst({
+        where: (field , {eq}) => (eq(field.id , id)),
+        columns : {
+            ownerId : true,
+            imagesDates : true,
+        }
+    })
+    if(!selectedField) {
+        return {err : "Field not found"}
+    }
+
+    if(selectedField.ownerId !== session.user.id) {
+        return {err : "Unauthorized"}
+    }
+
+    try {
+        await db.delete(field).where(eq(field.id , id))
+        await db.delete(crop).where(eq(crop.fieldId , id))
+        const paths = selectedField.imagesDates.map((date : string) => {
+            const p = ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"].map((type : string) => {
+                return `${id}/${date}/${type}.png`
+            })
+            return p;
+        })
+        for(const path of paths) {
+            await supabase.storage.from("field").remove(path)
+        }
+    } catch (e :any) {
+        console.log(e)
+        return {err : "Backend error "}
+    }
+}
+
 
 function toPostgresPolygon(coords: number[][]): string {
     return `((${coords.map(([x, y]) => `${x},${y}`).join("),(")}))`;

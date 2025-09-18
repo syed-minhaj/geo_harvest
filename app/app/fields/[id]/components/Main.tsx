@@ -2,14 +2,49 @@
 import { tfield } from "@/app/types";
 import dynamic from "next/dynamic"
 import Config from "./Config";
+import { Button } from "@/app/components/ui/button";
+import { DeleteField as DeleteFieldAction } from "@/app/actions/field";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const MapClient = dynamic(() => import("./MapClient") , { ssr : false});
 
 export default function Main({field} : {field : tfield}) {
+    const router = useRouter();
+
+    function DeleteField() {
+        toast.info("Do you want to delete this field ?", {
+            id : "confirm",
+            action : 
+                {
+                    label : "Yes",
+                    onClick : () => {
+                        toast.dismiss("confirm");
+                        toast.loading("Deleting field" , {
+                            id : "loading",
+                        });
+                        DeleteFieldAction({id : field.id}).then((res) => {
+                            if(res && res.err) {
+                                toast.error(res.err);
+                                return;
+                            }
+                            toast.dismiss("loading");
+                            toast.success("Successfully deleted");
+                            router.push("/app/fields");
+                        })
+                    }
+                }
+            
+        });
+        
+    }
     return (
         <>
             <MapClient field={field} />
             <Config />
+            <Button  className='bg-destructive ml-auto hover:bg-destructive/85 ' onClick={() => {DeleteField()}}>
+                Delete field
+            </Button>
         </>
 
     )
