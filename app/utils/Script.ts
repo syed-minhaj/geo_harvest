@@ -68,31 +68,37 @@ const N_SCRIPT = ({ colorRamp }: { colorRamp: number[][] }) => {
     let viz;
 
     function setup() {
-    const ramps = ${JSON.stringify(colorRamp)};
-    viz = new ColorRampVisualizer(ramps);
-    return {
+      const ramps = ${JSON.stringify(colorRamp)};
+      viz = new ColorRampVisualizer(ramps);
+      return {
         input: ["B05", "B08", "SCL", "dataMask"],
-        output: { bands: 4 } // RGBA: alpha = dataMask*(cloud mask)
-    };
+        output: { bands: 4 }
+      };
     }
 
     // 3 = cloud shadow, 7–10 = clouds, 11 = snow/ice
     function isClear(scl) {
-    return scl !== 3 && scl !== 7 && scl !== 8 && scl !== 9 && scl !== 10 && scl !== 11;
+      return scl !== 3 && scl !== 7 && scl !== 8 && scl !== 9 && scl !== 10 && scl !== 11;
     }
 
     function evaluatePixel(sample) {
-    // NDRE
-    const ndre = (sample.B08 - sample.B05) / (sample.B08 + sample.B05);
+      // NDRE
+      let ndre = (sample.B08 - sample.B05) / (sample.B08 + sample.B05);
 
-    // Color from ramp + transparent where no data OR cloudy/snow
-    const rgb = viz.process(ndre);
-    const alpha = sample.dataMask * (isClear(sample.SCL) ? 1 : 0);
+      let rgb;
+      if (sample.dataMask === 1 && isClear(sample.SCL)) {
+        // valid pixel → use ramp
+        rgb = viz.process(ndre);
+      } else {
+        // invalid pixel → force to lowest ramp color
+        rgb = viz.process(-1.0); // or use the first value of your ramp domain
+      }
 
-    return [...rgb, alpha];
+      return [...rgb, 1]; // always opaque
     }
-`;
+  `;
 };
+
 
 
 const P_SCRIPT = ({colorRamp} : {colorRamp : number[][]}) => {
