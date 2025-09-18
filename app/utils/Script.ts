@@ -86,18 +86,23 @@ const N_SCRIPT = ({ colorRamp }: { colorRamp: number[][] }) => {
       let ndre = (sample.B08 - sample.B05) / (sample.B08 + sample.B05);
 
       let rgb;
-      if (sample.dataMask === 1 && isClear(sample.SCL)) {
-        // valid pixel → use ramp
-        rgb = viz.process(ndre);
+      if (sample.dataMask === 1) {
+        if (isClear(sample.SCL)) {
+          // valid pixel
+          rgb = viz.process(ndre);
+        } else {
+          // cloudy pixel inside AOI → lowest ramp
+          rgb = viz.process(-1.0);
+        }
+        return [...rgb, 1]; // opaque inside AOI
       } else {
-        // invalid pixel → force to lowest ramp color
-        rgb = viz.process(-1.0); // or use the first value of your ramp domain
+        // outside AOI → transparent
+        return [0, 0, 0, 0];
       }
-
-      return [...rgb, 1]; // always opaque
     }
   `;
 };
+
 
 
 
