@@ -2,7 +2,7 @@ import { NextResponse , NextRequest } from "next/server";
 import { db } from "@/app/lib/drizzle";
 import { field as fieldDB , crop} from "@/db/schema";
 import { supabase } from "@/app/lib/supabase";
-import { sentinel_image , sentinel_catalog } from "@/app/actions/sentinel";
+import { sentinel_image , sentinel_catalog } from "@/app/utils/sentinel";
 import { fromPostgresPolygon } from "@/app/utils/coordinate";
 import { eq, sql } from "drizzle-orm";
 import { ImageType } from "@/app/types";
