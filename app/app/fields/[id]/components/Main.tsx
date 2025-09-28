@@ -41,7 +41,9 @@ export default function Main({field} : {field : tfield}) {
     return (
         <>
             <MapClient field={field} />
-            <Config />
+            <div className='w-full rounded-[1.75rem] border  flex flex-col gap-4 p-4 '>
+                <Config />
+            </div>
             <Button  className='bg-destructive ml-auto hover:bg-destructive/85 ' onClick={() => {DeleteField()}}>
                 Delete field
             </Button>
