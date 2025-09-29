@@ -16,7 +16,7 @@ export default function Config() {
         }
     }
     return (
-        <div className='w-full flex flex-col sm:flex-row gap-4 flex-wrap'>
+        <div className='w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 '>
         {
             ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"].map((imageType) => (
                 <button className={`${isActive(hash, imageType)} border rounded-[0.75rem] p-4 h-fit flex-1`}
