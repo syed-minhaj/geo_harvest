@@ -6,13 +6,16 @@ import { Button } from "@/app/components/ui/button";
 import { DeleteField as DeleteFieldAction } from "@/app/actions/field";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Graph from "./graph";
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
 import { Settings2 } from "lucide-react";
+import { useHash } from "@/app/hooks/hash";
 
 const MapClient = dynamic(() => import("./MapClient") , { ssr : false});
 
 export default function Main({field} : {field : tfield}) {
     const router = useRouter();
+    const {hash} = useHash("")
 
     function DeleteField() {
         toast.info("Do you want to delete this field ?", {
@@ -45,6 +48,12 @@ export default function Main({field} : {field : tfield}) {
             <MapClient field={field} />
             <div className='w-full rounded-[1.75rem] border  flex flex-col gap-4 p-4 '>
                 <Config />
+                <div className={`w-full grid grid-cols-1 md:grid-cols-2 gap-4 ${hash == "" ? "hidden" : ""}`}>
+                    <Graph typeP="yearly" field={field} />
+                    <div className="hidden md:block">
+                        <Graph typeP="periodly" field={field} />
+                    </div>
+                </div>
             </div>
             <Popover >
                 <PopoverTrigger className="ml-auto rounded border flex flex-row items-center gap-2 p-2 ">
