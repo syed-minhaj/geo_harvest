@@ -6,6 +6,8 @@ import { Button } from "@/app/components/ui/button";
 import { DeleteField as DeleteFieldAction } from "@/app/actions/field";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
+import { Settings2 } from "lucide-react";
 
 const MapClient = dynamic(() => import("./MapClient") , { ssr : false});
 
@@ -44,9 +46,16 @@ export default function Main({field} : {field : tfield}) {
             <div className='w-full rounded-[1.75rem] border  flex flex-col gap-4 p-4 '>
                 <Config />
             </div>
-            <Button  className='bg-destructive ml-auto hover:bg-destructive/85 ' onClick={() => {DeleteField()}}>
-                Delete field
-            </Button>
+            <Popover >
+                <PopoverTrigger className="ml-auto rounded border flex flex-row items-center gap-2 p-2 ">
+                    <Settings2/> Settings
+                </PopoverTrigger>
+                <PopoverContent className="w-fit">
+                    <Button  className='bg-destructive ml-auto hover:bg-destructive/85 ' onClick={() => {DeleteField()}}>
+                        Delete field
+                    </Button>
+                </PopoverContent>
+            </Popover>
         </>
 
     )
