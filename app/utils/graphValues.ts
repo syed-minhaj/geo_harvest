@@ -3,13 +3,13 @@ import { tcrop, tfield , ImageType } from "@/app/types";
 import { getColorPalette as colorRamp } from "./Script";
 import { getDateShort } from "./Date";
 
+type rampRGB = {
+    value : number,
+    r : number,
+    g : number,
+    b : number,
+}[]
 
-const rampRGB =(imageType : ImageType) => colorRamp(imageType).map(([value, intColor]) => {
-    const r = (intColor >> 16) & 255;
-    const g = (intColor >> 8) & 255;
-    const b = intColor & 255;
-    return { value, r, g, b };
-});
 
 const loadImage = (url: string): Promise<HTMLImageElement> => {
     return new Promise((resolve, reject) => {
@@ -21,11 +21,11 @@ const loadImage = (url: string): Promise<HTMLImageElement> => {
     });
 };
 
-function findClosestValue(r: number, g: number, b: number , imageType : ImageType) {
+function findClosestValue(r: number, g: number, b: number ,  rampRGB : rampRGB) {
     let closestValue: number | null = null;
     let minDist = Infinity;
-    for (let i = 0; i < rampRGB(imageType).length; i++) {
-        const c = rampRGB(imageType)[i];
+    for (let i = 0; i < rampRGB.length; i++) {
+        const c = rampRGB[i];
         const dr = r - c.r;
         const dg = g - c.g;
         const db = b - c.b;
@@ -38,7 +38,7 @@ function findClosestValue(r: number, g: number, b: number , imageType : ImageTyp
     return closestValue;
 }
 
-async function getAverageRampValueFromUrl(imageUrl: string , imageType : ImageType): Promise<number | null> {
+async function getAverageRampValueFromUrl(imageUrl: string , imageType : ImageType , rampRGB : rampRGB): Promise<number | null> {
 
     const img = await loadImage(imageUrl);
 
@@ -63,7 +63,7 @@ async function getAverageRampValueFromUrl(imageUrl: string , imageType : ImageTy
         const a = data[i + 3];
         if (a === 0) continue; 
 
-        const val = findClosestValue(r, g, b , imageType);
+        const val = findClosestValue(r, g, b , rampRGB);
         if (val !== null && val !== undefined) {
             sum += val;
             count++;
@@ -99,6 +99,12 @@ function average(numbers : number[]) {
 }
 
 async function getGraphData(field : tfield  , graphType : "yearly" | "periodly" , ImageType : ImageType) {
+    const rampRGB =  colorRamp(ImageType).map(([value, intColor]) => {
+        const r = (intColor >> 16) & 255;
+        const g = (intColor >> 8) & 255;
+        const b = intColor & 255;
+        return { value, r, g, b };
+    });
     const graphData = []
     let lasthex = "#0ADD08";
     const noOfValues = Object.keys(field.imagesDates).length;
@@ -107,7 +113,7 @@ async function getGraphData(field : tfield  , graphType : "yearly" | "periodly" 
         for(let i = 0 ; i < noOfValues ; i++) {
             let j = i
             i = noOfValues - i - 1;
-            const a = await getAverageRampValueFromUrl(`https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${field.id}/${field.imagesDates[i]}/${ImageType}.png`,ImageType)
+            const a = await getAverageRampValueFromUrl(`https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${field.id}/${field.imagesDates[i]}/${ImageType}.png`,ImageType , rampRGB)
             if(a !== null) {
                 lasthex ="#" + findClosestColorFromHex(a , colorRamp(ImageType) , ImageType).toString(16).padStart(6, '0').toUpperCase();
                 graphData.push({
@@ -134,7 +140,7 @@ async function getGraphData(field : tfield  , graphType : "yearly" | "periodly" 
             const monthOfCurrentValue = new Date(field.imagesDates[i]).getMonth();
             const monthOfLastValue = new Date(field.imagesDates[i+1]).getMonth() ?? -1;
             if (monthOfCurrentValue === monthOfLastValue) {
-                const a = await getAverageRampValueFromUrl(`https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${field.id}/${field.imagesDates[i]}/${ImageType}.png`,ImageType)
+                const a = await getAverageRampValueFromUrl(`https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${field.id}/${field.imagesDates[i]}/${ImageType}.png`,ImageType , rampRGB)
                 if(a !== null) valuesOfMonth.push(a)
             }else if(valuesOfMonth.length != 0){
                 graphData.push({
@@ -145,7 +151,7 @@ async function getGraphData(field : tfield  , graphType : "yearly" | "periodly" 
                 valuesOfMonth = []
                 i = i - 1
             }else {
-                const a = await getAverageRampValueFromUrl(`https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${field.id}/${field.imagesDates[i]}/${ImageType}.png`,ImageType)
+                const a = await getAverageRampValueFromUrl(`https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${field.id}/${field.imagesDates[i]}/${ImageType}.png`,ImageType , rampRGB)
                 if(a !== null) valuesOfMonth.push(a)
             }
             i = j
