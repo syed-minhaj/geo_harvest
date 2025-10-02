@@ -184,7 +184,7 @@ const colorRamp = [[0.1, 8388608],
     [0.42, 52479], [0.44, 39423], [0.46, 26111], 
     [0.48, 13311], [0.5, 255], [0.52, 229], 
     [0.54, 204], [0.56, 178], [0.58, 153], [0.6, 128]]
-    
+  
 export function SCRIPT(imageType : ImageType , crop : keyof typeof availableCrops) {
     switch(imageType) {
         case "waterRequirement":
@@ -197,5 +197,20 @@ export function SCRIPT(imageType : ImageType , crop : keyof typeof availableCrop
             return STRESS_SCRIPT();
         default:
             return NDMI_SCRIPT({colorRamp});
+    }
+}
+
+export const getColorPalette = (imageType : ImageType) => {
+    switch(imageType) {
+        case "cropStress":
+            return [
+                [-1.0, 0xFF0000], // red
+                [0.0,  0xFF8000], // orange
+                [0.3,  0xFFFF00], // yellow
+                [0.6,  0x80FF00], // yellow-green
+                [1.0,  0x00FF00], // green
+            ]
+        default:
+            return colorRamp;
     }
 }
