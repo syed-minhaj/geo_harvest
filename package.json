@@ -41,13 +41,13 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-leaflet": "^5.0.0",
-    "recharts": "^2.15.4",
+    "recharts": "2.15.4",
     "sharp": "^0.34.3",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.13",
+    "@tailwindcss/postcss": "^4.1.14",
     "@types/leaflet": "^1.9.20",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.17",
