@@ -6,12 +6,12 @@ import { Button } from "@/app/components/ui/button";
 import { DeleteField as DeleteFieldAction } from "@/app/actions/field";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import Graph from "./graph";
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
 import { Settings2 } from "lucide-react";
 import { useHash } from "@/app/hooks/hash";
 
 const MapClient = dynamic(() => import("./MapClient") , { ssr : false});
+const Graph = dynamic(() => import("./graph") , { ssr : false});
 
 export default function Main({field} : {field : tfield}) {
     const router = useRouter();
