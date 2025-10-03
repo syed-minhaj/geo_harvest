@@ -66,7 +66,7 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield }) => {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <ChartContainer config={chartConfig}>
+                <ChartContainer config={chartConfig} className="aspect-56/31">
                 <AreaChart
                     accessibilityLayer
                     data={chartData}
