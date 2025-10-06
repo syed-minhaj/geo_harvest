@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectValue , SelectTrigger, SelectGroup, Select
 const ChangeGraphType = ({type , setType} : {type : "yearly" | "periodly" , setType : (type : "yearly" | "periodly") => void}) => {
     return (
         <Select value={type} onValueChange={(e) => {setType(type == "yearly" ? "periodly" : "yearly")}}>
-            <SelectTrigger className="ml-4 md:hidden">
+            <SelectTrigger className="ml-auto lg:hidden">
                 <SelectValue placeholder="Select Crop" />
             </SelectTrigger>
             <SelectContent>

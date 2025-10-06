@@ -3,6 +3,7 @@ import { auth } from '@/app/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Main from './components/Main';
+import Link from 'next/link';
 
 
 type PageProps = Promise<{
@@ -30,7 +31,13 @@ export default async function FieldPage({params} : {params : PageProps}) {
     }
     const field = await getFieldById(id);
     if(!field) {
-        return <div>Field not found</div>
+        return (
+            <div className="flex flex-col text-center mt-30 gap-4 mx-4 ">
+                <h2 className="text-3xl">Field Not Found</h2>
+                <p>The field you are looking for does not exist.</p>
+                <Link href="/app/fields" className='opacity-66 hover:opacity-100'>View available fields</Link>
+            </div>
+        )
     }
     if(field.ownerId !== session.user.id) {
         redirect("/app/fields");

@@ -46,11 +46,11 @@ export default function Main({field} : {field : tfield}) {
     return (
         <>
             <MapClient field={field} />
-            <div className='w-full rounded-[1.75rem] border  flex flex-col gap-4 p-4 '>
+            <div className='w-full rounded-[1.75rem] sm:border  flex flex-col gap-4 sm:p-4 '>
                 <Config />
-                <div className={`w-full grid grid-cols-1 md:grid-cols-2 gap-4 ${hash == "" ? "hidden" : ""}`}>
+                <div className={`w-full grid grid-cols-1 lg:grid-cols-2 gap-4 ${hash == "" ? "hidden" : ""}`}>
                     <Graph typeP="yearly" field={field} />
-                    <div className="hidden md:block">
+                    <div className="hidden lg:block">
                         <Graph typeP="periodly" field={field} />
                     </div>
                 </div>
