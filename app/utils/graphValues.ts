@@ -110,9 +110,7 @@ async function getGraphData(field : tfield  , graphType : "yearly" | "periodly" 
     const noOfValues = Object.keys(field.imagesDates).length;
 
     if (graphType == "yearly"){
-        for(let i = 0 ; i < noOfValues ; i++) {
-            let j = i
-            i = noOfValues - i - 1;
+        for(let i = noOfValues-1 ; i >= 0 ; i--) {
             const a = await getAverageRampValueFromUrl(`https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${field.id}/${field.imagesDates[i]}/${ImageType}.png`,ImageType , rampRGB)
             if(a !== null) {
                 lasthex ="#" + findClosestColorFromHex(a , colorRamp(ImageType) , ImageType).toString(16).padStart(6, '0').toUpperCase();
@@ -126,17 +124,13 @@ async function getGraphData(field : tfield  , graphType : "yearly" | "periodly" 
                     value : NaN,
                 })
             }
-            i = j
         }
     }
     
     else{
         let valuesOfMonth :number[] = []
         
-        for(let i = 0 ; i < noOfValues ; i++) {
-            let j = i
-            i = noOfValues - i - 1;
-            let NaNB = false
+        for(let i = noOfValues-1 ; i >= 0 ; i--) {
             const monthOfCurrentValue = new Date(field.imagesDates[i]).getMonth();
             const monthOfLastValue = new Date(field.imagesDates[i+1]).getMonth() ?? -1;
             if (monthOfCurrentValue === monthOfLastValue) {
@@ -149,12 +143,11 @@ async function getGraphData(field : tfield  , graphType : "yearly" | "periodly" 
                 })
                 lasthex ="#" + findClosestColorFromHex(average(valuesOfMonth) , colorRamp(ImageType) , ImageType).toString(16).padStart(6,'0').toUpperCase();
                 valuesOfMonth = []
-                i = i - 1
+                i++
             }else {
                 const a = await getAverageRampValueFromUrl(`https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${field.id}/${field.imagesDates[i]}/${ImageType}.png`,ImageType , rampRGB)
                 if(a !== null) valuesOfMonth.push(a)
             }
-            i = j
         
         }
         if (valuesOfMonth.length != 0){
