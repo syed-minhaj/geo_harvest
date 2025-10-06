@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation"
 import type { ReactNode } from "react"
 import { authClient } from "../lib/auth-client"
 import { useEffect } from "react"
+import ThemeProvider from "./themeProvider"
 
 export default function Providers({ children }: { children: ReactNode }) {
     const router = useRouter()
@@ -16,25 +17,27 @@ export default function Providers({ children }: { children: ReactNode }) {
     }, [pathname])
     
     return (
-        <AuthUIProvider
-            basePath="/app/auth"
-            authClient={authClient}
-            navigate={router.push}
-            replace={router.replace}
-            redirectTo="/app/fields"
-            onSessionChange={() => {
-                router.refresh()
-            }}
-            Link={Link}
-            social={{providers : ["google"]}}
-            credentials={{
-                passwordValidation: {
-                    minLength: 8,
-                },
-                confirmPassword: true,
-            }}
-        >
-            {children}
-        </AuthUIProvider>
+         <ThemeProvider>
+            <AuthUIProvider
+                basePath="/app/auth"
+                authClient={authClient}
+                navigate={router.push}
+                replace={router.replace}
+                redirectTo="/app/fields"
+                onSessionChange={() => {
+                    router.refresh()
+                }}
+                Link={Link}
+                social={{providers : ["google"]}}
+                credentials={{
+                    passwordValidation: {
+                        minLength: 8,
+                    },
+                    confirmPassword: true,
+                }}
+            >
+                {children}
+            </AuthUIProvider>
+        </ThemeProvider>
     )
 }

@@ -3,6 +3,7 @@ import { Albert_Sans, Geist, Geist_Mono , Josefin_Sans} from "next/font/google";
 import "./globals.css";
 import 'leaflet/dist/leaflet.css';
 import NextTopLoader from "nextjs-toploader";
+import ThemeProvider from "./components/themeProvider";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -44,8 +45,10 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} ${josefinSans.variable} ${albertSans.variable} antialiased`}
             >
-                <NextTopLoader color="#004C20" showSpinner={false} />
-                {children}
+                <ThemeProvider>
+                    <NextTopLoader color="#004C20" showSpinner={false} />
+                    {children}
+                </ThemeProvider>
             </body>
         </html>
     );
