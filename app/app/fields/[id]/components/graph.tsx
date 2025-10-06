@@ -3,7 +3,7 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/app/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/app/components/ui/chart"
 import { TrendingDown, TrendingUp } from "lucide-react"
-import {AreaChart, CartesianGrid, XAxis, Area , YAxis, Scatter } from "recharts"
+import {AreaChart, CartesianGrid, XAxis, Area , YAxis } from "recharts"
 import { tfield , tcrop, ImageType} from "@/app/types";
 import {useHash } from "@/app/hooks/hash";
 import { getGraphData } from "@/app/utils/graphValues";
@@ -75,7 +75,7 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield }) => {
                         right: 12,
                     }}
                 >
-                    <CartesianGrid vertical={false} />
+                    <CartesianGrid vertical={false} opacity={0.4}/>
                     <XAxis
                         dataKey="date"
                         tickLine={false}
@@ -89,8 +89,8 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield }) => {
                         tickLine={false}
                         axisLine={false}
                         width={40}
-                        ticks={[0, 0.25, 0.50, 0.75, 1.0, 1.1]}
-                        domain={[0, 1.1]}
+                        ticks={[0, 0.25, 0.50, 0.75, 1.0]}
+                        domain={[0, 1]}
                         tickFormatter={(value) => `${scoreToCompliment(value)}`}
                     />
                     <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
@@ -126,6 +126,7 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield }) => {
                     <div className="flex items-center gap-2 leading-none font-medium">
                         {(() => {
                             if (!done) return "Loading...";
+                            if(!chartData[chartData.length - 2]) return "No Change"
                             const diff =  chartData[chartData.length - 1].value - chartData[chartData.length - 2].value 
                             const diffInPercent = (Math.abs(diff) / chartData[chartData.length - 2].value * 100).toFixed(2)
                             if (diff > 0) 
