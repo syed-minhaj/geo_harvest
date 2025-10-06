@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { calculateAreaInAcres } from '@/app/utils/area';
 import { Separator } from '@/app/components/ui/separator';
 import { fromPostgresPolygon } from '@/app/utils/coordinate';
+import { Button } from '@/app/components/ui/button';
+
 async function getFieldsById(id: string) {
     return await db.query.field.findMany({
         where: (field , {eq}) => (eq(field.ownerId , id)),
@@ -74,7 +76,25 @@ export default async function page() {
     
     const session = await auth.api.getSession({headers : await headers()});
     if (!session) {
-        return <div>Please login</div>
+        return (
+            <div className='flex flex-col items-center justify-center my-40 gap-4'>
+                <div className=' text-2xl '>
+                    Please SignIn to view your fields
+                </div>
+                <div className='flex flex-row gap-4'>
+                    <Link href={`/app/auth/sign-in`}>
+                        <Button variant={'outline'}>
+                            Sign In
+                        </Button>
+                    </Link>
+                    <Link href={`/app/auth/sign-up`}>
+                        <Button variant={'outline'}>
+                            Sign Up
+                        </Button>
+                    </Link>
+                </div>
+            </div>
+        )
     }
    
     const fields = await getFieldsById(session.user.id);
@@ -114,7 +134,7 @@ export default async function page() {
                     <div className='flex flex-col gap-1'>
                         <div className='flex flex-row justify-between'>
                             <span className='font-medium text-sm'>Latest Analysis</span>
-                            <span className='opacity-66 text-xs'>{new Date(field.imagesDates[0]).toDateString()}</span>
+                            <span className='opacity-66 text-xs'>{new Date(field.imagesDates[field.imagesDates.length - 1]).toDateString()}</span>
                         </div>
                         <div className='flex flex-row justify-between'>
                             <span className='font-medium text-sm'>Planted Date</span>
