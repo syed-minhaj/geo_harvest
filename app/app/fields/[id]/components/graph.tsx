@@ -65,13 +65,13 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield }) => {
                     Showing total visitors for the last 6 months
                 </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0 sm:p-6">
                 <ChartContainer config={chartConfig} className="aspect-56/31">
                 <AreaChart
                     accessibilityLayer
                     data={chartData}
                     margin={{
-                        left: 12,
+                        left: 0,
                         right: 12,
                     }}
                 >
@@ -84,6 +84,7 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield }) => {
                         tickFormatter={(value) => value}
                     />
                     <YAxis 
+                        className="hidden sm:block "
                         dataKey="value"
                         tickLine={false}
                         axisLine={false}
