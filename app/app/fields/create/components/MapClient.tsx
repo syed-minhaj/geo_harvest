@@ -6,7 +6,7 @@ import { LatLngExpression   } from 'leaflet';
 import { getUserLocation } from '@/app/utils/coordinate';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
-import { EditControl } from 'minhaj-react-leaflet-draw';
+import { EditControl } from 'react-leaflet-draw';
 import { useEffect, useState } from 'react';
 import '@/app/style/map.css';
 
