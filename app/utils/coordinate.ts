@@ -44,4 +44,12 @@ function fromPostgresPolygon(polygonString: string): number[][] {
     });
 }
 
-export {getUserLocation , fromPostgresPolygon};
+
+function getZoom(coordinates : number[][]) {
+    const lats = coordinates.map((c:any) => c[0]);
+    const south = Math.min(...lats);
+    const north = Math.max(...lats);
+    return Math.log2(180/Math.abs(north - south)) + 1
+}
+
+export {getUserLocation , fromPostgresPolygon , getZoom};

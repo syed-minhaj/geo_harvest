@@ -1,7 +1,7 @@
 "use client"
 import {  CreateField } from '@/app/actions/field';
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Input } from '@/app/components/ui/input';
 import { Button } from '@/app/components/ui/button';
@@ -24,16 +24,43 @@ export default function CreateFieldPage() {
 
     const router = useRouter();
     
+    useEffect(() => {
+        // if user 
+        if(localStorage.getItem("createdField")){
+            const data = JSON.parse(localStorage.getItem("createdField") as string);
+            setName(data.name);
+            setCrop(data.fcrop.name);
+            setVariety(data.fcrop.variety);
+            setPlantedDate(data.fcrop.plantedDate);
+            setCoordinates(data.coordinates);
+            localStorage.removeItem("createdField");
+        }
+    }, []);
+
+
     async function Submit () {
         if(coordinates && name && crop && plantedDate){
             toast.loading("Creating field" , {
                 id : "loading",
             });
             setisCreating(true);
+            const data = {name : name, coordinates : coordinates , fcrop : {name : crop , variety : variety ,plantedDate : plantedDate}}
             await CreateField({name : name, coordinates : coordinates , fcrop : {name : crop , variety : variety ,plantedDate : new Date(plantedDate)} }).then((res) => {
                 if(res.err){
                     toast.dismiss("loading");
-                    toast.error(res.err);
+                    if(res.err == "Please login to create a field."){
+                        localStorage.setItem("createdField" , JSON.stringify(data));
+                        toast.error("Please Sign Up to create a field." , {
+                            action : {
+                                label : "Sign Up",
+                                onClick : () => {
+                                    router.push("/app/auth/sign-up")
+                                }
+                            }
+                        });
+                    }else{
+                        toast.error(res.err);
+                    }
                     return;
                 }
                 toast.dismiss("loading");
@@ -58,7 +85,7 @@ export default function CreateFieldPage() {
                     <video  className='w-full  lg:w-1/3 lg:h-fit bg-gray-600 rounded-[0.75rem]' autoPlay loop muted>
                         <source src={`${process.env.APP_URL}/tutorial.mp4`} type="video/mp4"></source>
                     </video>
-                <MapClient setCordinates={setCoordinates} />
+                <MapClient cordinates={coordinates} setCordinates={setCoordinates} />
             </div>
             <div className='flex flex-col sm:flex-row gap-4 '>
                 <h3 className='text-xl font-bold font-josefin-sans w-fit'>Name of field : </h3>
