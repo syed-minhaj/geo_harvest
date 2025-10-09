@@ -11,7 +11,7 @@ import { ImageType, tfield } from '@/app/types';
 import { useHash } from '@/app/hooks/hash';
 import SwitchDate from './switchDate';
 import { getColorPalette } from '@/data/colorPalette';
-import { fromPostgresPolygon } from '@/app/utils/coordinate';
+import { fromPostgresPolygon, getZoom } from '@/app/utils/coordinate';
 
 
 
@@ -46,12 +46,6 @@ export default function MapClient({field} : {field : tfield}) {
         return `https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${field.id}/${date}/${type}.png`
     }
 
-    function getZoom(coordinates : number[][]) {
-        const lats = coordinates.map((c:any) => c[0]);
-        const south = Math.min(...lats);
-        const north = Math.max(...lats);
-        return Math.log2(180/Math.abs(north - south)) + 1
-    }
 
     const colors = getColorPalette(hash as ImageType);
     const gradient = `linear-gradient(to top, ${colors.join(",")})`;
