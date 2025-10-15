@@ -11,7 +11,10 @@ const ThemeSwitcher = () => {
             } else {
                 document.documentElement.classList.remove('dark');
             }
-                localStorage.setItem('theme', theme);
+            localStorage.setItem('theme', theme);
+            const metaTag = document.querySelector('meta[name="theme-color"]');
+            if (!metaTag) return;
+            metaTag.setAttribute('content', theme === 'dark' ? '#0a0a0a' : '#F8FDFB');
     }, [theme]);
 
     const toggleTheme = () => {
