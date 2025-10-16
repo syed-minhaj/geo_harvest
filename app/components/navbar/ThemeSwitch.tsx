@@ -15,6 +15,9 @@ const ThemeSwitcher = () => {
             const metaTag = document.querySelector('meta[name="theme-color"]');
             if (!metaTag) return;
             metaTag.setAttribute('content', theme === 'dark' ? '#0a0a0a' : '#F8FDFB');
+            const html = document.querySelector('html');
+            if (!html) return;
+            html.style = `color-scheme: ${theme};`
     }, [theme]);
 
     const toggleTheme = () => {
