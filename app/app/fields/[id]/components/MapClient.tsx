@@ -52,7 +52,7 @@ export default function MapClient({field} : {field : tfield}) {
 
     return (
         <div className='relative'>    
-            <MapContainer center={position} zoom={getZoom(coordinates)} scrollWheelZoom={true} style={{}} className='w-full  h-[27rem] rounded-[1.75rem] z-20 ' >
+            <MapContainer center={position} zoom={getZoom(coordinates)} scrollWheelZoom={true} style={{}} className='w-full  h-[27rem] rounded-[0.75rem] sm:rounded-[1.75rem] z-20 ' >
                 <TileLayer
                     url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                     attribution="© OpenStreetMap contributors"
