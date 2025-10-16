@@ -67,7 +67,7 @@ export default function Home() {
                 </div>
                 <div className="w-full aspect-[960/452] ">
                     <Image src="/startPage.png" alt="hero" width={960} height={452} 
-                    className="mt-18 shadow-[0_4px_50px_var(--color-main)] rounded-[0.75rem]   " />
+                    className="mt-18 shadow-[0_4px_50px_var(--color-main)] rounded-[0.75rem] mx-auto " />
                 </div>
                 <h3 className="text-4xl md:text-5xl font-light tracking-tight mt-20 mb-5 ">
                     Powered by Sentinel
