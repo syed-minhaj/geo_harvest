@@ -1,11 +1,13 @@
 import { NextResponse , NextRequest } from "next/server";
 import { db } from "@/app/lib/drizzle";
-import { field as fieldDB , crop} from "@/db/schema";
+import { field as fieldDB , crop, avgPixelValue} from "@/db/schema";
 import { supabase } from "@/app/lib/supabase";
 import { sentinel_image , sentinel_catalog } from "@/app/utils/sentinel";
 import { fromPostgresPolygon } from "@/app/utils/coordinate";
 import { eq, sql } from "drizzle-orm";
 import { ImageType } from "@/app/types";
+import { getAverageRampValueFromUrl_Server } from "@/app/actions/actions";
+import { getColorPalette as colorRamp } from "@/app/utils/Script";
 
 export async function GET(req : NextRequest) {
     
@@ -31,6 +33,7 @@ export async function GET(req : NextRequest) {
     });
 
     try{
+        const pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
         for(const field of fields) {
             console.log("start" , field.id);
             const coor = fromPostgresPolygon(field.coordinates);
@@ -72,17 +75,25 @@ export async function GET(req : NextRequest) {
                             contentType: 'image/png', 
                             upsert: true, 
                         });
-    
                     
                     if (error) {
                         console.error('Error uploading image:', error.message);
                         return null;
                     }
+                    const rampRGB =  colorRamp(to).map(([value, intColor]) => {
+                        const r = (intColor >> 16) & 255;
+                        const g = (intColor >> 8) & 255;
+                        const b = intColor & 255;
+                        return { value, r, g, b };
+                    });
+                    const value = await getAverageRampValueFromUrl_Server(field.id , dates[0] , to , rampRGB)
+                    pixelValues.push({fieldId : field.id , imageType : to , imageDate : dates[0] , value : value})
                 })
                 console.log("done" , to);
             }
             console.log("done" , field.id);
         }
+        if (pixelValues.length != 0) await db.insert(avgPixelValue).values(pixelValues)
     }catch(e){
         console.log(e);
         return NextResponse.json(
