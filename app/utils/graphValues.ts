@@ -1,7 +1,7 @@
-import { tcrop, tfield , ImageType } from "@/app/types";
-//import sharp from "sharp";
+import { tfield , ImageType } from "@/app/types";
 import { getColorPalette as colorRamp } from "./Script";
 import { getDateShort } from "./Date";
+import { getAverageRampValueFromUrl_Server, getAvgPixelValues, setAvgPixelValueBatch } from "../actions/actions";
 
 type rampRGB = {
     value : number,
@@ -11,71 +11,9 @@ type rampRGB = {
 }[]
 
 
-const loadImage = (url: string): Promise<HTMLImageElement> => {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.onload = () => resolve(img);
-        img.onerror = (e) => reject(new Error(`Failed to load image: ${url}`));
-        img.src = url;
-    });
-};
-
-function findClosestValue(r: number, g: number, b: number ,  rampRGB : rampRGB) {
-    let closestValue: number | null = null;
-    let minDist = Infinity;
-    for (let i = 0; i < rampRGB.length; i++) {
-        const c = rampRGB[i];
-        const dr = r - c.r;
-        const dg = g - c.g;
-        const db = b - c.b;
-        const dist = dr * dr + dg * dg + db * db;
-        if (dist < minDist) {
-            minDist = dist;
-            closestValue = c.value;
-        }
-    }
-    return closestValue;
-}
-
-async function getAverageRampValueFromUrl(imageUrl: string , imageType : ImageType , rampRGB : rampRGB): Promise<number | null> {
-
-    const img = await loadImage(imageUrl);
-
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    if (!ctx) throw new Error("Canvas is not supported");
-
-    canvas.width = img.width;
-    canvas.height = img.height;
-    ctx.drawImage(img, 0, 0);
-
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-
-    let sum = 0;
-    let count = 0;
-
-    for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const a = data[i + 3];
-        if (a === 0) continue; 
-
-        const val = findClosestValue(r, g, b , rampRGB);
-        if (val !== null && val !== undefined) {
-            sum += val;
-            count++;
-        }
-    }
-
-    if (count === 0) return null;
-    return imageType ==="cropStress" ? (sum / count) : (sum / count) / 0.6;
-}
+const pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
 
 function findClosestColorFromHex(target:number , colorRamp : number[][] , imageType : ImageType) {
-    // target must be from 0 to 1
     if (imageType != "cropStress") target = target * 0.6
     let closestValue = NaN;
     let smallestDist = Infinity;
@@ -98,6 +36,12 @@ function average(numbers : number[]) {
     return sum / numbers.length;
 }
 
+async function getAverageRampValueFromUrl(fieldId : string , imageDate : string , ImageType : ImageType , rampRGB : rampRGB): Promise<number | null> {
+    const res = await getAverageRampValueFromUrl_Server(fieldId , imageDate , ImageType , rampRGB)
+    pixelValues.push({fieldId , imageType : ImageType , imageDate , value : res})
+    return res;
+}
+
 async function getGraphData(field : tfield  , graphType : "yearly" | "periodly" , ImageType : ImageType) {
     const rampRGB =  colorRamp(ImageType).map(([value, intColor]) => {
         const r = (intColor >> 16) & 255;
@@ -105,13 +49,20 @@ async function getGraphData(field : tfield  , graphType : "yearly" | "periodly" 
         const b = intColor & 255;
         return { value, r, g, b };
     });
-    const graphData = []
+    const {avgPixelValues , err} = await getAvgPixelValues(field.id , ImageType)
+    
+    const graphData : {date : string , value : number}[] = []
+    const dateToValue : {[key : string] : number} = {}
+    for (const avgPixelValue of avgPixelValues) {
+        dateToValue[avgPixelValue.ImageDate] = avgPixelValue.value ?? NaN
+    }
+
     let lasthex = "#0ADD08";
     const noOfValues = Object.keys(field.imagesDates).length;
 
     if (graphType == "yearly"){
         for(let i = noOfValues-1 ; i >= 0 ; i--) {
-            const a = await getAverageRampValueFromUrl(`https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${field.id}/${field.imagesDates[i]}/${ImageType}.png`,ImageType , rampRGB)
+            const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
             if(a !== null) {
                 lasthex ="#" + findClosestColorFromHex(a , colorRamp(ImageType) , ImageType).toString(16).padStart(6, '0').toUpperCase();
                 graphData.push({
@@ -134,7 +85,7 @@ async function getGraphData(field : tfield  , graphType : "yearly" | "periodly" 
             const monthOfCurrentValue = new Date(field.imagesDates[i]).getMonth();
             const monthOfLastValue = new Date(field.imagesDates[i+1]).getMonth() ?? -1;
             if (monthOfCurrentValue === monthOfLastValue) {
-                const a = await getAverageRampValueFromUrl(`https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${field.id}/${field.imagesDates[i]}/${ImageType}.png`,ImageType , rampRGB)
+                const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
                 if(a !== null) valuesOfMonth.push(a)
             }else if(valuesOfMonth.length != 0){
                 graphData.push({
@@ -145,7 +96,7 @@ async function getGraphData(field : tfield  , graphType : "yearly" | "periodly" 
                 valuesOfMonth = []
                 i++
             }else {
-                const a = await getAverageRampValueFromUrl(`https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${field.id}/${field.imagesDates[i]}/${ImageType}.png`,ImageType , rampRGB)
+                const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
                 if(a !== null) valuesOfMonth.push(a)
             }
         
@@ -169,6 +120,7 @@ async function getGraphData(field : tfield  , graphType : "yearly" | "periodly" 
         }
     }
 
+    if (pixelValues.length != 0) await setAvgPixelValueBatch(pixelValues)
     return {graphData , lasthex}
 }
 
