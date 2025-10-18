@@ -1,9 +1,97 @@
 {
-  "id": "dc068eac-4ac0-4fee-9fd4-658a0c922dc9",
-  "prevId": "573ca258-9182-413e-ba72-c0785e722868",
+  "id": "2ab6891e-76a2-4279-8891-15eebb715888",
+  "prevId": "dc068eac-4ac0-4fee-9fd4-658a0c922dc9",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.avg_pixel_value": {
+      "name": "avg_pixel_value",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "field_id": {
+          "name": "field_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image_type": {
+          "name": "image_type",
+          "type": "ImageType",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image_date": {
+          "name": "image_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "value": {
+          "name": "value",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "avgPixelValueId_idx": {
+          "name": "avgPixelValueId_idx",
+          "columns": [
+            {
+              "expression": "field_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "avg_pixel_value_field_id_field_id_fk": {
+          "name": "avg_pixel_value_field_id_field_id_fk",
+          "tableFrom": "avg_pixel_value",
+          "tableTo": "field",
+          "columnsFrom": [
+            "field_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.crop": {
       "name": "crop",
       "schema": "",
@@ -521,6 +609,16 @@
         "rice",
         "cotton",
         "other"
+      ]
+    },
+    "public.ImageType": {
+      "name": "ImageType",
+      "schema": "public",
+      "values": [
+        "waterRequirement",
+        "nitrogenRequirement",
+        "phosphorusRequirement",
+        "cropStress"
       ]
     }
   },

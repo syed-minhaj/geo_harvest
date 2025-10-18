@@ -1,13 +1,15 @@
-import { pgEnum , pgTable, text, timestamp , customType, varchar, index} from "drizzle-orm/pg-core";
+import { pgEnum , pgTable, text, timestamp , customType, varchar,real, index} from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 import { randomUUID } from "crypto";
 import { availableCrops } from "../data/crop";
 import { relations, sql } from "drizzle-orm";
+import { ImageType } from "@/app/types";
 
 export type Crop = keyof typeof availableCrops;
 export type Variety<C extends Crop> = (typeof availableCrops)[C][number];
 
 export const CropEnum = pgEnum("Crop", Object.keys(availableCrops) as [string, ...string[]]);
+export const ImageTypeEnum = pgEnum("ImageType", ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"]);
 
 const polygon = customType<{ data: string }>({
     dataType() {
@@ -33,8 +35,22 @@ export const field = pgTable("field", {
 ]);
 
 export const fieldRelations = relations(field, ({many}) => ({
-    crop : many(crop)
+    crop : many(crop),
+    avgPixelValue : many(avgPixelValue),
 }))
+
+export const avgPixelValue = pgTable("avg_pixel_value", {
+    id: text("id").primaryKey().$defaultFn(() => randomUUID()),
+    fieldId: text("field_id").notNull()
+            .references(() => field.id, { onDelete: "cascade" }),
+    imageType: ImageTypeEnum("image_type").notNull().$type<ImageType>(),
+    imageDate: text("image_date").notNull(),
+    created_at: timestamp("created_at").defaultNow().notNull(),
+    updated_at: timestamp("updated_at").defaultNow().notNull(),
+    value : real("value"),
+} , (table) => [
+    index("avgPixelValueId_idx").on(table.fieldId),
+]);
 
 export const crop = pgTable("crop", {
     id: text("id").primaryKey().$defaultFn(() => randomUUID()),
