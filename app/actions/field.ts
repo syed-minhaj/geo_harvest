@@ -2,7 +2,7 @@
 import { headers } from "next/headers";
 import { auth } from "@/app/lib/auth";
 import { db } from "@/app/lib/drizzle";
-import { Crop as CropName , field , crop } from "@/db/schema";
+import { Crop as CropName , field , crop, avgPixelValue } from "@/db/schema";
 import { supabase } from "@/app/lib/supabase";
 import { sentinel_catalog, sentinel_image } from "../utils/sentinel";
 import { eq, sql } from "drizzle-orm";
@@ -107,6 +107,7 @@ export async function DeleteField({id} : {id : string }) {
     try {
         await db.delete(field).where(eq(field.id , id))
         await db.delete(crop).where(eq(crop.fieldId , id))
+        await db.delete(avgPixelValue).where(eq(avgPixelValue.fieldId , id))
         const paths = selectedField.imagesDates.map((date : string) => {
             const p = ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"].map((type : string) => {
                 return `${id}/${date}/${type}.png`
