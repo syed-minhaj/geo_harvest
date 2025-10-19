@@ -52,6 +52,13 @@ export const avgPixelValue = pgTable("avg_pixel_value", {
     index("avgPixelValueId_idx").on(table.fieldId),
 ]);
 
+export const avgPixelValueRelations = relations(avgPixelValue, ({one}) => ({
+    field : one(field , {
+        fields : [avgPixelValue.fieldId],
+        references : [field.id]
+    })
+}))
+
 export const crop = pgTable("crop", {
     id: text("id").primaryKey().$defaultFn(() => randomUUID()),
     name: CropEnum("name").notNull().$type<Crop>(),
