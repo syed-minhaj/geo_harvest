@@ -1,5 +1,5 @@
 "use client"
-import { tfield } from "@/app/types";
+import { ImageType, tfield } from "@/app/types";
 import dynamic from "next/dynamic"
 import Config from "./Config";
 import { Button } from "@/app/components/ui/button";
@@ -13,7 +13,14 @@ import { useHash } from "@/app/hooks/hash";
 const MapClient = dynamic(() => import("./MapClient") , { ssr : false});
 const Graph = dynamic(() => import("./graph") , { ssr : false});
 
-export default function Main({field} : {field : tfield}) {
+type avgPixelValue = {
+    fieldId : string,
+    imageType : ImageType,
+    imageDate : string,
+    value : number | null,
+}
+
+export default function Main({field} : {field : tfield & {avgPixelValue : avgPixelValue[]}}) {
     const router = useRouter();
     const {hash} = useHash("")
 

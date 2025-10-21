@@ -12,7 +12,17 @@ type PageProps = Promise<{
 
 async function getFieldById(id : string) {
     const f = await db.query.field.findFirst({
-        where: (field , {eq}) => (eq(field.id , id))
+        where: (field , {eq}) => (eq(field.id , id)),
+        with:{
+            avgPixelValue : {
+                columns : {
+                    fieldId : true,
+                    imageType : true,
+                    imageDate : true,
+                    value : true,
+                }
+            }
+        }
     })
     if(!f){
         return null;

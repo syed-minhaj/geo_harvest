@@ -13,7 +13,14 @@ import ChangeGraphType from "./chageGraphType";
 
 type graphType = "yearly" | "periodly"
 
-const Graph = ({typeP , field} : {typeP : graphType , field : tfield }) => {
+type avgPixelValue = {
+    fieldId : string,
+    imageType : ImageType,
+    imageDate : string,
+    value : number | null,
+}
+
+const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixelValue : avgPixelValue[]} }) => {
     const {hash} = useHash("")
     const [type , setType] = useState<"yearly" | "periodly">(typeP)
     const [chartData , setChartData] = useState < {date : string , value : number}[]>([])
@@ -33,7 +40,6 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield }) => {
                     color: res.lasthex,
                 })
                 setDone(true);
-                console.log("done");
             })
         }
     },[hash , type])
