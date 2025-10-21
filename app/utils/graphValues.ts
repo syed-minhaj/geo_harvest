@@ -10,6 +10,12 @@ type rampRGB = {
     b : number,
 }[]
 
+type avgPixelValue = {
+    fieldId : string,
+    imageType : ImageType,
+    imageDate : string,
+    value : number | null,
+}
 
 const pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
 
@@ -42,19 +48,19 @@ async function getAverageRampValueFromUrl(fieldId : string , imageDate : string 
     return res;
 }
 
-async function getGraphData(field : tfield  , graphType : "yearly" | "periodly" , ImageType : ImageType) {
+async function getGraphData(field : tfield & {avgPixelValue : avgPixelValue[]}  , graphType : "yearly" | "periodly" , ImageType : ImageType) {
     const rampRGB =  colorRamp(ImageType).map(([value, intColor]) => {
         const r = (intColor >> 16) & 255;
         const g = (intColor >> 8) & 255;
         const b = intColor & 255;
         return { value, r, g, b };
     });
-    const {avgPixelValues , err} = await getAvgPixelValues(field.id , ImageType)
+    const avgPixelValues  = field.avgPixelValue.filter(({imageType}) => imageType == ImageType)
     
     const graphData : {date : string , value : number}[] = []
     const dateToValue : {[key : string] : number} = {}
     for (const avgPixelValue of avgPixelValues) {
-        dateToValue[avgPixelValue.ImageDate] = avgPixelValue.value ?? NaN
+        dateToValue[avgPixelValue.imageDate] = avgPixelValue.value ?? NaN
     }
 
     let lasthex = "#0ADD08";
