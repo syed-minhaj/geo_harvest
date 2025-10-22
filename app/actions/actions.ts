@@ -8,6 +8,7 @@ import { auth } from "../lib/auth";
 import { headers } from "next/headers";
 import sharp from "sharp";
 import fetch from "node-fetch";
+import { revalidatePath } from "next/cache";
 
 type rampRGB = {
     value : number,
@@ -15,6 +16,10 @@ type rampRGB = {
     g : number,
     b : number,
 }[]
+
+export async function revalidatePath_fromClient(path : string) {
+    await revalidatePath(path);
+}
 
 export async function getAvgPixelValues(fieldId : string , imageType : ImageType ) {
     
