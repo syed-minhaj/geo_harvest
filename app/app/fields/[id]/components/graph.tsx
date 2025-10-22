@@ -58,6 +58,25 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixel
         }
     }
 
+    function CustomTick({ x, y, stroke, payload }: any) {
+        return (
+            <g transform={`translate(${x},${y})`} >
+                <text
+                    dy={16}
+                    textAnchor="end"
+                    fontSize={10}
+                    transform="rotate(-45) translate(-5)"
+                >
+                    {scoreToCompliment(payload.value).includes(" ") ?
+                        scoreToCompliment(payload.value).split(" ").map((word , index) => <tspan key={index} x={0} dy="1.2em" >{word}</tspan>)
+                    :
+                        scoreToCompliment(payload.value)
+                    }
+                </text>
+            </g>
+        );
+    }
+
     return (
         <Card className={`${!done ? "animate-pulse" : ""} relative`}>
             <div className={`absolute w-full h-full flex justify-center items-center  ${!done ? "": "hidden"}`}>
@@ -90,14 +109,14 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixel
                         tickFormatter={(value) => value}
                     />
                     <YAxis 
-                        className="hidden sm:block "
                         dataKey="value"
                         tickLine={false}
                         axisLine={false}
-                        width={40}
+                        width={30}
                         ticks={[0, 0.25, 0.50, 0.75, 1.0]}
                         domain={[0, 1]}
                         tickFormatter={(value) => `${scoreToCompliment(value)}`}
+                        tick={CustomTick}
                     />
                     <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
                     <defs>
