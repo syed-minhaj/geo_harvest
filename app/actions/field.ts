@@ -7,7 +7,8 @@ import { supabase } from "@/app/lib/supabase";
 import { sentinel_catalog, sentinel_image } from "../utils/sentinel";
 import { eq, sql } from "drizzle-orm";
 import { ImageType } from "../types";
-
+import { getAverageRampValueFromUrl_Server } from "@/app/actions/actions";
+import { getColorPalette as colorRamp } from "@/app/utils/Script";
 
 type CropType = {
     name : CropName,
@@ -51,6 +52,8 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
                 })
                 .where(eq(field.id, feildId))
 
+                const pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
+                
                 for(const to  of ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"] as ImageType[]) {
 
                     await sentinel_image({coordinates , date:dates[0]  , imageType : to , crop : fcrop.name}).then(async (res) => {
@@ -66,6 +69,14 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
                                 upsert: false, 
                             });
 
+                            const rampRGB =  colorRamp(to).map(([value, intColor]) => {
+                                const r = (intColor >> 16) & 255;
+                                const g = (intColor >> 8) & 255;
+                                const b = intColor & 255;
+                                return { value, r, g, b };
+                            });
+                            const value = await getAverageRampValueFromUrl_Server(feildId , dates[0] , to , rampRGB)
+                            pixelValues.push({fieldId : feildId , imageType : to , imageDate : dates[0] , value : value})
                         
                         if (error) {
                             console.error('Error uploading image:', error.message);
@@ -73,6 +84,7 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
                         }
                     })
                 }
+                if (pixelValues.length != 0) await db.insert(avgPixelValue).values(pixelValues)
         })
         return {err : null , data : {id : feildId}}
     } catch (e :any) {
