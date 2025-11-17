@@ -43,9 +43,15 @@ function average(numbers : number[]) {
 }
 
 async function getAverageRampValueFromUrl(fieldId : string , imageDate : string , ImageType : ImageType , rampRGB : rampRGB): Promise<number | null> {
-    const res = await getAverageRampValueFromUrl_Server(fieldId , imageDate , ImageType , rampRGB)
-    pixelValues.push({fieldId , imageType : ImageType , imageDate , value : res})
-    return res;
+    try{
+        const res = await getAverageRampValueFromUrl_Server(fieldId , imageDate , ImageType , rampRGB)
+        pixelValues.push({fieldId , imageType : ImageType , imageDate , value : res})
+        return res;
+    }catch(e){
+        console.log(e)
+        pixelValues.push({fieldId , imageType : ImageType , imageDate , value : null})
+        return null;
+    }
 }
 
 async function getGraphData(field : tfield & {avgPixelValue : avgPixelValue[]}  , graphType : "yearly" | "periodly" , ImageType : ImageType) {
