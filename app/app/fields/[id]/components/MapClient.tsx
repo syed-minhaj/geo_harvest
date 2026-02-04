@@ -69,7 +69,7 @@ export default function MapClient({field} : {field : tfield}) {
             <SwitchDate dates={field.imagesDates} imagesDate={imagesDate} setImagesDate={setImagesDate} />
             <div className="absolute right-2 top-0 h-full   shadow-lg rounded-xl p-2 flex flex-col items-center">
                 <div
-                    className="w-3 h-60 rounded-full z-500 my-auto "
+                    className="w-1 h-60 rounded-full z-500 my-auto "
                     style={{ background: gradient }}
                 />
             </div>
