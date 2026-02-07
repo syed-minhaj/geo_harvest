@@ -54,7 +54,7 @@ export default async function FieldPage({params} : {params : PageProps}) {
     }
 
     return (
-        <main className="min-h-screen flex flex-col  gap-4 p-4 w-full">
+        <main className="flex-1 flex flex-col  gap-4 px-2 pb-2 w-full min-h-0 relative overflow-hidden ">
             <Main  field={field} />
         </main>
     )

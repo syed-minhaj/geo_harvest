@@ -51,8 +51,8 @@ export default function MapClient({field} : {field : tfield}) {
     const gradient = `linear-gradient(to top, ${colors.join(",")})`;
 
     return (
-        <div className='relative'>    
-            <MapContainer center={position} zoom={getZoom(coordinates)} scrollWheelZoom={true} style={{}} className='w-full  h-[27rem] rounded-[0.75rem] sm:rounded-[1.75rem] z-20 ' >
+        <div className="relative h-full  "> 
+            <MapContainer center={position} zoom={getZoom(coordinates)} scrollWheelZoom={true} style={{}} className="w-full h-full rounded-[0.75rem] corner-squircle z-20 " >
                 <TileLayer
                     url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                     attribution="© OpenStreetMap contributors"
@@ -69,7 +69,7 @@ export default function MapClient({field} : {field : tfield}) {
             <SwitchDate dates={field.imagesDates} imagesDate={imagesDate} setImagesDate={setImagesDate} />
             <div className="absolute right-2 top-0 h-full   shadow-lg rounded-xl p-2 flex flex-col items-center">
                 <div
-                    className="w-1 h-60 rounded-full z-500 my-auto "
+                    className="w-1 h-60 rounded-full z-100 my-auto "
                     style={{ background: gradient }}
                 />
             </div>
