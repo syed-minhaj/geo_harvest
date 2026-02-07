@@ -155,7 +155,7 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-    width: 10px;
+    height: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -171,4 +171,8 @@ body {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: #555;
+}
+
+.corner-squircle {
+    corner-shape : squircle;
 }

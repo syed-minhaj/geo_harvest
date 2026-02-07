@@ -19,7 +19,7 @@ export default function Config() {
         <div className='w-full grid grid-cols-2 lg:grid-cols-4 gap-4 '>
         {
             ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"].map((imageType) => (
-                <button className={`${isActive(hash, imageType)} border rounded-[0.75rem] p-4  flex-1 h-full`}
+                <button className={`${isActive(hash, imageType)} border rounded-[0.75rem] p-4  flex-1 h-full corner-squircle`}
                     onClick={() => setHash(imageType)} key={imageType}>
                     {imageType.split("R")[0]}{imageType.split("R")[1] ? ` R${imageType.split("R")[1]}`: ""}
                 </button>

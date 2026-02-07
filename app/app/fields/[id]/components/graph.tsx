@@ -78,7 +78,7 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixel
     }
 
     return (
-        <Card className={`${!done ? "animate-pulse" : ""} relative`}>
+        <Card className={`${!done ? "animate-pulse" : ""} relative corner-squircle`}>
             <div className={`absolute w-full h-full flex justify-center items-center  ${!done ? "": "hidden"}`}>
                 <div className="">loading...</div>
             </div>

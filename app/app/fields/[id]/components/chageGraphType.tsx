@@ -7,7 +7,7 @@ const ChangeGraphType = ({type , setType} : {type : "yearly" | "periodly" , setT
             <SelectTrigger className="ml-auto lg:hidden">
                 <SelectValue placeholder="Select Crop" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className='z-300'>
                 <SelectGroup>
                     <SelectLabel>Time period</SelectLabel>
                         <SelectItem value={"yearly"} key={"yearly"}>
