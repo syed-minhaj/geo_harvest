@@ -62,6 +62,7 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixel
         return (
             <g transform={`translate(${x},${y})`} >
                 <text
+fill="hsl(var(--foreground))"
                     dy={16}
                     textAnchor="end"
                     fontSize={10}
@@ -94,6 +95,7 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixel
                 <ChartContainer config={chartConfig} className="aspect-56/31">
                 <AreaChart
                     accessibilityLayer
+key={`${value.color}-${hash}-${type}`}
                     data={chartData}
                     margin={{
                         left: 0,
