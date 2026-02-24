@@ -11,6 +11,7 @@ import { ChevronRight, Settings2 } from "lucide-react";
 import { useHash } from "@/app/hooks/hash";
 import {ChevronLeft } from "lucide-react"
 import { useState } from "react";
+import { ChartWrapper } from "./chartWrapper";
 
 const MapClient = dynamic(() => import("./MapClient") , { ssr : false});
 const Graph = dynamic(() => import("./graph") , { ssr : false});
@@ -67,12 +68,14 @@ export default function Main({field} : {field : tfield & {avgPixelValue : avgPix
             
                 <div className='w-full   flex flex-col gap-4  '>
                     <Config />
-                    <div className={`w-full grid grid-cols-1 lg:grid-cols-2 gap-4 ${hash == "" ? "hidden" : ""}`}>
-                        <Graph typeP="yearly" field={field} />
-                        <div className="hidden lg:block">
-                            <Graph typeP="periodly" field={field} />
+                    <ChartWrapper>
+                        <div className={`w-full grid grid-cols-1 lg:grid-cols-2 gap-4 ${hash == "" ? "hidden" : ""}`}>
+                            <Graph typeP="yearly" field={field} />
+                            <div className="hidden lg:block">
+                                <Graph typeP="periodly" field={field} />
+                            </div>
                         </div>
-                    </div>
+                    </ChartWrapper>
                 </div>
                 <Popover >
                     <PopoverTrigger className="ml-auto rounded border flex flex-row items-center gap-2 p-2 ">
