@@ -103,7 +103,7 @@ key={`${value.color}-${hash}-${type}`}
                         right: 12,
                     }}
                 >
-                    <CartesianGrid vertical={false} opacity={0.4}/>
+                    <CartesianGrid vertical={false} opacity={0.4} stroke="hsl(var(--border))"/>
                     <XAxis
                         dataKey="date"
                         tickLine={false}
