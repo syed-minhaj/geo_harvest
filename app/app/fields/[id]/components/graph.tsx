@@ -62,7 +62,8 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixel
         return (
             <g transform={`translate(${x},${y})`} >
                 <text
-fill="hsl(var(--foreground))"
+                    fill="currentColor" // Change from hsl(var(--foreground))
+                    className="fill-foreground"
                     dy={16}
                     textAnchor="end"
                     fontSize={10}
