@@ -20,9 +20,30 @@ type avgPixelValue = {
     value : number | null,
 }
 
+type allData = {
+    [k in ImageType] : {
+        [J in graphType] : {
+            data : {date : string , value : number}[] ,
+            value : {label:string,color:string}
+        } | undefined
+    }
+}
+
+const ImagesTypes: ImageType[] = ["waterRequirement", "nitrogenRequirement", "phosphorusRequirement", "cropStress"]
+
 const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixelValue : avgPixelValue[]} }) => {
     const {hash} = useHash("")
     const [type , setType] = useState<"yearly" | "periodly">(typeP)
+    const [allData, setAllData] = useState<allData>(() => {
+        const initialState = {} as allData;
+        ImagesTypes.forEach((img : ImageType) => {
+            initialState[img] = {
+                yearly: undefined,
+                periodly: undefined
+            };
+        });
+        return initialState;
+    });
     const [chartData , setChartData] = useState < {date : string , value : number}[]>([])
     const [done , setDone] = useState(false)
     const [value , setValue] = useState<{label:string,color:string}>({
@@ -31,18 +52,35 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixel
     });
 
     useEffect(() => {
+        for (const img of ImagesTypes) {
+            for (const type  of ["yearly", "periodly"] as graphType[]) {
+                getGraphData(field , type, img ).then((res) => {
+                    setAllData(prev => ({
+                        ...prev,
+                        [img]: {
+                            ...prev[img],
+                            [type]: {
+                                data : res.graphData,
+                                value : { label: "value", color: res.lasthex }
+                            }
+                        }
+                    }));
+                })
+            }
+        }
+    },[])
+
+    useEffect(() => {
         setDone(false)
         if (document && hash){
-            getGraphData(field , type, hash as ImageType ).then((res) => {
-                setChartData(res.graphData);
-                setValue({
-                    label: "value",
-                    color: res.lasthex,
-                })
+            const data = allData[hash as ImageType][type];
+            if (data) {
+                setChartData(data.data);
+                setValue(data.value);
                 setDone(true);
-            })
+            }
         }
-    },[hash , type])
+    },[hash , type , allData , chartData , value])
 
     const chartConfig = {
         value: value,
@@ -95,7 +133,7 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixel
                 <ChartContainer config={chartConfig} className="aspect-56/31">
                 <AreaChart
                     accessibilityLayer
-key={`${value.color}-${hash}-${type}`}
+                    key={`${value.color}-${hash}-${type}`}
                     data={chartData}
                     margin={{
                         left: 0,
