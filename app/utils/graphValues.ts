@@ -75,7 +75,7 @@ async function getGraphData(field : tfield & {avgPixelValue : avgPixelValue[]}  
     if (graphType == "yearly"){
         for(let i = noOfValues-1 ; i >= 0 ; i--) {
             const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
-            if(a !== null) {
+            if(a !== null && !Number.isNaN(a)) {
                 lasthex ="#" + findClosestColorFromHex(a , colorRamp(ImageType) , ImageType).toString(16).padStart(6, '0').toUpperCase();
                 graphData.push({
                     date :  getDateShort(new Date(field.imagesDates[i])),
@@ -98,7 +98,7 @@ async function getGraphData(field : tfield & {avgPixelValue : avgPixelValue[]}  
             const monthOfLastValue = new Date(field.imagesDates[i+1]).getMonth() ?? -1;
             if (monthOfCurrentValue === monthOfLastValue) {
                 const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
-                if(a !== null) valuesOfMonth.push(a)
+                if(a !== null && !Number.isNaN(a)) valuesOfMonth.push(a)
             }else if(valuesOfMonth.length != 0){
                 graphData.push({
                     date : JSON.stringify(graphData.length + 1),
@@ -109,7 +109,7 @@ async function getGraphData(field : tfield & {avgPixelValue : avgPixelValue[]}  
                 i++
             }else {
                 const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
-                if(a !== null) valuesOfMonth.push(a)
+                if(a !== null && !Number.isNaN(a)) valuesOfMonth.push(a)
             }
         
         }
