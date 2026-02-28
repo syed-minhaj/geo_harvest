@@ -122,15 +122,15 @@ key={`${value.color}-${hash}-${type}`}
                     />
                     <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
                     <defs>
-                    <linearGradient id="fillValue" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id={`fillValue-${value.color}`} x1="0" y1="0" x2="0" y2="1">
                         <stop
                             offset="5%"
-                            stopColor="var(--color-value)"
+                            stopColor={value.color}
                             stopOpacity={0.8}
                         />
                         <stop
                             offset="95%"
-                            stopColor="var(--color-value)"
+                            stopColor={value.color}
                             stopOpacity={0.1}
                         />
                     </linearGradient>
@@ -138,7 +138,7 @@ key={`${value.color}-${hash}-${type}`}
                     <Area
                         dataKey="value"
                         type="linear"
-                        fill="url(#fillValue)"
+                        fill={`url(#fillValue-${value.color})`}
                         fillOpacity={0.4}
                         stroke="var(--color-value)"
                         stackId="a"
