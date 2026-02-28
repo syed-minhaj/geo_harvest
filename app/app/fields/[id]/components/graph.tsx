@@ -6,7 +6,7 @@ import { TrendingDown, TrendingUp } from "lucide-react"
 import {AreaChart, CartesianGrid, XAxis, Area , YAxis } from "recharts"
 import { tfield , tcrop, ImageType} from "@/app/types";
 import {useHash } from "@/app/hooks/hash";
-import { getGraphData } from "@/app/utils/graphValues";
+import { getGraphData } from "@/app/actions/graphValues";
 import { useEffect,useState } from "react";
 import { getDateShort } from "@/app/utils/Date";
 import ChangeGraphType from "./chageGraphType";
