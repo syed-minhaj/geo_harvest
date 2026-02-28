@@ -55,11 +55,7 @@ export async function GET(req : NextRequest) {
                 console.log("already done" , field.id);
                 continue;
             }
-            await db.update(fieldDB)
-                .set({
-                    imagesDates: sql`array_append(${fieldDB.imagesDates}, ${dates[0]})`
-                })
-                .where(eq(fieldDB.id, field.id))
+            
     
             for(const to  of ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"] as ImageType[]) {
             
@@ -91,6 +87,13 @@ export async function GET(req : NextRequest) {
                 })
                 console.log("done" , to);
             }
+
+            await db.update(fieldDB)
+                .set({
+                    imagesDates: sql`array_append(${fieldDB.imagesDates}, ${dates[0]})`
+                })
+                .where(eq(fieldDB.id, field.id))
+            
             console.log("done" , field.id);
         }
         if (pixelValues.length != 0) await db.insert(avgPixelValue).values(pixelValues)
