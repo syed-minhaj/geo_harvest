@@ -34,7 +34,7 @@ export async function GET(req : NextRequest) {
 
     try{
         const pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
-        for(const field of fields) {
+        outerLoop: for(const field of fields) {
             console.log("start" , field.id);
             const coor = fromPostgresPolygon(field.coordinates);
             // change coordinates to lat/lng to lng/lat
@@ -59,32 +59,33 @@ export async function GET(req : NextRequest) {
     
             for(const to  of ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"] as ImageType[]) {
             
-                await sentinel_image({coordinates : coor.map((c : number[]) => [c[1], c[0]]) , date:dates[0]  , imageType : to , crop : field.crop[0].name}).then(async (res) => {
-                    if(res.err || res.data === null) {
-                        console.log(res.err);
-                        return null;
-                    }
-                    const { data, error } = await supabase.storage
-                        .from("field")
-                        .upload(`${field.id}/${dates[0]}/${to}.png`, res.data, {
-                            cacheControl: '3600', 
-                            contentType: 'image/png', 
-                            upsert: true, 
-                        });
+                const res = await sentinel_image({coordinates : coor.map((c : number[]) => [c[1], c[0]]) , date:dates[0]  , imageType : to , crop : field.crop[0].name})
                     
-                    if (error) {
-                        console.error('Error uploading image:', error.message);
-                        return null;
-                    }
-                    const rampRGB =  colorRamp(to).map(([value, intColor]) => {
-                        const r = (intColor >> 16) & 255;
-                        const g = (intColor >> 8) & 255;
-                        const b = intColor & 255;
-                        return { value, r, g, b };
+                if(res.err || res.data === null) {
+                    console.log(res.err);
+                    continue outerLoop;
+                }
+                const { data, error } = await supabase.storage
+                    .from("field")
+                    .upload(`${field.id}/${dates[0]}/${to}.png`, res.data, {
+                        cacheControl: '3600', 
+                        contentType: 'image/png', 
+                        upsert: true, 
                     });
-                    const value = await getAverageRampValueFromUrl_Server(field.id , dates[0] , to , rampRGB)
-                    pixelValues.push({fieldId : field.id , imageType : to , imageDate : dates[0] , value : value})
-                })
+                
+                if (error) {
+                    console.error('Error uploading image:', error.message);
+                    continue;
+                }
+                const rampRGB =  colorRamp(to).map(([value, intColor]) => {
+                    const r = (intColor >> 16) & 255;
+                    const g = (intColor >> 8) & 255;
+                    const b = intColor & 255;
+                    return { value, r, g, b };
+                });
+                const value = await getAverageRampValueFromUrl_Server(field.id , dates[0] , to , rampRGB)
+                pixelValues.push({fieldId : field.id , imageType : to , imageDate : dates[0] , value : value})
+                
                 console.log("done" , to);
             }
 
