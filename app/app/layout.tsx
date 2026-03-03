@@ -10,7 +10,7 @@ export default function AppLayout({
 }>) {
     return (
 
-        <main lang="en" className="flex flex-col h-screen ">
+        <main lang="en" className="flex flex-col h-[100dvh] ">
             <Providers>
                 <Navbar />
                 {children}
