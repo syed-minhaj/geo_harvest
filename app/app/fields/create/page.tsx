@@ -82,8 +82,8 @@ export default function CreateFieldPage() {
     return (
         <main className="min-h-screen flex flex-col  gap-4 p-4 w-full">
             <div className='w-full lg:h-[27rem] flex flex-col lg:flex-row-reverse gap-4'>
-                    <video  className='w-full  lg:w-1/3 lg:h-fit bg-gray-600 rounded-[0.75rem]' autoPlay loop muted>
-                        <source src={`${process.env.APP_URL}/tutorial2/master.m3u8`} type="video/mp4"></source>
+                    <video preload='auto' className='w-full  lg:w-1/3 lg:h-fit bg-gray-600 rounded-[0.75rem]' autoPlay loop muted>
+                        <source src={`${process.env.NEXT_PUBLIC_APP_URL}/tutorial.mp4`} type="video/mp4"></source>
                     </video>
                 <MapClient cordinates={coordinates} setCordinates={setCoordinates} />
             </div>
