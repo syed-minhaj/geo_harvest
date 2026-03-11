@@ -4,9 +4,9 @@
 #EXT-X-MEDIA-SEQUENCE:0
 #EXT-X-PLAYLIST-TYPE:VOD
 #EXTINF:8.333333,
-playlist0.ts
+playlist0.tsseg
 #EXTINF:7.633333,
-playlist1.ts
+playlist1.tsseg
 #EXTINF:1.033333,
-playlist2.ts
+playlist2.tsseg
 #EXT-X-ENDLIST
