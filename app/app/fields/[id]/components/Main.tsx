@@ -110,9 +110,12 @@ export default function Main({field} : {field : tfield & {avgPixelValue : avgPix
                 <div className='w-full   flex flex-col gap-4  '>
                     <Config />
                     <ChartWrapper>
-                        <div className={`w-full grid grid-cols-1 lg:grid-cols-2 gap-4 ${hash == "" ? "hidden" : ""}`}>
-                            <Graph typeP="yearly" field={field} allData={allData} />
-                            <div className="hidden lg:block">
+                        <div className={`w-full  ${hash == "" ? "hidden" : ""}`}>
+                            <div className="lg:hidden">
+                                <Graph typeP="yearly" field={field} allData={allData} />
+                            </div>
+                            <div className="hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <Graph typeP="yearly" field={field} allData={allData} />
                                 <Graph typeP="periodly" field={field}  allData={allData} />
                             </div>
                         </div>
