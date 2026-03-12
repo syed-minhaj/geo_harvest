@@ -3,6 +3,7 @@ import { tfield , ImageType } from "@/app/types";
 import { getColorPalette as colorRamp } from "../utils/Script";
 import { getDateShort } from "../utils/Date";
 import { getAverageRampValueFromUrl_Server, revalidatePath_fromClient, setAvgPixelValueBatch } from "./actions";
+import { revalidatePath } from "next/cache";
 
 type rampRGB = {
     value : number,
@@ -133,7 +134,7 @@ async function getGraphData(field : tfield & {avgPixelValue : avgPixelValue[]}  
         }
     }
 
-    if (pixelValues.length != 0) {await setAvgPixelValueBatch(pixelValues); revalidatePath_fromClient(`/app/fields/${field.id}`)}
+    if (pixelValues.length != 0) {await setAvgPixelValueBatch(pixelValues); revalidatePath(`/app/fields/${field.id}`)}
     return {graphData , lasthex}
 }
 
