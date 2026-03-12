@@ -80,7 +80,7 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixel
                 setDone(true);
             }
         }
-    },[hash , type , allData , chartData , value])
+    },[hash , type , allData ])
 
     const chartConfig = {
         value: value,
