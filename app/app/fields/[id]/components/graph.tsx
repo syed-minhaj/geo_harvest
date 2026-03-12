@@ -6,10 +6,10 @@ import { TrendingDown, TrendingUp } from "lucide-react"
 import {AreaChart, CartesianGrid, XAxis, Area , YAxis } from "recharts"
 import { tfield , tcrop, ImageType} from "@/app/types";
 import {useHash } from "@/app/hooks/hash";
-import { getGraphData } from "@/app/actions/graphValues";
 import { useEffect,useState } from "react";
 import { getDateShort } from "@/app/utils/Date";
 import ChangeGraphType from "./chageGraphType";
+import { allData } from "./Main";
 
 type graphType = "yearly" | "periodly"
 
@@ -20,30 +20,11 @@ type avgPixelValue = {
     value : number | null,
 }
 
-type allData = {
-    [k in ImageType] : {
-        [J in graphType] : {
-            data : {date : string , value : number}[] ,
-            value : {label:string,color:string}
-        } | undefined
-    }
-}
 
-const ImagesTypes: ImageType[] = ["waterRequirement", "nitrogenRequirement", "phosphorusRequirement", "cropStress"]
-
-const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixelValue : avgPixelValue[]} }) => {
+const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield & {avgPixelValue : avgPixelValue[]} , allData : allData}) => {
     const {hash} = useHash("")
     const [type , setType] = useState<"yearly" | "periodly">(typeP)
-    const [allData, setAllData] = useState<allData>(() => {
-        const initialState = {} as allData;
-        ImagesTypes.forEach((img : ImageType) => {
-            initialState[img] = {
-                yearly: undefined,
-                periodly: undefined
-            };
-        });
-        return initialState;
-    });
+    
     const [chartData , setChartData] = useState < {date : string , value : number}[]>([])
     const [done , setDone] = useState(false)
     const [value , setValue] = useState<{label:string,color:string}>({
@@ -51,33 +32,18 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixel
         color: "#0ADD08",
     });
 
-    useEffect(() => {
-        ImagesTypes.forEach((img) => {
-            (["yearly", "periodly"] as graphType[]).forEach((type) => {
-                getGraphData(field , type, img ).then((res) => {
-                    setAllData(prev => ({
-                        ...prev,
-                        [img]: {
-                            ...prev[img],
-                            [type]: {
-                                data : res.graphData,
-                                value : { label: "value", color: res.lasthex }
-                            }
-                        }
-                    }));
-                })
-            });
-        });
-    },[])
 
     useEffect(() => {
-        setDone(false)
         if (document && hash){
             const data = allData[hash as ImageType][type];
             if (data) {
                 setChartData(data.data);
                 setValue(data.value);
                 setDone(true);
+            }else{
+                setDone(false)
+                setChartData([])
+                setValue({label : "value" , color : "#0ADD08"})
             }
         }
     },[hash , type , allData ])

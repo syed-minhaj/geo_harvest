@@ -10,23 +10,64 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/pop
 import { ChevronRight, Settings2 } from "lucide-react";
 import { useHash } from "@/app/hooks/hash";
 import {ChevronLeft } from "lucide-react"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChartWrapper } from "./chartWrapper";
+import { getGraphData } from "@/app/actions/graphValues";
 
 const MapClient = dynamic(() => import("./MapClient") , { ssr : false});
 const Graph = dynamic(() => import("./graph") , { ssr : false});
 
+type graphType = "yearly" | "periodly"
 type avgPixelValue = {
     fieldId : string,
     imageType : ImageType,
     imageDate : string,
     value : number | null,
 }
+export type allData = {
+    [k in ImageType] : {
+        [J in graphType] : {
+            data : {date : string , value : number}[] ,
+            value : {label:string,color:string}
+        } | undefined
+    }
+}
+const ImagesTypes: ImageType[] = ["waterRequirement", "nitrogenRequirement", "phosphorusRequirement", "cropStress"]
+
 
 export default function Main({field} : {field : tfield & {avgPixelValue : avgPixelValue[]}}) {
     const router = useRouter();
     const {hash} = useHash("")
     const [openMenu, setOpenMenu] = useState(false);
+    const [allData, setAllData] = useState<allData>(() => {
+        const initialState = {} as allData;
+        ImagesTypes.forEach((img : ImageType) => {
+            initialState[img] = {
+                yearly: undefined,
+                periodly: undefined
+            };
+        });
+        return initialState;
+    });
+
+    useEffect(() => {
+        ImagesTypes.forEach((img) => {
+            (["yearly", "periodly"] as graphType[]).forEach((type) => {
+                getGraphData(field , type, img ).then((res) => {
+                    setAllData(prev => ({
+                        ...prev,
+                        [img]: {
+                            ...prev[img],
+                            [type]: {
+                                data : res.graphData,
+                                value : { label: "value", color: res.lasthex }
+                            }
+                        }
+                    }));
+                })
+            });
+        });
+    },[])
 
     function DeleteField() {
         toast.info("Do you want to delete this field ?", {
@@ -70,9 +111,9 @@ export default function Main({field} : {field : tfield & {avgPixelValue : avgPix
                     <Config />
                     <ChartWrapper>
                         <div className={`w-full grid grid-cols-1 lg:grid-cols-2 gap-4 ${hash == "" ? "hidden" : ""}`}>
-                            <Graph typeP="yearly" field={field} />
+                            <Graph typeP="yearly" field={field} allData={allData} />
                             <div className="hidden lg:block">
-                                <Graph typeP="periodly" field={field} />
+                                <Graph typeP="periodly" field={field}  allData={allData} />
                             </div>
                         </div>
                     </ChartWrapper>
