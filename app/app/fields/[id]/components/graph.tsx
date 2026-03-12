@@ -52,8 +52,8 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixel
     });
 
     useEffect(() => {
-        for (const img of ImagesTypes) {
-            for (const type  of ["yearly", "periodly"] as graphType[]) {
+        ImagesTypes.forEach((img) => {
+            (["yearly", "periodly"] as graphType[]).forEach((type) => {
                 getGraphData(field , type, img ).then((res) => {
                     setAllData(prev => ({
                         ...prev,
@@ -66,8 +66,8 @@ const Graph = ({typeP , field} : {typeP : graphType , field : tfield & {avgPixel
                         }
                     }));
                 })
-            }
-        }
+            });
+        });
     },[])
 
     useEffect(() => {
