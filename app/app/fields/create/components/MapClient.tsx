@@ -59,7 +59,7 @@ export default function MapClient({cordinates , setCordinates} : {cordinates : n
 
 
     return (
-        <MapContainer center={position} zoom={cordinates ? getZoom(cordinates) : 18} scrollWheelZoom={true} style={{}} className='w-full lg:w-auto lg:flex-1 h-[27rem] rounded-[0.75rem] z-20' >
+        <MapContainer center={position} zoom={cordinates ? getZoom(cordinates) : 18} scrollWheelZoom={true} style={{}} className='w-full lg:w-auto lg:flex-1 h-[27rem] rounded-[0.75rem] z-20 corner-squircle ' >
             <TileLayer
                 url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                 attribution="© OpenStreetMap contributors"
