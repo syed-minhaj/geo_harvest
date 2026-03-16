@@ -19,7 +19,7 @@ type avgPixelValue = {
     value : number | null,
 }
 
-const pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
+let pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
 
 function findClosestColorFromHex(target:number , colorRamp : number[][] , imageType : ImageType) {
     if (imageType != "cropStress") target = target * 0.6
@@ -137,7 +137,11 @@ async function getGraphData(field : tfield  , avgPixelValue : avgPixelValue[]  ,
         }
     }
 
-    if (pixelValues.length != 0) {await setAvgPixelValueBatch(pixelValues); revalidatePath(`/app/fields/${field.id}`)}
+    if (graphType == "yearly") {
+        if (pixelValues.length != 0) {await setAvgPixelValueBatch(pixelValues); revalidatePath(`/app/fields/${field.id}`)}
+    }else {
+        pixelValues = []
+    }
     return {graphData , lasthex}
 }
 
