@@ -21,7 +21,7 @@ type avgPixelValue = {
 }
 
 
-const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield & {avgPixelValue : avgPixelValue[]} , allData : allData}) => {
+const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield , allData : allData}) => {
     const {hash} = useHash("")
     const [type , setType] = useState<"yearly" | "periodly">(typeP)
     

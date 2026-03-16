@@ -3,7 +3,7 @@ import { ImageType, tfield } from "@/app/types";
 import dynamic from "next/dynamic"
 import Config from "./Config";
 import { Button } from "@/app/components/ui/button";
-import { DeleteField as DeleteFieldAction } from "@/app/actions/field";
+import { DeleteField as DeleteFieldAction, getAvgPixelValueByFieldIdImageType } from "@/app/actions/field";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
@@ -35,7 +35,7 @@ export type allData = {
 const ImagesTypes: ImageType[] = ["waterRequirement", "nitrogenRequirement", "phosphorusRequirement", "cropStress"]
 
 
-export default function Main({field} : {field : tfield & {avgPixelValue : avgPixelValue[]}}) {
+export default function Main({field} : {field : tfield }) {
     const router = useRouter();
     const {hash} = useHash("")
     const [openMenu, setOpenMenu] = useState(false);
@@ -51,22 +51,26 @@ export default function Main({field} : {field : tfield & {avgPixelValue : avgPix
     });
 
     useEffect(() => {
-        ImagesTypes.forEach((img) => {
-            (["yearly", "periodly"] as graphType[]).forEach((type) => {
-                getGraphData(field , type, img ).then((res) => {
-                    setAllData(prev => ({
-                        ...prev,
-                        [img]: {
-                            ...prev[img],
-                            [type]: {
-                                data : res.graphData,
-                                value : { label: "value", color: res.lasthex }
+        const AsyncFunc = async () => {
+            for(const img of ImagesTypes) {
+                const res = await getAvgPixelValueByFieldIdImageType(field.id , img)
+                for(const type of ["yearly", "periodly"] as graphType[]) {
+                    getGraphData(field  , res , type, img ).then((res) => {
+                        setAllData(prev => ({
+                            ...prev,
+                            [img]: {
+                                ...prev[img],
+                                [type]: {
+                                    data : res.graphData,
+                                    value : { label: "value", color: res.lasthex }
+                                }
                             }
-                        }
-                    }));
-                })
-            });
-        });
+                        }));
+                    })
+                }
+            }
+        }
+        AsyncFunc();
     },[])
 
     function DeleteField() {

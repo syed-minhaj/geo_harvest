@@ -56,14 +56,15 @@ async function getAverageRampValueFromUrl(fieldId : string , imageDate : string 
     }
 }
 
-async function getGraphData(field : tfield & {avgPixelValue : avgPixelValue[]}  , graphType : "yearly" | "periodly" , ImageType : ImageType) {
+async function getGraphData(field : tfield  , avgPixelValue : avgPixelValue[]  , graphType : "yearly" | "periodly" , ImageType : ImageType) {
+    
     const rampRGB =  colorRamp(ImageType).map(([value, intColor]) => {
         const r = (intColor >> 16) & 255;
         const g = (intColor >> 8) & 255;
         const b = intColor & 255;
         return { value, r, g, b };
     });
-    const avgPixelValues  = field.avgPixelValue.filter(({imageType}) => imageType == ImageType)
+    const avgPixelValues  = avgPixelValue.filter(({imageType}) => imageType == ImageType)
     
     const graphData : {date : string , value : number}[] = []
     const dateToValue : {[key : string] : number} = {}
