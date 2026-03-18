@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectValue , SelectTrigger, SelectGroup, Select
 import { Crop as CropType , Variety as VarietyType } from '@/db/schema';
 import { availableCrops } from '@/data/crop';
 import { useRouter } from 'next/navigation';
+import Tutorial from './components/Tutorial';
 
 const MapClient = dynamic(() => import("./components/MapClient"), { ssr: false });
 
@@ -21,11 +22,11 @@ export default function CreateFieldPage() {
     const [variety, setVariety] = useState<string>("other");
     const [plantedDate, setPlantedDate] = useState<string | undefined>();
     const [isCreating , setisCreating] = useState<boolean>(false);
+    const [tutorialRequired, setTutorialRequired] = useState<boolean>(true);
 
     const router = useRouter();
     
     useEffect(() => {
-        // if user 
         if(localStorage.getItem("createdField")){
             const data = JSON.parse(localStorage.getItem("createdField") as string);
             setName(data.name);
@@ -81,12 +82,12 @@ export default function CreateFieldPage() {
     }
     return (
         <main className="min-h-screen flex flex-col  gap-4 p-4 w-full">
-            <div className='w-full lg:h-[27rem] flex flex-col lg:flex-row-reverse gap-4'>
-                    <video preload='auto' className='w-full  lg:w-1/3 lg:h-fit bg-gray-600 rounded-[0.75rem]' autoPlay loop muted>
-                        <source src={`${process.env.NEXT_PUBLIC_APP_URL}/tutorial.mp4`} type="video/mp4"></source>
-                    </video>
+            <div className='relative  '>
                 <MapClient cordinates={coordinates} setCordinates={setCoordinates} />
             </div>
+            {tutorialRequired && 
+                <Tutorial open={tutorialRequired} setOpen={setTutorialRequired} />
+            }
             <div className='flex flex-col sm:flex-row gap-4 '>
                 <h3 className='text-xl font-bold font-josefin-sans w-fit'>Name of field : </h3>
                 <Input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder='e.g. Field1' className='sm:w-[20rem]'/>
