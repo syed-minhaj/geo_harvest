@@ -114,7 +114,7 @@ export async function Fields() {
                         <polygon  points={pgpolygontosvgPolygon(field.coordinates)}  fill="green" stroke="#004C20" fillOpacity={0.25} strokeWidth="2" />
                     </svg>
                     <div className='flex flex-col gap-2'>
-                        <h2 className='text-xl font-semibold '>
+                        <h2 className='text-xl font-semibold min-w-24'>
                             {field.name}
                         </h2>
                         <div className='flex flex-col '>
@@ -124,7 +124,7 @@ export async function Fields() {
                     </div>
                 </div>
                 <Separator />
-                <div className='text-sm flex flex-row '>
+                <div className='text-sm flex flex-row w-70 '>
                     <div className='flex flex-col w-1/2 '>
                         <span className='opacity-66'>Crop:</span>
                         <span className='font-medium'>{field.crop[0].name}</span>
@@ -165,17 +165,17 @@ export function FieldsLoader() {
             {[...Array(2)].map((_, i) => (  
                 <div className={`p-4 rounded-[0.75rem] border-1 bg-white dark:bg-secondary/15 shadow-sm hover:shadow-lg dark:shadow-gray-900 flex flex-col gap-3`}>
                     <div className='flex flex-row gap-4'>
-                        <Skeleton className='rounded-[0.5rem] w-37 h-37 '  />
+                        <Skeleton className='rounded-[0.5rem] w-37.5 h-37.5 '  />
                         <div className='flex flex-col gap-2'>
-                            <Skeleton className='h-6 w-32 rounded-md' />
+                            <Skeleton className='h-6 w-24 rounded-md' />
                             <div className='flex flex-col gap-1'>
                                 <Skeleton className='h-4 w-10 rounded-md' />
-                                <Skeleton className='h-4 w-24 rounded-md' />
+                                <Skeleton className='h-4 w-20 rounded-md' />
                             </div>
                         </div>
                     </div>
                     <Separator />
-                    <div className='text-sm flex flex-row'>
+                    <div className='text-sm flex flex-row h-10'>
                         <div className='flex flex-col w-1/2 gap-1'>
                             <Skeleton className='h-4 w-10 rounded-md' />
                             <Skeleton className='h-4 w-20 rounded-md' />
@@ -186,7 +186,7 @@ export function FieldsLoader() {
                         </div>
                     </div>
                     <Separator />
-                    <div className='flex flex-col gap-1'>
+                    <div className='flex flex-col gap-1 h-11 w-70'>
                         <div className='flex flex-row justify-between'>
                             <Skeleton className='h-4 w-28 rounded-md' />
                             <Skeleton className='h-3 w-20 rounded-md' />
