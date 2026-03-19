@@ -3,10 +3,18 @@ import Link from 'next/link';
 import { calculateAreaInAcres } from '@/app/utils/area';
 import { Separator } from '@/app/components/ui/separator';
 import { fromPostgresPolygon } from '@/app/utils/coordinate';
+import { auth } from '@/app/lib/auth';
+import { headers } from 'next/headers';
+import { Button } from '@/app/components/ui/button';
 
-async function getFieldsById(id: string) {
-    return await db.query.field.findMany({
-        where: (field , {eq}) => (eq(field.ownerId , id)),
+async function getFields() {
+    const session = await auth.api.getSession({headers : await headers()});
+    if (!session) {
+        return {data : null , error : "Not logged in"}
+    }
+
+    const fields =  await db.query.field.findMany({
+        where: (field , {eq}) => (eq(field.ownerId , session.user.id)),
         columns : {
             id : true,
             name : true,
@@ -24,6 +32,8 @@ async function getFieldsById(id: string) {
             }
         }
     });
+    return {data : fields , error : null}
+    
 }
 
 
@@ -69,8 +79,31 @@ function pgpolygontosvgPolygon(polygon: string, width = 150, height = 150, paddi
     return scaledCoords.join(' ');
 }
 
-export async function Fields({userID} : {userID : string}) {
-    const fields = await getFieldsById(userID);
+export async function Fields() {
+    const {data : fields , error} = await getFields();
+
+    if (error || fields == null) {
+        return (
+            <div className='flex flex-col items-center justify-center my-40 gap-4'>
+                <div className=' text-2xl '>
+                    Please SignIn to view your fields
+                </div>
+                <div className='flex flex-row gap-4'>
+                    <Link href={`/app/auth/sign-in`}>
+                        <Button variant={'outline'}>
+                            Sign In
+                        </Button>
+                    </Link>
+                    <Link href={`/app/auth/sign-up`}>
+                        <Button variant={'outline'}>
+                            Sign Up
+                        </Button>
+                    </Link>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <>
         {fields.map((field) => (
