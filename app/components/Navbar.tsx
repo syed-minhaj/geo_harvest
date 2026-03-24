@@ -11,7 +11,7 @@ export   function Navbar() {
 
 
     return (
-        <nav className="flex flex-row items-center justify-center h-16 px-4 ">
+        <nav className="flex flex-row items-center h-16 px-4 ">
             <Link href={"/app/fields"} className="mr-auto" >
                 <Logo />
             </Link>
