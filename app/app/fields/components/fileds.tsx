@@ -163,7 +163,7 @@ export function FieldsLoader() {
     return (
         <>
             {[...Array(2)].map((_, i) => (  
-                <div className={`p-4 rounded-[0.75rem] border-1 bg-white dark:bg-secondary/15 shadow-sm hover:shadow-lg dark:shadow-gray-900 flex flex-col gap-3`}>
+                <div key={i} className={`p-4 rounded-[0.75rem] border-1 bg-white dark:bg-secondary/15 shadow-sm hover:shadow-lg dark:shadow-gray-900 flex flex-col gap-3`}>
                     <div className='flex flex-row gap-4'>
                         <Skeleton className='rounded-[0.5rem] w-37.5 h-37.5 '  />
                         <div className='flex flex-col gap-2'>
