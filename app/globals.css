@@ -9,9 +9,6 @@
     --color-main: #004C20;
 }
 
-html {
-  scrollbar-gutter: stable;
-}
 
 @theme inline {
   --color-main: #004C20;
