@@ -9,6 +9,7 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 import { EditControl } from 'react-leaflet-draw';
 import { useEffect, useState } from 'react';
 import '@/app/style/map.css';
+import { Button } from '@/app/components/ui/button';
 
 type location = {
     latitude : number,
@@ -31,8 +32,9 @@ export default function MapClient({cordinates , setCordinates} : {cordinates : n
 
     if (err || !location) {
         return  (
-            <div>{err}
-                <button onClick={() => getUserLocation()}>Get User Location</button>
+            <div className='w-full h-[30rem] 2xl:h-[35rem] rounded-[0.75rem] z-20 corner-squircle bg-muted flex flex-col gap-4 justify-center items-center'>
+                <div className='max-w-[80%] text-center'>{err}</div>
+                <Button onClick={() => getUserLocation()}>Allow Location Access</Button>
             </div>
         )
     }
