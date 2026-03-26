@@ -15,7 +15,10 @@ const nextConfig: NextConfig = {
     serverActions : {
         bodySizeLimit : "10mb"
     }
-  }
+  },
+   logging: {
+    browserToTerminal: false,
+  },
 };
 
 export default nextConfig;
