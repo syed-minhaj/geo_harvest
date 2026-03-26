@@ -12,7 +12,10 @@ import { availableCrops } from '@/data/crop';
 import { useRouter } from 'next/navigation';
 import Tutorial from './components/Tutorial';
 
-const MapClient = dynamic(() => import("./components/MapClient"), { ssr: false });
+const MapClient = dynamic(() => import("./components/MapClient"), {
+    ssr: false,
+    loading: () => <div className="w-full h-[30rem] 2xl:h-[35rem] rounded-[0.75rem] z-20 corner-squircle bg-muted" />,
+});
 
 export default function CreateFieldPage() {
     
