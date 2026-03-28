@@ -105,51 +105,56 @@ export async function Fields() {
     }
 
     return (
-        <>
-        {fields.map((field) => (
-            <Link className={`p-4 rounded-[0.75rem] border-1  bg-white dark:bg-secondary/15 shadow-sm hover:shadow-lg dark:shadow-gray-900  flex flex-col gap-3 `}
-            key={field.id} href={`/app/fields/${field.id}`}>
-                <div className='flex flex-row gap-4'> 
-                    <svg height={150} width={150}>
-                        <polygon  points={pgpolygontosvgPolygon(field.coordinates)}  fill="green" stroke="#004C20" fillOpacity={0.25} strokeWidth="2" />
-                    </svg>
-                    <div className='flex flex-col gap-2'>
-                        <h2 className='text-xl font-semibold min-w-24'>
-                            {field.name}
-                        </h2>
-                        <div className='flex flex-col '>
-                            <span className='opacity-66'>Area:</span>
-                            <span className='font-medium'>{calculateAreaInAcres(fromPostgresPolygon(field.coordinates)).toFixed(2)} acres</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-4 max-w-6xl mx-auto ">
+            {fields.map((field) => (
+                <Link className={`p-4 rounded-[0.75rem] border-1  bg-white dark:bg-secondary/15 shadow-sm hover:shadow-lg dark:shadow-gray-900  flex flex-col gap-3 `}
+                key={field.id} href={`/app/fields/${field.id}`}>
+                    <div className='flex flex-row gap-4'> 
+                        <svg height={150} width={150}>
+                            <polygon  points={pgpolygontosvgPolygon(field.coordinates)}  fill="green" stroke="#004C20" fillOpacity={0.25} strokeWidth="2" />
+                        </svg>
+                        <div className='flex flex-col gap-2'>
+                            <h2 className='text-xl font-semibold min-w-24'>
+                                {field.name}
+                            </h2>
+                            <div className='flex flex-col '>
+                                <span className='opacity-66'>Area:</span>
+                                <span className='font-medium'>{calculateAreaInAcres(fromPostgresPolygon(field.coordinates)).toFixed(2)} acres</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <Separator />
-                <div className='text-sm flex flex-row w-70 '>
-                    <div className='flex flex-col w-1/2 '>
-                        <span className='opacity-66'>Crop:</span>
-                        <span className='font-medium'>{field.crop[0].name}</span>
+                    <Separator />
+                    <div className='text-sm flex flex-row w-70 '>
+                        <div className='flex flex-col w-1/2 '>
+                            <span className='opacity-66'>Crop:</span>
+                            <span className='font-medium'>{field.crop[0].name}</span>
+                        </div>
+                        {field.crop[0].seedVariety != "other" ? 
+                            <div className='flex flex-col w-1/2'>
+                                <span className='opacity-66'>Variety:</span>
+                                <span className='font-medium'>{field.crop[0].seedVariety}</span> 
+                            </div> : null
+                        }
                     </div>
-                    {field.crop[0].seedVariety != "other" ? 
-                        <div className='flex flex-col w-1/2'>
-                            <span className='opacity-66'>Variety:</span>
-                            <span className='font-medium'>{field.crop[0].seedVariety}</span> 
-                        </div> : null
-                    }
-                </div>
-                <Separator />
-                <div className='flex flex-col gap-1'>
-                    <div className='flex flex-row justify-between'>
-                        <span className='font-medium text-sm'>Latest Analysis</span>
-                        <span className='opacity-66 text-xs'>{new Date(field.imagesDates[field.imagesDates.length - 1]).toDateString()}</span>
+                    <Separator />
+                    <div className='flex flex-col gap-1'>
+                        <div className='flex flex-row justify-between'>
+                            <span className='font-medium text-sm'>Latest Analysis</span>
+                            <span className='opacity-66 text-xs'>{new Date(field.imagesDates[field.imagesDates.length - 1]).toDateString()}</span>
+                        </div>
+                        <div className='flex flex-row justify-between'>
+                            <span className='font-medium text-sm'>Planted Date</span>
+                            <span className='opacity-66 text-xs'>{field.crop[0].planted_at?.toDateString()}</span>
+                        </div>
                     </div>
-                    <div className='flex flex-row justify-between'>
-                        <span className='font-medium text-sm'>Planted Date</span>
-                        <span className='opacity-66 text-xs'>{field.crop[0].planted_at?.toDateString()}</span>
-                    </div>
-                </div>
+                </Link>
+            ))}
+            <Link href="/app/fields/create" className='bg-white dark:bg-secondary/15 rounded-[0.75rem] shadow-sm group p-4 
+            border-2 border-dashed border-gray-300 dark:border-border hover:!border-gray-400 hover:shadow-lg flex flex-col gap-2 justify-center'>
+                <span className='text-center text-2xl group-hover:font-semibold leading-none'>+</span>
+                <span className='text-center '>Create a new field</span>
             </Link>
-        ))}
-        </>
+        </div>
     )
 }
 
@@ -161,7 +166,7 @@ function Skeleton({ className}: { className?: string }) {
 
 export function FieldsLoader() {
     return (
-        <>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-4 max-w-6xl mx-auto ">
             {[...Array(2)].map((_, i) => (  
                 <div key={i} className={`p-4 rounded-[0.75rem] border-1 bg-white dark:bg-secondary/15 shadow-sm hover:shadow-lg dark:shadow-gray-900 flex flex-col gap-3`}>
                     <div className='flex flex-row gap-4'>
@@ -198,6 +203,6 @@ export function FieldsLoader() {
                     </div>
                 </div>
             ))}
-        </>
+        </div>
     )
 }
