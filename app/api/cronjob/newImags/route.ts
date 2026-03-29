@@ -7,7 +7,7 @@ import { fromPostgresPolygon } from "@/app/utils/coordinate";
 import { eq, sql } from "drizzle-orm";
 import { ImageType } from "@/app/types";
 import { getAverageRampValueFromUrl_Server } from "@/app/actions/actions";
-import { getColorPalette as colorRamp } from "@/app/utils/Script";
+import { getColorRamp } from "@/app/utils/colorRamp";
 
 export async function GET(req : NextRequest) {
     
@@ -77,7 +77,7 @@ export async function GET(req : NextRequest) {
                     console.error('Error uploading image:', error.message);
                     continue;
                 }
-                const rampRGB =  colorRamp(to).map(([value, intColor]) => {
+                const rampRGB =  getColorRamp(field.crop[0].name , to).map(([value, intColor]) => {
                     const r = (intColor >> 16) & 255;
                     const g = (intColor >> 8) & 255;
                     const b = intColor & 255;
