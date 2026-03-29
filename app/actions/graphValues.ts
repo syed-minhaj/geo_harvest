@@ -1,9 +1,9 @@
 "use server";
 import { tfield , ImageType } from "@/app/types";
-import { getColorPalette as colorRamp } from "../utils/Script";
 import { getDateShort } from "../utils/Date";
 import { getAverageRampValueFromUrl_Server, revalidatePath_fromClient, setAvgPixelValueBatch } from "./actions";
 import { revalidatePath } from "next/cache";
+import { getColorRamp } from "../utils/colorRamp";
 
 type rampRGB = {
     value : number,
@@ -58,9 +58,9 @@ async function getAverageRampValueFromUrl(fieldId : string , imageDate : string 
     }
 }
 
-async function getGraphData(field : tfield  , avgPixelValue : avgPixelValue[]  , graphType : "yearly" | "periodly" , ImageType : ImageType) {
+async function getGraphData(field : tfield & {crop : {name : string}[]}  , avgPixelValue : avgPixelValue[]  , graphType : "yearly" | "periodly" , ImageType : ImageType) {
     
-    const rampRGB =  colorRamp(ImageType).map(([value, intColor]) => {
+    const rampRGB =  getColorRamp(field.crop[0].name , ImageType).map(([value, intColor]) => {
         const r = (intColor >> 16) & 255;
         const g = (intColor >> 8) & 255;
         const b = intColor & 255;
@@ -81,7 +81,7 @@ async function getGraphData(field : tfield  , avgPixelValue : avgPixelValue[]  ,
         for(let i = noOfValues-1 ; i >= 0 ; i--) {
             const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
             if(a !== null && !Number.isNaN(a)) {
-                lasthex ="#" + findClosestColorFromHex(a , colorRamp(ImageType) , ImageType).toString(16).padStart(6, '0').toUpperCase();
+                lasthex ="#" + findClosestColorFromHex(a , getColorRamp(field.crop[0].name , ImageType) , ImageType).toString(16).padStart(6, '0').toUpperCase();
                 graphData.push({
                     date :  getDateShort(new Date(field.imagesDates[i])),
                     value : a,
@@ -109,7 +109,7 @@ async function getGraphData(field : tfield  , avgPixelValue : avgPixelValue[]  ,
                     date : JSON.stringify(graphData.length + 1),
                     value : average(valuesOfMonth) ,
                 })
-                lasthex ="#" + findClosestColorFromHex(average(valuesOfMonth) , colorRamp(ImageType) , ImageType).toString(16).padStart(6,'0').toUpperCase();
+                lasthex ="#" + findClosestColorFromHex(average(valuesOfMonth) , getColorRamp(field.crop[0].name , ImageType) , ImageType).toString(16).padStart(6,'0').toUpperCase();
                 valuesOfMonth = []
                 i++
             }else {
@@ -123,7 +123,7 @@ async function getGraphData(field : tfield  , avgPixelValue : avgPixelValue[]  ,
                 date : JSON.stringify(graphData.length + 1),
                 value : average(valuesOfMonth),
             })
-            lasthex ="#" + findClosestColorFromHex(average(valuesOfMonth) , colorRamp(ImageType) , ImageType).toString(16).padStart(6, '0').toUpperCase();
+            lasthex ="#" + findClosestColorFromHex(average(valuesOfMonth) , getColorRamp(field.crop[0].name , ImageType) , ImageType).toString(16).padStart(6, '0').toUpperCase();
             valuesOfMonth = []
         }
 
