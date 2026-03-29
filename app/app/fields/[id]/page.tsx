@@ -13,6 +13,11 @@ type PageProps = Promise<{
 async function getFieldById(id : string) {
     const f = await db.query.field.findFirst({
         where: (field , {eq}) => (eq(field.id , id)),
+        with: {
+            crop : {
+                columns : {name:true}
+            }
+        }
     })
     if(!f){
         return null;
