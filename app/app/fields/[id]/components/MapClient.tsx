@@ -10,12 +10,29 @@ import '@/app/style/map.css';
 import { ImageType, tfield } from '@/app/types';
 import { useHash } from '@/app/hooks/hash';
 import SwitchDate from './switchDate';
-import { getColorPalette } from '@/data/colorPalette';
+import { getColorRamp } from '@/app/utils/colorRamp';
 import { fromPostgresPolygon, getZoom } from '@/app/utils/coordinate';
 
 
+function RampBar({crop , hash} : {crop : string , hash : ImageType}) {
+    const colors = getColorRamp(crop , hash);
+    if (!colors) return null;
+    const gradient = `linear-gradient(to top, ${colors
+        .map(([, hex]) => `#${hex.toString(16).padStart(6, "0")}`)
+        .join(",")})`;
 
-export default function MapClient({field} : {field : tfield}) {
+    return (
+        <div className="absolute right-2 top-0 h-full   shadow-lg rounded-xl p-2 flex flex-col items-center">
+            <div
+                className="w-1 h-60 rounded-full z-100 my-auto "
+                style={{ background: gradient }}
+            />
+        </div>
+    )
+}
+
+
+export default function MapClient({field} : {field : tfield & {crop : {name : string}[]}}) {
     
     const coordinates = fromPostgresPolygon(field.coordinates);
     const {hash, updateHash} = useHash("")
@@ -47,9 +64,6 @@ export default function MapClient({field} : {field : tfield}) {
     }
 
 
-    const colors = getColorPalette(hash as ImageType);
-    const gradient = `linear-gradient(to top, ${colors.join(",")})`;
-
     return (
         <div className="relative h-full  "> 
             <MapContainer center={position} zoom={getZoom(coordinates)} scrollWheelZoom={true} style={{}} className="w-full h-full rounded-[0.75rem] corner-squircle z-20 " >
@@ -67,12 +81,7 @@ export default function MapClient({field} : {field : tfield}) {
                 </FeatureGroup>
             </MapContainer>
             <SwitchDate dates={field.imagesDates} imagesDate={imagesDate} setImagesDate={setImagesDate} />
-            <div className="absolute right-2 top-0 h-full   shadow-lg rounded-xl p-2 flex flex-col items-center">
-                <div
-                    className="w-1 h-60 rounded-full z-100 my-auto "
-                    style={{ background: gradient }}
-                />
-            </div>
+            <RampBar crop={field.crop[0].name} hash={hash as ImageType} />
         </div>
     );
 }
