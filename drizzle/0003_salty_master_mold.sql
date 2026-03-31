@@ -1,0 +1,1 @@
+ALTER TABLE "crop" ALTER COLUMN "planted_at" SET NOT NULL;

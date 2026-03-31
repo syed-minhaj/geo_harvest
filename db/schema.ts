@@ -67,7 +67,7 @@ export const crop = pgTable("crop", {
             .references(() => field.id, { onDelete: "cascade" }),
     created_at: timestamp("created_at").defaultNow().notNull(),
     updated_at: timestamp("updated_at").defaultNow().notNull(),
-    planted_at : timestamp("planted_at"),
+    planted_at : timestamp("planted_at").notNull(),
 } , (table) => [
     index("cropId_idx").on(table.id),
 ]);
