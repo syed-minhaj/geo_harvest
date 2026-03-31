@@ -15,6 +15,7 @@ async function getToken(){
         const tokenRes = await fetch('https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            signal: AbortSignal.timeout(30000),
             body: `client_id=${client_id}&client_secret=${client_secret}&grant_type=client_credentials`,
         });
         const tokenData = await tokenRes.json();
@@ -84,6 +85,7 @@ export async function sentinel_image({coordinates , date , imageType , crop , pl
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
+            signal: AbortSignal.timeout(30000),
             body: JSON.stringify({
                 input: input(geometry , date),
                 output: output,
@@ -144,6 +146,7 @@ export async function sentinel_catalog({coordinates} : {coordinates : number[][]
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
+            signal: AbortSignal.timeout(30000),
             body: JSON.stringify(input(geometry)),
         });
         return {err : null  ,data : await sentinelRes.json()};
