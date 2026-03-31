@@ -14,8 +14,8 @@ import { getColorRamp } from '@/app/utils/colorRamp';
 import { fromPostgresPolygon, getZoom } from '@/app/utils/coordinate';
 
 
-function RampBar({crop , hash} : {crop : string , hash : ImageType}) {
-    const colors = getColorRamp(crop , hash);
+function RampBar({crop , hash , plantingDate} : {crop : string , hash : ImageType , plantingDate : Date}) {
+    const colors = getColorRamp(crop , hash , plantingDate);
     if (!colors) return null;
     const gradient = `linear-gradient(to top, ${colors
         .map(([, hex]) => `#${hex.toString(16).padStart(6, "0")}`)
@@ -32,7 +32,7 @@ function RampBar({crop , hash} : {crop : string , hash : ImageType}) {
 }
 
 
-export default function MapClient({field} : {field : tfield & {crop : {name : string}[]}}) {
+export default function MapClient({field} : {field : tfield & {crop : {name : string , planted_at : Date}[]}}) {
     
     const coordinates = fromPostgresPolygon(field.coordinates);
     const {hash, updateHash} = useHash("")
@@ -81,7 +81,7 @@ export default function MapClient({field} : {field : tfield & {crop : {name : st
                 </FeatureGroup>
             </MapContainer>
             <SwitchDate dates={field.imagesDates} imagesDate={imagesDate} setImagesDate={setImagesDate} />
-            <RampBar crop={field.crop[0].name} hash={hash as ImageType} />
+            <RampBar crop={field.crop[0].name} hash={hash as ImageType} plantingDate={field.crop[0].planted_at} />
         </div>
     );
 }

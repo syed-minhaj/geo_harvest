@@ -27,6 +27,7 @@ export async function GET(req : NextRequest) {
             crop : {
                 columns : {
                     name : true,
+                    planted_at : true
                 }
             }
         }
@@ -59,7 +60,7 @@ export async function GET(req : NextRequest) {
     
             for(const to  of ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"] as ImageType[]) {
             
-                const res = await sentinel_image({coordinates : coor.map((c : number[]) => [c[1], c[0]]) , date:dates[0]  , imageType : to , crop : field.crop[0].name})
+                const res = await sentinel_image({coordinates : coor.map((c : number[]) => [c[1], c[0]]) , date:dates[0]  , imageType : to , crop : field.crop[0].name , plantingDate : field.crop[0].planted_at})
                     
                 if(res.err || res.data === null) {
                     console.log(res.err);
@@ -77,7 +78,7 @@ export async function GET(req : NextRequest) {
                     console.error('Error uploading image:', error.message);
                     continue;
                 }
-                const rampRGB =  getColorRamp(field.crop[0].name , to).map(([value, intColor]) => {
+                const rampRGB =  getColorRamp(field.crop[0].name , to , field.crop[0].planted_at).map(([value, intColor]) => {
                     const r = (intColor >> 16) & 255;
                     const g = (intColor >> 8) & 255;
                     const b = intColor & 255;

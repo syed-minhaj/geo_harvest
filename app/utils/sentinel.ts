@@ -25,8 +25,8 @@ async function getToken(){
     }
 }
 
-export async function sentinel_image({coordinates , date , imageType , crop} : 
-    {coordinates : number[][] , date : string , imageType : ImageType , crop : keyof typeof availableCrops}) {
+export async function sentinel_image({coordinates , date , imageType , crop , plantingDate} : 
+    {coordinates : number[][] , date : string , imageType : ImageType , crop : keyof typeof availableCrops , plantingDate : Date}) {
     
     if (!coordinates || coordinates.length === 0 ) {
         return {err : "No coordinates provided" , data: null};
@@ -87,7 +87,7 @@ export async function sentinel_image({coordinates , date , imageType , crop} :
             body: JSON.stringify({
                 input: input(geometry , date),
                 output: output,
-                evalscript: SCRIPT(imageType , crop),
+                evalscript: SCRIPT(imageType , crop , plantingDate),
             }),
         });
         if(!sentinelRes.ok){

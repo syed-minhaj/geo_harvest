@@ -8,7 +8,7 @@ import { sentinel_catalog, sentinel_image } from "../utils/sentinel";
 import { and, eq, sql } from "drizzle-orm";
 import { ImageType } from "../types";
 import { getAverageRampValueFromUrl_Server } from "@/app/actions/actions";
-import { getColorPalette as colorRamp } from "@/app/utils/Script";
+import { getColorRamp } from "../utils/colorRamp";
 
 type CropType = {
     name : CropName,
@@ -56,7 +56,7 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
                 
                 for(const to  of ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"] as ImageType[]) {
 
-                    await sentinel_image({coordinates , date:dates[0]  , imageType : to , crop : fcrop.name}).then(async (res) => {
+                    await sentinel_image({coordinates , date:dates[0]  , imageType : to , crop : fcrop.name , plantingDate : fcrop.plantedDate}).then(async (res) => {
                         if(res.err || res.data === null) {
                             console.log(res.err);
                             return null;
@@ -69,7 +69,7 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
                                 upsert: false, 
                             });
 
-                            const rampRGB =  colorRamp(to).map(([value, intColor]) => {
+                            const rampRGB =  getColorRamp(fcrop.name , to , fcrop.plantedDate).map(([value, intColor]) => {
                                 const r = (intColor >> 16) & 255;
                                 const g = (intColor >> 8) & 255;
                                 const b = intColor & 255;

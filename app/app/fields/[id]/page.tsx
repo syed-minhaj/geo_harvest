@@ -15,7 +15,7 @@ async function getFieldById(id : string) {
         where: (field , {eq}) => (eq(field.id , id)),
         with: {
             crop : {
-                columns : {name:true}
+                columns : {name:true , planted_at:true}
             }
         }
     })

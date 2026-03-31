@@ -35,7 +35,7 @@ export type allData = {
 const ImagesTypes: ImageType[] = ["waterRequirement", "nitrogenRequirement", "phosphorusRequirement", "cropStress"]
 
 
-export default function Main({field} : {field : tfield & {crop : {name : string}[]}}) {
+export default function Main({field} : {field : tfield & {crop : {name : string , planted_at : Date}[]}}) {
     const router = useRouter();
     const {hash} = useHash("")
     const [openMenu, setOpenMenu] = useState(false);
