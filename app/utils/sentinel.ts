@@ -135,7 +135,11 @@ export async function sentinel_catalog({coordinates} : {coordinates : number[][]
             "collections": ["sentinel-2-l2a"],
             "datetime": `${from7daysAgo}/${today}`,
             "limit": 10,
-            
+            "filter": {
+                op: "<=",
+                args: [{ property: "eo:cloud_cover" }, 5],
+            },
+            "filter-lang": "cql2-json",
             "intersects": geometry 
         };
     };
