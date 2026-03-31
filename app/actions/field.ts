@@ -46,6 +46,7 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
             const dates = res.data.features.map((f : any) => f.properties.datetime);
             dates.sort((a:string, b:string) => new Date(b).getTime() - new Date(a).getTime());
 
+            if (dates.length === 0) return {err : null , data : {id: feildId}}
             await db.update(field)
                 .set({
                     imagesDates: sql`array_append(${field.imagesDates}, ${dates[0]})`
