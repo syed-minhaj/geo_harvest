@@ -37,59 +37,59 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
             planted_at : fcrop.plantedDate,
         })
 
-        await sentinel_catalog({coordinates}).then(async (res) => {
-            if(res.err) {
-                console.log(res.err);
-                return ;
+        const res = await sentinel_catalog({coordinates})
+        if(res.err) {
+            console.error(res.err);
+            return {err : res.err , data : null}
+        }
+
+        const dates = res.data.features.map((f : any) => f.properties.datetime);
+        dates.sort((a:string, b:string) => new Date(b).getTime() - new Date(a).getTime());
+
+        if (dates.length === 0) return {err : null , data : {id: feildId}}
+        await db.update(field)
+            .set({
+                imagesDates: sql`array_append(${field.imagesDates}, ${dates[0]})`
+            })
+            .where(eq(field.id, feildId))
+
+        const pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
+        
+        for(const to  of ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"] as ImageType[]) {
+
+            const res = await sentinel_image({coordinates , date:dates[0]  , imageType : to , crop : fcrop.name , plantingDate : fcrop.plantedDate})
+            if(res.err || res.data === null) {
+                console.error(res.err);
+                return {err : res.err , data : null};
             }
+            const { data, error } = await supabase.storage
+                .from("field")
+                .upload(`${feildId}/${dates[0]}/${to}.png`, res.data, {
+                    cacheControl: '3600', 
+                    contentType: 'image/png', 
+                    upsert: false, 
+                });
 
-            const dates = res.data.features.map((f : any) => f.properties.datetime);
-            dates.sort((a:string, b:string) => new Date(b).getTime() - new Date(a).getTime());
-
-            if (dates.length === 0) return {err : null , data : {id: feildId}}
-            await db.update(field)
-                .set({
-                    imagesDates: sql`array_append(${field.imagesDates}, ${dates[0]})`
-                })
-                .where(eq(field.id, feildId))
-
-                const pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
-                
-                for(const to  of ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"] as ImageType[]) {
-
-                    await sentinel_image({coordinates , date:dates[0]  , imageType : to , crop : fcrop.name , plantingDate : fcrop.plantedDate}).then(async (res) => {
-                        if(res.err || res.data === null) {
-                            console.log(res.err);
-                            return null;
-                        }
-                        const { data, error } = await supabase.storage
-                            .from("field")
-                            .upload(`${feildId}/${dates[0]}/${to}.png`, res.data, {
-                                cacheControl: '3600', 
-                                contentType: 'image/png', 
-                                upsert: false, 
-                            });
-
-                            const rampRGB =  getColorRamp(fcrop.name , to , fcrop.plantedDate).map(([value, intColor]) => {
-                                const r = (intColor >> 16) & 255;
-                                const g = (intColor >> 8) & 255;
-                                const b = intColor & 255;
-                                return { value, r, g, b };
-                            });
-                            const value = await getAverageRampValueFromUrl_Server(feildId , dates[0] , to , rampRGB)
-                            pixelValues.push({fieldId : feildId , imageType : to , imageDate : dates[0] , value : value})
-                        
-                        if (error) {
-                            console.error('Error uploading image:', error.message);
-                            return null;
-                        }
-                    })
-                }
-                if (pixelValues.length != 0) await db.insert(avgPixelValue).values(pixelValues)
-        })
+            const rampRGB =  getColorRamp(fcrop.name , to , fcrop.plantedDate).map(([value, intColor]) => {
+                const r = (intColor >> 16) & 255;
+                const g = (intColor >> 8) & 255;
+                const b = intColor & 255;
+                return { value, r, g, b };
+            });
+            const value = await getAverageRampValueFromUrl_Server(feildId , dates[0] , to , rampRGB)
+            pixelValues.push({fieldId : feildId , imageType : to , imageDate : dates[0] , value : value})
+            
+            if (error) {
+                console.error('Error uploading image:', error.message);
+                return {err : "backend error : contact admin." , data : null};
+            }
+            
+        }
+        if (pixelValues.length != 0) await db.insert(avgPixelValue).values(pixelValues)
+        
         return {err : null , data : {id : feildId}}
     } catch (e :any) {
-        console.log(e)
+        console.error(e)
         return {err : "Backend error "}
     }
     
