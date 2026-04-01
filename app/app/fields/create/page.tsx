@@ -96,7 +96,7 @@ export default function CreateFieldPage() {
                 <Input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder='e.g. Field1' className='sm:w-[20rem]'/>
             </div>
             <Separator  />
-            <div className='flex flex-col gap-4'>
+            <div className='flex flex-col gap-4 pb-8'>
                 <h2 className='text-2xl font-bold font-josefin-sans'>Crops </h2>
                 <div className='flex flex-col sm:flex-row gap-4'>
                     <Select disabled={isCreating} value={crop} onValueChange={(e) => {setCrop(e as CropType); console.log(e)}}>
@@ -144,7 +144,6 @@ export default function CreateFieldPage() {
                 </div>
                 <Button disabled={isCreating} className='sm:w-fit' onClick={Submit}>Create</Button>
             </div>
-            <div className='w-full h-[2rem] '></div>
         </main>
     )
 }
