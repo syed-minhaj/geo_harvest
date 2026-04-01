@@ -84,7 +84,7 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
                 lasthex ="#" + findClosestColorFromHex(a , getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at) , ImageType).toString(16).padStart(6, '0').toUpperCase();
                 graphData.push({
                     date :  getDateShort(new Date(field.imagesDates[i])),
-                    value : a,
+                    value : a < 0 ? 0 : a,
                 })
             }else{
                 graphData.push({
@@ -103,7 +103,7 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
             const monthOfLastValue = new Date(field.imagesDates[i+1]).getMonth() ?? -1;
             if (monthOfCurrentValue === monthOfLastValue) {
                 const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
-                if(a !== null && !Number.isNaN(a)) valuesOfMonth.push(a)
+                if(a !== null && !Number.isNaN(a)) valuesOfMonth.push(a < 0 ? 0 : a)
             }else if(valuesOfMonth.length != 0){
                 graphData.push({
                     date : JSON.stringify(graphData.length + 1),
@@ -114,7 +114,7 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
                 i++
             }else {
                 const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
-                if(a !== null && !Number.isNaN(a)) valuesOfMonth.push(a)
+                if(a !== null && !Number.isNaN(a)) valuesOfMonth.push(a < 0 ? 0 : a)
             }
         
         }
