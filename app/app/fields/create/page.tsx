@@ -93,7 +93,7 @@ export default function CreateFieldPage() {
             }
             <div className='flex flex-col sm:flex-row gap-4 '>
                 <h3 className='text-xl font-bold font-josefin-sans w-fit'>Name of field : </h3>
-                <Input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder='e.g. Field1' className='sm:w-[20rem]'/>
+                <Input type="text" disabled={isCreating} value={name} onChange={(e) => setName(e.target.value)} placeholder='e.g. Field1' className='sm:w-[20rem]'/>
             </div>
             <Separator  />
             <div className='flex flex-col gap-4 pb-8'>
