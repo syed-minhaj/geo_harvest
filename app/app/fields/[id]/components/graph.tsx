@@ -8,7 +8,7 @@ import { tfield , tcrop, ImageType} from "@/app/types";
 import {useHash } from "@/app/hooks/hash";
 import { useEffect,useState } from "react";
 import { getDateShort } from "@/app/utils/Date";
-import ChangeGraphType from "./chageGraphType";
+import {ChangeGraphType,  ChangeGraphYear } from "./chageGraphSettting";
 import { allData } from "./Main";
 
 type graphType = "yearly" | "periodly"
@@ -21,10 +21,58 @@ type avgPixelValue = {
 }
 
 
+const chartDataByYear = (rawData: { date: string; value: number }[] , year : number) => {
+    
+    const sorted = [...rawData].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    )
+    const lastYear = sorted.filter(
+        d => new Date(d.date).getFullYear() === year - 1
+    )
+    const nextYear = sorted.filter(
+        d => new Date(d.date).getFullYear() === year + 1
+    )
+    const filtered = sorted.filter(
+        d => new Date(d.date).getFullYear() === year
+    )
+
+    if (filtered.length === 0) return []
+
+    const firstDate = new Date(sorted[0].date)
+    const lastDate  = new Date(sorted[sorted.length - 1].date)
+
+    const months = ["jan 1", "feb 1", "mar 1", "apr 1", "may 1", "jun 1", "jul 1", "aug 1", "sep 1", "oct 1", "nov 1", "dec 1"]
+    
+    const leading = []
+    const jan1 = new Date(firstDate.getFullYear(), 0, 1)
+    if ((firstDate.getMonth() != jan1.getMonth()) && !lastYear.length) {
+        for (let i = 0; i < firstDate.getMonth(); i++) {
+            leading.push({ date: months[i], value: NaN })
+        }
+    }
+    const trailing = []
+    const dec31 = new Date(firstDate.getFullYear(), 11, 31)
+    if ((lastDate.getMonth() != dec31.getMonth()) && !nextYear.length) {
+        for (let i = lastDate.getMonth() + 1; i < 12; i++) {
+            trailing.push({ date: months[i], value: NaN })
+        }
+    }
+
+    return [
+        ...leading,
+        ...filtered.map(d => ({
+            date: new Date(d.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+            value: d.value,
+        })),
+        ...trailing,
+    ]
+}
+
+
 const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield , allData : allData}) => {
     const {hash} = useHash("")
     const [type , setType] = useState<"yearly" | "periodly">(typeP)
-    
+    const [year , setYear] = useState(new Date().getFullYear())
     const [chartData , setChartData] = useState < {date : string , value : number}[]>([])
     const [done , setDone] = useState(false)
     const [value , setValue] = useState<{label:string,color:string}>({
@@ -37,7 +85,11 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
         if (document && hash){
             const data = allData[hash as ImageType][type];
             if (data) {
-                setChartData(data.data);
+                if (type === "yearly") {
+                    setChartData(chartDataByYear(data.data , year));
+                } else {
+                    setChartData(data.data);
+                }
                 setValue(data.value);
                 setDone(true);
             }else{
@@ -46,7 +98,7 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
                 setValue({label : "value" , color : "#0ADD08"})
             }
         }
-    },[hash , type , allData ])
+    },[hash , type , allData , year ])
 
     const chartConfig = {
         value: value,
@@ -89,7 +141,12 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
             </div>
             <CardHeader>
                 <CardTitle className="w-full flex flex-row">{hash} graph over time {type}
-                    <ChangeGraphType type={type} setType={setType} />
+                    <div className="flex flex-row gap-2 ml-auto">
+                        {type === "yearly" && 
+                            <ChangeGraphYear year={year} setYear={setYear} years={[2025,2026]} />
+                        }
+                        <ChangeGraphType type={type} setType={setType} />
+                    </div>
                 </CardTitle>
                 <CardDescription>
                     Showing total visitors for the last 6 months
@@ -108,6 +165,7 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
                 >
                     <CartesianGrid vertical={false} opacity={0.4} stroke="var(--border)"/>
                     <XAxis
+                        type="category" 
                         dataKey="date"
                         tickLine={false}
                         axisLine={false}

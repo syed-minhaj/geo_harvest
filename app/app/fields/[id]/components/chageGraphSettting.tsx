@@ -22,4 +22,25 @@ const ChangeGraphType = ({type , setType} : {type : "yearly" | "periodly" , setT
     )
 }
 
-export default ChangeGraphType
+const ChangeGraphYear = ({year , setYear , years} : {year : number , setYear : (year : number) => void , years : number[] }) => {
+    return (
+        <Select value={String(year)} onValueChange={(value) => {setYear(Number(value))}}>
+            <SelectTrigger className="ml-auto ">
+                <SelectValue placeholder="Select Crop" />
+            </SelectTrigger>
+            <SelectContent className='z-300'>
+                <SelectGroup>
+                    <SelectLabel>Year</SelectLabel>
+                    {years.map((year) => 
+                        <SelectItem value={String(year)} key={String(year)}>
+                            {year}
+                        </SelectItem>
+                    )}
+                </SelectGroup>
+            </SelectContent>
+        </Select>
+    )
+}
+
+
+export  {ChangeGraphType , ChangeGraphYear}
