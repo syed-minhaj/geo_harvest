@@ -4,6 +4,8 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Main from './components/Main';
 import Link from 'next/link';
+import { crop, field } from '@/db/schema';
+import { eq  } from 'drizzle-orm';
 
 
 type PageProps = Promise<{
@@ -11,19 +13,14 @@ type PageProps = Promise<{
 }>
 
 async function getFieldById(id : string) {
-    const f = await db.query.field.findFirst({
-        where: (field , {eq}) => (eq(field.id , id)),
-        with: {
-            crop : {
-                columns : {name:true , planted_at:true}
-            }
-        }
-    })
+    const f = await db.select({field , crop : {name: crop.name , planted_at : crop.planted_at }})
+            .from(field).where(eq(field.id , id)).innerJoin(crop , eq(field.id , crop.fieldId)).execute();
     if(!f){
         return null;
     }
-    f.imagesDates = f.imagesDates.reverse();
-    return f;
+    const ff = {...f[0].field , crop :[f[0].crop]};
+    ff.imagesDates = ff.imagesDates.reverse();
+    return ff;
 }
 
 
