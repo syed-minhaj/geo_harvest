@@ -32,6 +32,7 @@ export const field = pgTable("field", {
             .default(sql`'{}'::text[]`),
 }, (table) => [
     index("firldId_idx").on(table.id),
+    index("fieldOwnerId_idx").on(table.ownerId),
 ]);
 
 export const fieldRelations = relations(field, ({many}) => ({
@@ -70,6 +71,7 @@ export const crop = pgTable("crop", {
     planted_at : timestamp("planted_at").notNull(),
 } , (table) => [
     index("cropId_idx").on(table.id),
+    index("cropFieldId_idx").on(table.fieldId),
 ]);
 
 export const cropRelations = relations(crop, ({one}) => ({
