@@ -166,7 +166,7 @@ function Skeleton({ className}: { className?: string }) {
 
 export function FieldsLoader() {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-4 max-w-6xl mx-auto ">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-4 max-w-6xl mx-auto w-full sm:w-auto ">
             {[...Array(3)].map((_, i) => (  
                 <div key={i} className={`p-4 rounded-[0.75rem] border-1 bg-white dark:bg-secondary/15 shadow-sm hover:shadow-lg dark:shadow-gray-900 flex flex-col gap-3`}>
                     <div className='flex flex-row gap-4'>
