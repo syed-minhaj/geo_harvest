@@ -139,18 +139,19 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
             <div className={`absolute w-full h-full flex justify-center items-center  ${!done ? "": "hidden"}`}>
                 <div className="">loading...</div>
             </div>
-            <CardHeader>
-                <CardTitle className="w-full flex flex-row">{hash} graph over time {type}
-                    <div className="flex flex-row gap-2 ml-auto">
-                        {type === "yearly" && 
-                            <ChangeGraphYear year={year} setYear={setYear} years={[2025,2026]} />
-                        }
-                        <ChangeGraphType type={type} setType={setType} />
-                    </div>
-                </CardTitle>
-                <CardDescription>
-                    Showing total visitors for the last 6 months
-                </CardDescription>
+            <CardHeader className="flex flex-row">
+                <div className="flex flex-col gap-1.5">
+                    <CardTitle className="w-full flex flex-row">{hash} graph over time {type}</CardTitle>
+                    <CardDescription>
+                        Showing total visitors for the last 6 months
+                    </CardDescription>
+                </div>
+                <div className="flex flex-row gap-2 ml-auto">
+                    {type === "yearly" && 
+                        <ChangeGraphYear year={year} setYear={setYear} years={[2025,2026]} />
+                    }
+                    <ChangeGraphType type={type} setType={setType} />
+                </div>
             </CardHeader>
             <CardContent className="p-0 sm:p-6">
                 <ChartContainer config={chartConfig} className="aspect-56/31">
