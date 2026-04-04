@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@daveyplate/better-auth-ui": "^2.1.11",
-    "@geoman-io/leaflet-geoman-free": "^2.14.1",
+    "@geoman-io/leaflet-geoman-free": "^2.11.0",
     "@neondatabase/serverless": "^1.0.1",
     "@radix-ui/react-popover": "^1.1.15",
     "@radix-ui/react-select": "^2.2.6",
