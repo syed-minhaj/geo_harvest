@@ -1,133 +1,181 @@
+
+import {
+    MoveRight,
+    Sprout,
+    Droplets,
+    Zap,
+    ShieldCheck,
+    BarChart3,
+    Github
+} from "lucide-react";
+
 import { HomeNavbar as Navbar } from "./components/Navbar";
-import Image from "next/image";
-import { Button } from "./components/ui/button";
-import CardStack from "./components/cards";
-import FeatureImage from "./components/featureImages";
-import CardsCover from "./components/cardsCover";
 import Link from "next/link";
 
-export default function Home() {
+const MetricChip = ({ label, value, color }: { label: string, value: string, color: string }) => (
+    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[10px] uppercase tracking-widest font-bold shadow-sm">
+        <span className={`w-1.5 h-1.5 rounded-full ${color} animate-pulse`} />
+        <span className="text-slate-500 dark:text-slate-400">{label}:</span>
+        <span className="text-slate-900 dark:text-white">{value}</span>
+    </div>
+);
 
-    const cards = [
+export default function App() {
+    const features = [
         {
-            id : 1,
-            title : "Moisture level",
-            content : "Monitor crop moisture levels and identify areas that require irrigation.",
-            position : "top-4 right-4",
-            url : "/mositure.png"
+            id: 1,
+            title: "Moisture Level",
+            content: "Monitor crop moisture levels and identify areas that require irrigation with precision mapping.",
+            icon: <Droplets className="w-5 h-5 text-blue-600 dark:text-blue-400" />,
+            color: "bg-blue-500/10 dark:bg-blue-500/20",
+            tag: "Hydration",
+            url: "/mositure.png"
         },
         {
-            id : 2,
-            title : "Nitrogen level",
-            content : "Monitor crop nitrogen levels and identify areas that require fertilization.",
-            position : "bottom-4 left-4",
+            id: 2,
+            title: "Nitrogen Level",
+            content: "Monitor crop nitrogen levels and identify areas that require specific fertilization protocols.",
+            icon: <Zap className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
+            color: "bg-amber-500/10 dark:bg-amber-500/20",
+            tag: "Nutrition",
             url: "/n.png"
         },
         {
-            id : 3,
-            title : "Crop Stress",
-            content : "Monitor crop stress levels and identify areas suffering from growth deficiencies.",
-            position : "left-4 top-4",
-            url : "/stress-after.png"
+            id: 3,
+            title: "Crop Stress",
+            content: "Early detection of crop stress and growth deficiencies via deep spectral analysis.",
+            icon: <Sprout className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />,
+            color: "bg-emerald-500/10 dark:bg-emerald-500/20",
+            tag: "Health Index",
+            url: "/stress-after.png"
         },
         {
-            id : 4,
-            title : "Phosphorus level",
-            content : "Monitor crop phosphorus levels and identify areas that require fertilization.",
-            position : "right-4 bottom-4",
+            id: 4,
+            title: "Phosphorus Level",
+            content: "High-resolution phosphorus mapping to optimize soil composition and nutrient balance.",
+            icon: <ShieldCheck className="w-5 h-5 text-purple-600 dark:text-purple-400" />,
+            color: "bg-purple-500/10 dark:bg-purple-500/20",
+            tag: "Soil Quality",
             url: "/p.png"
         }
-    ]
+    ];
 
     return (
-        <>
+        <div className="min-h-screen bg-slate-50 dark:bg-[#020203] text-slate-900 dark:text-slate-50 selection:bg-emerald-500/30 overflow-x-hidden font-sans transition-colors duration-300">
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/5 dark:bg-emerald-500/10 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/5 dark:bg-blue-500/10 blur-[120px] rounded-full" />
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-20 pointer-events-none" />
+            </div>
             <Navbar />
-            <div className="flex flex-col items-center font-alpet-sans w-11/12 md:w-4/6 mx-auto mb-30 gap-10  ">
-                <div className="flex flex-col items-center justify-center mt-11 gap-4 ">
-                    <h1 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tight leading-none text-center">
-                        <span>Farming from </span><span className="text-main">Space</span>
+            <main className="relative pt-32 pb-20 px-6">
+                <section className="max-w-5xl mx-auto text-center mb-32">
+                    <div className="flex justify-center mb-8">
+                        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 backdrop-blur-md shadow-xl dark:shadow-2xl">
+                            <MetricChip label="Sentinel-2" value="Active" color="bg-emerald-500" />
+                            <div className="w-px h-4 bg-slate-200 dark:bg-white/10" />
+                            <MetricChip label="Refresh" value="5 Days" color="bg-blue-500" />
+                        </div>
+                    </div>
+                    <h1 className="text-5xl md:text-8xl font-bold tracking-tight leading-[1.1] mb-8 bg-gradient-to-b from-slate-900 to-slate-500 dark:from-white dark:to-white/50 bg-clip-text text-transparent">
+                        Farming from <span className="text-emerald-600 dark:text-emerald-500">Space.</span>
                     </h1>
-                    <h3 className="text-xl md:text-2xl leading-none font-light w-11/12 md:w-146 text-center opacity-85 ">
-                        Monitor crop health, optimize irrigation, and boost yields 
-                        with <span className="text-main">satellite</span> analysis. 
-                        The future of agriculture is here.
-                    </h3>
-                    <div className="flex flex-row gap-4 mt-4 ">
-                        <Link href={"/app/fields/create"}>
-                            <Button className="bg-amber-500 hover:bg-amber-500/85  ">
-                                Get Started
-                            </Button>
+                    <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-light leading-relaxed mb-12">
+                        Monitor crop health, optimize irrigation, and boost yields with professional satellite analysis.
+                        The future of agriculture is managed from orbit.
+                    </p>
+                    <div className="flex flex-wrap items-center justify-center gap-6">
+                        <Link href={"/app/fields/create"} className="h-14 px-10 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-black font-bold rounded-2xl transition-all shadow-lg shadow-emerald-600/20 dark:shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-95 flex items-center">
+                            Get Started
                         </Link>
-                        <a href="https://github.com/syed-minhaj/geo_harvest" >
-                            <Button variant="outline" className="">
-                                Learn More
-                            </Button>
+                        <a target="_blank" href="https://github.com/syed-minhaj/geo_harvest" 
+                            className="h-14 px-10 bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 text-slate-900 dark:text-white font-semibold rounded-2xl border border-slate-200 dark:border-white/10 transition-all flex items-center gap-3 group shadow-sm">
+                            Learn More <MoveRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </a>
                     </div>
-                </div>
-                <div className="w-full aspect-[960/452] ">
-                    <Image src="/startPage.png" alt="hero" width={960} height={452} 
-                    className="mt-18 shadow-[0_4px_50px_var(--color-main)] rounded-[0.75rem] mx-auto " />
-                </div>
-                <h3 className="text-4xl md:text-5xl font-light tracking-tight mt-20 mb-5 ">
-                    Powered by Sentinel
-                </h3>
-                <div 
-                    className="w-4/6 md:w-full place-items-center card"
-                >
-                    {cards.map((card) => {
-        
-                        return (
-                            <div
-                                key={card.id}
-                                className="cardrotate cursor-pointer transition-all duration-500 ease-out shadow-2xl relative group hover:z-50 hover:scale-105  "
-                                
-                            >
-                                <div className="relative w-64 rounded-2xl overflow-hidden" style={{ height: '360px' }}>
-                                    <Image 
-                                        src={card.url} 
-                                        width={256} 
-                                        height={360} 
-                                        alt={card.title}
-                                        className="w-full h-full object-cover rounded-2xl border"
-                                        style={{ 
-                                            boxShadow: '-4px 4px 25px 1px rgba(0, 0, 0, 0.25)' 
-                                        }}
-                                    />
-                                    <div className="hover:opacity-100 opacity-0 absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent transition-opacity duration-300 pointer-events-none"/>
-                                    
-                                    <div className="absolute inset-0 p-4 rounded-2xl text-white group-hover:flex flex-col justify-start transition-opacity duration-300
-                                                    hover:opacity-100 opacity-0 hidden "
-                                        style={{
-                                            backgroundColor: 'rgba(17, 24, 39, 0.85)',
-                                        }}
-                                    >
-                                        <h3 className="text-3xl font-bold my-3">{card.title}</h3>
-                                        <p className="text-lg" style={{ opacity: 0.85 }}>{card.content}</p>
+                </section>
+                <section className="max-w-7xl mx-auto mb-40 relative">
+                    <div className="absolute -inset-4 bg-emerald-500/10 dark:bg-emerald-500/20 blur-[100px] rounded-full opacity-20" />
+                    <div className="relative p-2 rounded-[2rem] bg-white/40 dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-sm shadow-2xl overflow-hidden group">
+                        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent opacity-50" />
+                        <div className="rounded-[1.6rem] overflow-hidden border border-slate-200 dark:border-white/5 bg-white/80 dark:bg-black/40">
+                            <img src="/startPage.png" className="w-full h-auto shadow-2xl" alt="GeoHarvest Platform" />
+                            <div className="absolute bottom-10 left-10 p-6 rounded-2xl bg-white/90 dark:bg-black/60 border border-slate-200 dark:border-white/10 backdrop-blur-xl max-w-xs hidden md:block border-l-4 border-l-emerald-500 shadow-xl">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <BarChart3 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                                    <span className="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Live Dashboard</span>
+                                </div>
+                                <p className="text-sm text-slate-600 dark:text-slate-300 font-medium">Precision spectral data visualization for large-scale field management.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section className="max-w-7xl mx-auto">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+                        <div>
+                            <span className="text-emerald-600 dark:text-emerald-500 font-bold uppercase tracking-[0.2em] text-xs mb-4 block">Powered by Sentinel</span>
+                            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white">Advanced Spectral Insights.</h2>
+                        </div>
+                        <p className="text-slate-500 dark:text-slate-400 max-w-md text-sm leading-relaxed font-light">
+                            Utilizing the Sentinel-2 constellation to provide 10m resolution analysis across critical vegetation indices.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {features.map((f) => (
+                            <div key={f.id} className="group relative p-4 rounded-3xl bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/[0.04] hover:border-emerald-200 dark:hover:border-white/10 transition-all duration-500 flex flex-col h-full shadow-sm hover:shadow-md">
+                                <div className="relative aspect-[3/4] w-full mb-6 rounded-2xl overflow-hidden border border-slate-100 dark:border-white/5 shadow-inner">
+                                    <img src={f.url} alt={f.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-in-out" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 dark:from-black/80 via-transparent to-transparent opacity-60" />
+                                    <div className={`absolute top-4 left-4 w-10 h-10 ${f.color} rounded-xl flex items-center justify-center backdrop-blur-md border border-white/20 shadow-lg`}>
+                                        {f.icon}
                                     </div>
                                 </div>
+                                <div className="px-2 pb-4">
+                                    <div className="inline-block px-2 py-0.5 rounded bg-emerald-500/10 text-[10px] text-emerald-600 dark:text-emerald-500 font-bold mb-3 uppercase tracking-tighter">
+                                        {f.tag}
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">{f.title}</h3>
+                                    <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed font-light opacity-80">
+                                        {f.content}
+                                    </p>
+                                </div>
                             </div>
-                        )
-                    })}
+                        ))}
+                    </div>
+                </section>
+            </main>
+            <footer className="mt-40 border-t border-slate-200 dark:border-white/5 bg-white dark:bg-black/40 py-20 transition-colors duration-300">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+                        <div className="col-span-1 md:col-span-2">
+                            <div className="flex items-center gap-2 font-bold text-2xl tracking-tighter mb-6 text-slate-900 dark:text-white">
+                                GeoHarvest
+                            </div>
+                            <p className="text-slate-500 dark:text-slate-400 max-w-sm font-light leading-relaxed">
+                                Empowering the next generation of farmers with space-borne intelligence and planetary-scale data analysis.
+                            </p>
+                        </div>
+                        <div>
+                            <h4 className="font-bold text-sm uppercase tracking-widest mb-6 text-slate-900 dark:text-white">Project</h4>
+                            <ul className="space-y-4 text-sm text-slate-500 dark:text-slate-500">
+                                <li className="flex items-center gap-2 font-medium"><Github className="w-4 h-4 text-slate-900 dark:text-slate-400" /><a href="https://github.com/syed-minhaj/geo_harvest" target="_blank" className="hover:text-emerald-600 dark:hover:text-white transition-colors">Source Code</a></li>
+                                <li className="font-medium"><a href="#" className="hover:text-emerald-600 dark:hover:text-white transition-colors">Documentation</a></li>
+                            </ul>
+                        </div>
+                        <div className="text-sm text-slate-500">
+                            <h4 className="font-bold text-sm uppercase tracking-widest mb-6 text-slate-900 dark:text-white">Legal</h4>
+                            <ul className="space-y-4 font-medium">
+                                <li><a href="#" className="hover:text-emerald-600 dark:hover:text-white transition-colors">Privacy Policy</a></li>
+                                <li>© 2026 GeoHarvest</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="pt-8 border-t border-slate-200 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+                        <p>Data powered by ESA Sentinel Constellation</p>
+                        <p>All rights reserved.</p>
+                    </div>
                 </div>
-                <FeatureImage cards={cards}/>
-            </div>
-            <footer className="flex flex-col gap-2 items-center justify-center text-accent mt-20 h-30 w-full bg-foreground">
-                <a href="https://github.com/syed-minhaj/geo_harvest" className=" font-light">
-                    <svg height="32" aria-hidden="true" viewBox="0 0 24 24" version="1.1" width="32" data-view-component="true" 
-                        className="octicon octicon-mark-github v-align-middle fill-background ">
-                        <path d="M12 1C5.923 1 1 5.923 1 12c0 4.867 3.149 8.979 7.521 10.436.55.096.756-.233.756-.522 
-                        0-.262-.013-1.128-.013-2.049-2.764.509-3.479-.674-3.699-1.292-.124-.317-.66-1.293-1.127-1.554-.385-.207-.936-.715-.014-.729.866-.014 
-                        1.485.797 1.691 1.128.99 1.663 2.571 1.196 3.204.907.096-.715.385-1.196.701-1.471-2.448-.275-5.005-1.224-5.005-5.432 0-1.196.426-2.186 
-                        1.128-2.956-.111-.275-.496-1.402.11-2.915 0 0 .921-.288 3.024 1.128a10.193 10.193 0 0 1 2.75-.371c.936 0 1.871.123 2.75.371 2.104-1.43 
-                        3.025-1.128 3.025-1.128.605 1.513.221 2.64.111 2.915.701.77 1.127 1.747 1.127 2.956 0 4.222-2.571 5.157-5.019 5.432.399.344.743 1.004.743 
-                        2.035 0 1.471-.014 2.654-.014 3.025 0 .289.206.632.756.522C19.851 20.979 23 16.854 23 12c0-6.077-4.922-11-11-11Z"></path>
-                    </svg>
-                </a>
-                <p className="text-sm  font-light">
-                    Copyright © 2025 Geo Harvest. All rights reserved.
-                </p>
             </footer>
-        </>
+        </div>
     );
 }
