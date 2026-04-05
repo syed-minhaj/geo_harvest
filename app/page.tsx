@@ -15,8 +15,8 @@ import Link from "next/link";
 const MetricChip = ({ label, value, color }: { label: string, value: string, color: string }) => (
     <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[10px] uppercase tracking-widest font-bold shadow-sm">
         <span className={`w-1.5 h-1.5 rounded-full ${color} animate-pulse`} />
-        <span className="text-slate-500 dark:text-slate-400">{label}:</span>
-        <span className="text-slate-900 dark:text-white">{value}</span>
+        <span className="text-slate-500 dark:text-slate-400 text-nowrap">{label}:</span>
+        <span className="text-slate-900 dark:text-white text-nowrap">{value}</span>
     </div>
 );
 
