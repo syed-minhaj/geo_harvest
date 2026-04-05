@@ -124,7 +124,7 @@ export default function App() {
                         {features.map((f) => (
                             <div key={f.id} className="group relative p-4 rounded-3xl bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/[0.04] hover:border-emerald-200 dark:hover:border-white/10 transition-all duration-500 flex flex-col h-full shadow-sm hover:shadow-md">
                                 <div className="relative aspect-[3/4] w-full mb-6 rounded-2xl overflow-hidden border border-slate-100 dark:border-white/5 shadow-inner">
-                                    <img src={f.url} alt={f.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-in-out" />
+                                    <img src={f.url} alt={f.title} className="w-full h-full object-cover grayscale-0 sm:grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-in-out" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 dark:from-black/80 via-transparent to-transparent opacity-60" />
                                     <div className={`absolute top-4 left-4 w-10 h-10 ${f.color} rounded-xl flex items-center justify-center backdrop-blur-md border border-white/20 shadow-lg`}>
                                         {f.icon}
