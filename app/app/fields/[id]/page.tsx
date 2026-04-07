@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { crop, field } from '@/db/schema';
 import { eq  } from 'drizzle-orm';
 
+const default_fields = ["06402424-72fa-4b52-8d2f-6bd81c56c2bf" , "9eee4301-3096-4d44-9542-8c31dccb520d"];
 
 type PageProps = Promise<{
     id : string
@@ -27,8 +28,9 @@ async function getFieldById(id : string) {
 export default async function FieldPage({params} : {params : PageProps}) {
     
     const {id} = await params;
+    const filedIsDefault = default_fields.includes(id)
     const session = await auth.api.getSession({headers : await headers()});
-    if (!session) {
+    if (!session && !filedIsDefault) {
         redirect("/app/auth/sign-in");
     }
     const field = await getFieldById(id);
@@ -41,7 +43,7 @@ export default async function FieldPage({params} : {params : PageProps}) {
             </div>
         )
     }
-    if(field.ownerId !== session.user.id) {
+    if(!filedIsDefault && field.ownerId !== session?.user.id) {
         redirect("/app/fields");
     }
 
