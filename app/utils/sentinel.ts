@@ -130,7 +130,7 @@ export async function sentinel_catalog({coordinates} : {coordinates : number[][]
     
         
         const today = new Date().toISOString();
-        const from7daysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+        const from7daysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
         return{
             "collections": ["sentinel-2-l2a"],
             "datetime": `${from7daysAgo}/${today}`,
