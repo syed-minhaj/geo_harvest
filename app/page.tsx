@@ -74,7 +74,7 @@ export default function App() {
                         <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 backdrop-blur-md shadow-xl dark:shadow-2xl">
                             <MetricChip label="Sentinel-2" value="Active" color="bg-emerald-500" />
                             <div className="w-px h-4 bg-slate-200 dark:bg-white/10" />
-                            <MetricChip label="Refresh" value="5 Days" color="bg-blue-500" />
+                            <MetricChip label="Refresh" value="7 Days" color="bg-blue-500" />
                         </div>
                     </div>
                     <h1 className="text-5xl md:text-8xl font-bold tracking-tight leading-[1.1] mb-8 bg-gradient-to-b from-slate-900 to-slate-500 dark:from-white dark:to-white/50 bg-clip-text text-transparent">
