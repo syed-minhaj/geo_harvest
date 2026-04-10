@@ -22,9 +22,9 @@ function RampBar({crop , hash , plantingDate} : {crop : string , hash : ImageTyp
         .join(",")})`;
 
     return (
-        <div className="absolute right-2 top-0 h-full   shadow-lg rounded-xl p-2 flex flex-col items-center">
+        <div className="absolute right-2 top-0 h-full shadow-lg rounded-xl p-2 flex flex-col items-center">
             <div
-                className="w-1 h-60 rounded-full z-100 my-auto "
+                className="w-1 h-60 rounded-full z-20 my-auto "
                 style={{ background: gradient }}
             />
         </div>

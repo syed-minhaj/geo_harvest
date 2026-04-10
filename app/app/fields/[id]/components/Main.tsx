@@ -106,7 +106,7 @@ export default function Main({field} : {field : tfield & {crop : {name : string 
                 className="absolute right-0 top-10 z-20 p-1 border corner-squircle rounded-l-xl bg-background cursor-pointer" />
             
             <div className={`bg-background w-full h-full absolute top-0 right-0 bottom-0 left-0 transform overflow-y-scroll ${openMenu ? "translate-x-0" : "translate-x-full"} 
-                 transition-transform duration-300 z-200 p-4 pt-0 flex flex-col gap-4 `}>
+                 transition-transform duration-300 z-30 p-4 pt-0 flex flex-col gap-4 `}>
                 
                 <ChevronRight strokeWidth={2} onClick={() => {setOpenMenu(!openMenu)}} size={32}
                     className="absolute left-0 top-10 z-20 p-1 border corner-squircle rounded-r-xl bg-background cursor-pointer" />
