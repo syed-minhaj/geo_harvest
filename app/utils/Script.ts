@@ -108,7 +108,7 @@ const P_SCRIPT = ({colorRamp} : {colorRamp : number[][]}) => {
 
     function setup() {
         return {
-            input: ["B05", "B07", "B8A", "SCL", "dataMask"],
+            input: ["B05", "B07", "SCL", "dataMask"],
             output: [
               { id: "default", bands: 4 },
               { id: "index", bands: 1, sampleType: "FLOAT32" },
@@ -123,9 +123,6 @@ const P_SCRIPT = ({colorRamp} : {colorRamp : number[][]}) => {
         // canopy health; phosphorus deficiency reduces chlorophyll production.
         // CIre = (B07 / B05) - 1
         let val = (samples.B07 / samples.B05) - 1;
-        // Normalise to roughly [-1, 1] range for the shared colour ramp
-        // CIre typically ranges 0–5; we clamp and rescale to [-1, 1]
-        val = Math.max(-1, Math.min(1, (val - 2.5) / 2.5));
         const indexVal = samples.dataMask === 1 ? val : NaN;
         return {
             default: [...viz.process(val), samples.dataMask],
