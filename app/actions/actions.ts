@@ -17,6 +17,13 @@ type rampRGB = {
     b : number,
 }[]
 
+const RAMP_MAX: Record<ImageType, number> = {
+    waterRequirement:      0.8,  // NDMI max
+    nitrogenRequirement:   0.6,  // NDRE practical max
+    phosphorusRequirement: 3.5,  // CIre practical max
+    cropStress:            1.0,  // NDVI max (no normalization)
+};
+
 export async function revalidatePath_fromClient(path : string) {
     await revalidatePath(path);
 }
@@ -106,5 +113,5 @@ export async function getAverageRampValueFromUrl_Server(
     }
 
     if (count === 0) return null;
-    return imageType === "cropStress" ? (sum / count) : (sum / count) / 0.6;
+    return sum / count / RAMP_MAX[imageType];
 }
