@@ -216,9 +216,11 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
                     <div className="flex items-center gap-2 leading-none font-medium">
                         {(() => {
                             if (!done) return "Loading...";
-                            if(!chartData[chartData.length - 2]) return "No Change"
-                            const diff =  chartData[chartData.length - 1].value - chartData[chartData.length - 2].value 
-                            const diffInPercent = (Math.abs(diff) / chartData[chartData.length - 2].value * 100).toFixed(2)
+                            let lastValid = 0; 
+                            for(let i = 0; i < chartData.length ;i++) {if(chartData[i].value){lastValid=i}}
+                            if(!chartData[lastValid - 1]) return "No Change"
+                            const diff =  chartData[lastValid].value - chartData[lastValid - 1].value 
+                            const diffInPercent = (Math.abs(diff) / chartData[lastValid - 1].value * 100).toFixed(2)
                             if (diff > 0) 
                                 return (
                                     <>{"Trending up by"} {diffInPercent} {"% "} <TrendingUp className="h-4 w-4" /></>
