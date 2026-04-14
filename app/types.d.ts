@@ -19,4 +19,11 @@ export type tcrop = {
     planted_at: Date | null;
 }
 
+
+export type WheatStage   = "seedling" | "elongation" | "heading" | "maturity";
+export type RiceStage    = "seedling" | "tillering"  | "reproductive" | "ripening";
+export type CottonStage  = "seedling" | "vegetative" | "flowering" | "bollMaturation";
+export type GenericStage = "seedling" | "vegetative" | "reproductive" | "maturity";
+
+
 export type ImageType = "waterRequirement" | "nitrogenRequirement" | "phosphorusRequirement" | "cropStress";

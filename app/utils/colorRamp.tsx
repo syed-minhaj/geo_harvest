@@ -1,5 +1,6 @@
 import { availableCrops } from "@/data/crop";
-
+import { wheatStage , riceStage , cottonStage , genericStage ,daysAfter } from "@/app/utils/agriCycle";
+import { WheatStage , RiceStage , CottonStage , GenericStage } from "@/app/types";
 
 export type CropKey = keyof typeof availableCrops;
 export type ImageType =
@@ -42,42 +43,6 @@ const makePhosphorusRamp = (
 ];
 
 
-type WheatStage   = "seedling" | "elongation" | "heading" | "maturity";
-type RiceStage    = "seedling" | "tillering"  | "reproductive" | "ripening";
-type CottonStage  = "seedling" | "vegetative" | "flowering" | "bollMaturation";
-type GenericStage = "seedling" | "vegetative" | "reproductive" | "maturity";
-
-function daysAfter(plantingDate: Date): number {
-    return Math.floor((Date.now() - plantingDate.getTime()) / 86_400_000);
-}
-
-function wheatStage(days: number): WheatStage {
-    if (days < 45)  return "seedling";
-    if (days < 75)  return "elongation";
-    if (days < 100) return "heading";
-    return "maturity";
-}
-
-function riceStage(days: number): RiceStage {
-    if (days < 30)  return "seedling";
-    if (days < 65)  return "tillering";
-    if (days < 95)  return "reproductive";
-    return "ripening";
-}
-
-function cottonStage(days: number): CottonStage {
-    if (days < 30)  return "seedling";
-    if (days < 70)  return "vegetative";
-    if (days < 150) return "flowering";
-    return "bollMaturation";
-}
-
-function genericStage(days: number): GenericStage {
-    if (days < 30)  return "seedling";
-    if (days < 70)  return "vegetative";
-    if (days < 110) return "reproductive";
-    return "maturity";
-}
 
 
 const wheatRamps: Record<WheatStage, Record<ImageType, number[][]>> = {
