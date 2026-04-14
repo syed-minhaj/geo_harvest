@@ -4,6 +4,7 @@ import { getDateShort } from "../utils/Date";
 import { getAverageRampValueFromUrl_Server, revalidatePath_fromClient, setAvgPixelValueBatch } from "./actions";
 import { revalidatePath } from "next/cache";
 import { getColorRamp } from "../utils/colorRamp";
+import { getAgriCycle, getCycleByIndex } from "../utils/agriCycle";
 
 type rampRGB = {
     value : number,
@@ -96,42 +97,42 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
     }
     
     else{
-        let valuesOfMonth :number[] = []
-        
+        let valuesOfCycle :number[] = []
         for(let i = noOfValues-1 ; i >= 0 ; i--) {
-            const monthOfCurrentValue = new Date(field.imagesDates[i]).getMonth();
-            const monthOfLastValue = new Date(field.imagesDates[i+1]).getMonth() ?? -1;
-            if (monthOfCurrentValue === monthOfLastValue) {
+            const cycleOfCurrentValue = getAgriCycle(new Date(field.imagesDates[i]) , field.crop[0].name , field.crop[0].planted_at);
+            const cycleOfLastValue = getAgriCycle(new Date(field.imagesDates[i+1]) , field.crop[0].name , field.crop[0].planted_at) ?? "no_last_value";
+            
+            if (cycleOfCurrentValue === cycleOfLastValue) {
                 const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
-                if(a !== null && !Number.isNaN(a)) valuesOfMonth.push(a < 0 ? 0 : a)
-            }else if(valuesOfMonth.length != 0){
+                if(a !== null && !Number.isNaN(a)) valuesOfCycle.push(a < 0 ? 0 : a)
+            }else if(valuesOfCycle.length != 0){
                 graphData.push({
-                    date : JSON.stringify(graphData.length + 1),
-                    value : average(valuesOfMonth) ,
+                    date : getCycleByIndex(graphData.length  , field.crop[0].name),
+                    value : average(valuesOfCycle) ,
                 })
-                lasthex ="#" + findClosestColorFromHex(average(valuesOfMonth) , getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at) , ImageType).toString(16).padStart(6,'0').toUpperCase();
-                valuesOfMonth = []
+                lasthex ="#" + findClosestColorFromHex(average(valuesOfCycle) , getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at) , ImageType).toString(16).padStart(6,'0').toUpperCase();
+                valuesOfCycle = []
                 i++
             }else {
                 const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
-                if(a !== null && !Number.isNaN(a)) valuesOfMonth.push(a < 0 ? 0 : a)
+                if(a !== null && !Number.isNaN(a)) valuesOfCycle.push(a < 0 ? 0 : a)
             }
         
         }
-        if (valuesOfMonth.length != 0){
+        if (valuesOfCycle.length != 0){
             graphData.push({
-                date : JSON.stringify(graphData.length + 1),
-                value : average(valuesOfMonth),
+                date : getCycleByIndex(graphData.length  , field.crop[0].name),
+                value : average(valuesOfCycle),
             })
-            lasthex ="#" + findClosestColorFromHex(average(valuesOfMonth) , getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at) , ImageType).toString(16).padStart(6, '0').toUpperCase();
-            valuesOfMonth = []
+            lasthex ="#" + findClosestColorFromHex(average(valuesOfCycle) , getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at) , ImageType).toString(16).padStart(6, '0').toUpperCase();
+            valuesOfCycle = []
         }
 
-        let noOfPeriods = 6
+        let noOfPeriods = 4
         noOfPeriods = noOfPeriods - graphData.length
         for(let i = 1 ; i <= noOfPeriods ; i++) {
             graphData.push({
-                date : JSON.stringify(graphData.length + 1),
+                date : getCycleByIndex(i + graphData.length - 1, field.crop[0].name),
                 value : NaN,
             })
         }
