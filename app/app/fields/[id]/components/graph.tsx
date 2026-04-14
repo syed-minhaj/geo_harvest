@@ -141,7 +141,7 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
             </div>
             <CardHeader className="flex flex-row">
                 <div className="flex flex-col gap-1.5">
-                    <CardTitle className="w-full flex flex-row">{hash} graph over time {type}</CardTitle>
+                    <CardTitle className="w-full flex flex-row">{hash} graph over {type == "yearly" && "time"} {type}</CardTitle>
                     <CardDescription>
                         Showing total visitors for the last 6 months
                     </CardDescription>
