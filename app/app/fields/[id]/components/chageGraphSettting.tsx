@@ -1,9 +1,9 @@
 import { Select, SelectContent, SelectValue , SelectTrigger, SelectGroup, SelectLabel, SelectItem } from '@/app/components/ui/select';
 
 
-const ChangeGraphType = ({type , setType} : {type : "yearly" | "periodly" , setType : (type : "yearly" | "periodly") => void}) => {
+const ChangeGraphType = ({type , setType} : {type : "yearly" | "crop cycle" , setType : (type : "yearly" | "crop cycle") => void}) => {
     return (
-        <Select value={type} onValueChange={(e) => {setType(type == "yearly" ? "periodly" : "yearly")}}>
+        <Select value={type} onValueChange={(e) => {setType(type == "yearly" ? "crop cycle" : "yearly")}}>
             <SelectTrigger className="ml-auto lg:hidden">
                 <SelectValue placeholder="Select Crop" />
             </SelectTrigger>
@@ -13,8 +13,8 @@ const ChangeGraphType = ({type , setType} : {type : "yearly" | "periodly" , setT
                         <SelectItem value={"yearly"} key={"yearly"}>
                             Yearly
                         </SelectItem>
-                        <SelectItem value={"periodly"} key={"periodly"}>
-                            Periodly
+                        <SelectItem value={"crop cycle"} key={"crop cycle"}>
+                            Crop Cycle
                         </SelectItem>
                 </SelectGroup>
             </SelectContent>

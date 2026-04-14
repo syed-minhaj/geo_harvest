@@ -17,7 +17,8 @@ import { getGraphData } from "@/app/actions/graphValues";
 const MapClient = dynamic(() => import("./MapClient") , { ssr : false});
 const Graph = dynamic(() => import("./graph") , { ssr : false});
 
-type graphType = "yearly" | "periodly"
+type graphType = "yearly" | "crop cycle";
+
 type avgPixelValue = {
     fieldId : string,
     imageType : ImageType,
@@ -44,7 +45,7 @@ export default function Main({field} : {field : tfield & {crop : {name : string 
         ImagesTypes.forEach((img : ImageType) => {
             initialState[img] = {
                 yearly: undefined,
-                periodly: undefined
+                "crop cycle": undefined
             };
         });
         return initialState;
@@ -54,7 +55,7 @@ export default function Main({field} : {field : tfield & {crop : {name : string 
         const AsyncFunc = async () => {
             for(const img of ImagesTypes) {
                 const res = await getAvgPixelValueByFieldIdImageType(field.id , img)
-                for(const type of ["yearly", "periodly"] as graphType[]) {
+                for(const type of ["yearly", "crop cycle"] as graphType[]) {
                     getGraphData(field  , res , type, img ).then((res) => {
                         setAllData(prev => ({
                             ...prev,
@@ -120,7 +121,7 @@ export default function Main({field} : {field : tfield & {crop : {name : string 
                             </div>
                             <div className="hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-4">
                                 <Graph typeP="yearly" field={field} allData={allData} />
-                                <Graph typeP="periodly" field={field}  allData={allData} />
+                                <Graph typeP="crop cycle" field={field}  allData={allData} />
                             </div>
                         </div>
                     </ChartWrapper>

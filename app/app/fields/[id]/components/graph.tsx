@@ -11,7 +11,7 @@ import { getDateShort } from "@/app/utils/Date";
 import {ChangeGraphType,  ChangeGraphYear } from "./chageGraphSettting";
 import { allData } from "./Main";
 
-type graphType = "yearly" | "periodly"
+type graphType = "yearly" | "crop cycle";
 
 type avgPixelValue = {
     fieldId : string,
@@ -71,7 +71,7 @@ const chartDataByYear = (rawData: { date: string; value: number }[] , year : num
 
 const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield , allData : allData}) => {
     const {hash} = useHash("")
-    const [type , setType] = useState<"yearly" | "periodly">(typeP)
+    const [type , setType] = useState<"yearly" | "crop cycle">(typeP)
     const [year , setYear] = useState(new Date().getFullYear())
     const [chartData , setChartData] = useState < {date : string , value : number}[]>([])
     const [done , setDone] = useState(false)

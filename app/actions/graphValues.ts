@@ -58,7 +58,7 @@ async function getAverageRampValueFromUrl(fieldId : string , imageDate : string 
     }
 }
 
-async function getGraphData(field : tfield & {crop : {name : string , planted_at : Date}[]}  , avgPixelValue : avgPixelValue[]  , graphType : "yearly" | "periodly" , ImageType : ImageType) {
+async function getGraphData(field : tfield & {crop : {name : string , planted_at : Date}[]}  , avgPixelValue : avgPixelValue[]  , graphType : "yearly" | "crop cycle" , ImageType : ImageType) {
     
     const rampRGB =  getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at).map(([value, intColor]) => {
         const r = (intColor >> 16) & 255;
