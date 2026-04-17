@@ -1,28 +1,12 @@
 "use client";
-import React, { useState, useEffect } from 'react';
 import  '../../style/themeToggle.css';
+import { useTheme } from 'next-themes';
 
 const ThemeSwitcher = () => {
-    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
-
-    useEffect(() => {
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-            localStorage.setItem('theme', theme);
-            const metaTag = document.querySelector('meta[name="theme-color"]');
-            if (!metaTag) return;
-            metaTag.setAttribute('content', theme === 'dark' ? '#0a0a0a' : '#F8FDFB');
-            const html = document.querySelector('html');
-            if (!html) return;
-            html.style = `color-scheme: ${theme};`
-    }, [theme]);
+    const { theme, setTheme } = useTheme();
 
     const toggleTheme = () => {
-        setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
-        localStorage.setItem('theme', theme);
+        setTheme(theme === "light" ? "dark" : "light");
     };
 
     return (
