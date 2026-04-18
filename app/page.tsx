@@ -85,7 +85,7 @@ export default function App() {
                         The future of agriculture is managed from orbit.
                     </p>
                     <div className="flex flex-wrap items-center justify-center gap-6">
-                        <Link href={"/app/fields/create"} className="h-14 px-10 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-black font-bold rounded-2xl transition-all shadow-lg shadow-emerald-600/20 dark:shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-95 flex items-center">
+                        <Link href={"/app/fields"} className="h-14 px-10 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-black font-bold rounded-2xl transition-all shadow-lg shadow-emerald-600/20 dark:shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-95 flex items-center">
                             Get Started
                         </Link>
                         <a target="_blank" href="https://github.com/syed-minhaj/geo_harvest" 
