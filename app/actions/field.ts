@@ -5,7 +5,7 @@ import { db } from "@/app/lib/drizzle";
 import { Crop as CropName , field , crop, avgPixelValue } from "@/db/schema";
 import { supabase } from "@/app/lib/supabase";
 import { sentinel_catalog, sentinel_image } from "../utils/sentinel";
-import { and, eq, sql } from "drizzle-orm";
+import { and, count, eq, sql } from "drizzle-orm";
 import { ImageType } from "../types";
 import { getAverageRampValueFromUrl_Server } from "@/app/actions/actions";
 import { getColorRamp } from "../utils/colorRamp";
@@ -16,11 +16,22 @@ type CropType = {
     plantedDate : Date
 }
 
+async function userAllowedToCreateField(userID : string) {
+    if (userID === process.env.ADMIN_USER_ID) return true;
+    const fieldCount = await db.select({count : count()}).from(field).where(eq(field.ownerId , userID)).execute();
+    if (fieldCount[0].count > 2) return false ;
+    return true;
+}
+
 export async function CreateField({name , coordinates , fcrop} : {name : string, coordinates : number[][] , fcrop : CropType}) {
 
     const session = await auth.api.getSession({headers : await headers()});
     if (!session) {
             return {err : "Please login to create a field."}
+    }
+
+    if (!await userAllowedToCreateField(session.user.id)) {
+        return {err : "You have reached the maximum number of fields."}
     }
     try {
         const f = await db.insert(field).values({
