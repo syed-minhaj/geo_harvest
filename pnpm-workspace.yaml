@@ -1,3 +1,12 @@
+allowBuilds:
+  core-js: true
+  esbuild: true
+  sharp: true
+minimumReleaseAgeExclude:
+  - next@16.2.5
+  - kysely@0.28.17
+  - next@16.2.6
+  - better-auth@1.6.2
 overrides:
   drizzle-orm@<0.45.2: '>=0.45.2'
   esbuild@<=0.24.2: '>=0.25.0'
