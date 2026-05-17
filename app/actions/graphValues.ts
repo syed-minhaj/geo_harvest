@@ -4,7 +4,7 @@ import { getDateShort } from "../utils/Date";
 import { getAverageRampValueFromUrl_Server, revalidatePath_fromClient, setAvgPixelValueBatch } from "./actions";
 import { revalidatePath } from "next/cache";
 import { getColorRamp } from "../utils/colorRamp";
-import { getAgriCycle, getCycleByIndex } from "../utils/agriCycle";
+import { getAgriCycle, getCycleByIndex, getCycleIndex } from "../utils/agriCycle";
 
 type rampRGB = {
     value : number,

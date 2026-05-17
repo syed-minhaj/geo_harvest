@@ -67,3 +67,17 @@ export function getCycleByIndex(index : number , cropType : string) {
     return determineStage[index];
 
 }
+
+export function getCycleIndex(cycle : string | undefined , cropType : string) {
+    const stageMap: Record<string, string[]> = {
+        wheat: wStage,
+        rice: rStage,
+        cotton: cStage,
+    };
+
+    const determineStage = stageMap[cropType] || genericStage;
+
+    if (cycle === undefined) return -1;
+    return determineStage.indexOf(cycle) ?? -1 ;
+
+}
