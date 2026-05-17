@@ -50,7 +50,10 @@ export async function GET(req : NextRequest) {
     
             const dates = res.data.features.map((f : any) => f.properties.datetime);
             dates.sort((a:string, b:string) => new Date(b).getTime() - new Date(a).getTime());
-    
+            if (dates.length === 0) {
+                console.log("no dates found");
+                continue;
+            }
             console.log(dates[0] , "\n" , field.imagesDates);
             if(field.imagesDates.includes(dates[0])) {
                 console.log("already done" , field.id);
