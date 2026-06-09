@@ -1,5 +1,6 @@
 
-import {Fields , FieldsLoader} from './components/fileds';
+import {Fields } from './components/fileds';
+import { FieldsLoader } from './components/fieldLoader';
 import { Suspense } from 'react';
 
 
