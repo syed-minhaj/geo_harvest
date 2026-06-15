@@ -104,9 +104,11 @@ function getLatestMetric(
     avgPixelValue: { imageType: string; value: number | null; imageDate: string }[],
     type: string
 ) {
-    return avgPixelValue
+    const sorted = avgPixelValue
         .filter(v => v.imageType === type)
         .sort((a, b) => b.imageDate.localeCompare(a.imageDate))[0]?.value ?? null;
+
+    return sorted === null ? null : sorted < 0 ? 0 : sorted;
 }
 
 function MetricCell({ label, value, unit }: { label: string; value: number | null; unit?: string }) {
@@ -162,7 +164,7 @@ export async function Fields() {
                     <Link
                         key={field.id}
                         href={`/app/fields/${field.id}`}
-                        className='rounded-[0.75rem] border-1 bg-white dark:bg-secondary/15 shadow-sm hover:shadow-lg dark:shadow-gray-900 overflow-hidden flex flex-col'
+                        className='rounded-[0.75rem] border-1 bg-white dark:bg-secondary/15 shadow-sm hover:shadow-lg dark:shadow-green-950/25 overflow-hidden flex flex-col'
                     >
                         <div className='flex flex-col sm:flex-row'>
                             <div className='bg-green-50 dark:bg-green-950/20 border-r border-border flex flex-col items-center justify-center gap-3 p-4 shrink-0'>
@@ -193,12 +195,12 @@ export async function Fields() {
                                     <div className="pb-3">
                                         <h2 className='text-lg font-semibold leading-tight'>{field.name}</h2>
                                     </div>
-                                    <div className='flex gap-1.5 flex-wrap justify-end'>
-                                        <span className='text-xs font-medium px-2.5 py-1 rounded-full bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800'>
+                                    <div className='flex gap-2.5 flex-wrap justify-end'>
+                                        <span className='text-xs font-medium py-1 text-muted-foreground'>
                                             {crop.name}
                                         </span>
                                         {crop.seedVariety !== 'other' && (
-                                            <span className='text-xs px-2.5 py-1 rounded-full bg-muted text-muted-foreground'>
+                                            <span className='text-xs py-1  text-muted-foreground'>
                                                 {crop.seedVariety}
                                             </span>
                                         )}
