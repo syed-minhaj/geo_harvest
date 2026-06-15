@@ -104,9 +104,11 @@ function getLatestMetric(
     avgPixelValue: { imageType: string; value: number | null; imageDate: string }[],
     type: string
 ) {
-    return avgPixelValue
+    const sorted = avgPixelValue
         .filter(v => v.imageType === type)
         .sort((a, b) => b.imageDate.localeCompare(a.imageDate))[0]?.value ?? null;
+
+    return sorted === null ? null : sorted < 0 ? 0 : sorted;
 }
 
 function MetricCell({ label, value, unit }: { label: string; value: number | null; unit?: string }) {
