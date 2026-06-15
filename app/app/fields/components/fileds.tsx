@@ -193,12 +193,12 @@ export async function Fields() {
                                     <div className="pb-3">
                                         <h2 className='text-lg font-semibold leading-tight'>{field.name}</h2>
                                     </div>
-                                    <div className='flex gap-1.5 flex-wrap justify-end'>
-                                        <span className='text-xs font-medium px-2.5 py-1 rounded-full bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800'>
+                                    <div className='flex gap-2.5 flex-wrap justify-end'>
+                                        <span className='text-xs font-medium py-1 text-muted-foreground'>
                                             {crop.name}
                                         </span>
                                         {crop.seedVariety !== 'other' && (
-                                            <span className='text-xs px-2.5 py-1 rounded-full bg-muted text-muted-foreground'>
+                                            <span className='text-xs py-1  text-muted-foreground'>
                                                 {crop.seedVariety}
                                             </span>
                                         )}
