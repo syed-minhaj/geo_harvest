@@ -162,7 +162,7 @@ export async function Fields() {
                     <Link
                         key={field.id}
                         href={`/app/fields/${field.id}`}
-                        className='rounded-[0.75rem] border-1 bg-white dark:bg-secondary/15 shadow-sm hover:shadow-lg dark:shadow-gray-900 overflow-hidden flex flex-col'
+                        className='rounded-[0.75rem] border-1 bg-white dark:bg-secondary/15 shadow-sm hover:shadow-lg dark:shadow-green-950/25 overflow-hidden flex flex-col'
                     >
                         <div className='flex flex-col sm:flex-row'>
                             <div className='bg-green-50 dark:bg-green-950/20 border-r border-border flex flex-col items-center justify-center gap-3 p-4 shrink-0'>
