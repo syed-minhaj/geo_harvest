@@ -41,9 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 certificates
-app/actions
-app/components
-app/utils
 
 docker-compose.yml
 dockerfile
