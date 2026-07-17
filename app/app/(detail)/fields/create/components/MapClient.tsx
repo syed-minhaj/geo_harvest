@@ -22,11 +22,15 @@ export default function MapClient({cordinates , setCordinates} : {cordinates : n
     const [location, setLocation] = useState<location | null>(null);
     const [err, setErr] = useState<string | null>(null);
 
-    useEffect(() => {
+    function getLocation () {
         getUserLocation().then(({location, err}) => {
             setLocation(location);
             setErr(err);
         })
+    }
+
+    useEffect(() => {
+        getLocation();
     }, []);
 
 
@@ -34,7 +38,7 @@ export default function MapClient({cordinates , setCordinates} : {cordinates : n
         return  (
             <div className='w-full h-[30rem] 2xl:h-[35rem] rounded-[0.75rem] z-20 corner-squircle bg-muted flex flex-col gap-4 justify-center items-center'>
                 <div className='max-w-[80%] text-center'>{err}</div>
-                <Button onClick={() => getUserLocation()}>Allow Location Access</Button>
+                <Button onClick={() => getLocation()}>Allow Location Access</Button>
             </div>
         )
     }

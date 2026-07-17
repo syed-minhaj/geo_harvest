@@ -47,7 +47,7 @@ export default function RootLayout({
                 <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
             </head>
             <body
-                className={`${geistSans.variable} ${geistMono.variable} ${josefinSans.variable} ${albertSans.variable} antialiased`}
+                className={`${geistSans.variable} ${geistMono.variable} ${josefinSans.variable} ${albertSans.variable} antialiased overflow-x-hidden`}
             >
                 <ThemeProvider>
                     <NextTopLoader color="#004C20" showSpinner={false} />
