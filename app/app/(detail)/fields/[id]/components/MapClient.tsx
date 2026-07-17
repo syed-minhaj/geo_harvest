@@ -65,7 +65,7 @@ export default function MapClient({field} : {field : tfield & {crop : {name : st
 
 
     return (
-        <div className="relative h-full  "> 
+        <div className="relative flex-1 min-h-0  "> 
             <MapContainer center={position} zoom={getZoom(coordinates)} scrollWheelZoom={true} style={{}} className="w-full h-full rounded-[0.75rem] corner-squircle z-20 " >
                 <TileLayer
                     url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"

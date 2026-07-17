@@ -1,7 +1,5 @@
 import { Toaster } from "../components/ui/sonner";
-import {Navbar} from "../components/Navbar";
 import Providers from "../components/providers";
-
 
 export default function AppLayout({
     children,
@@ -9,13 +7,9 @@ export default function AppLayout({
     children: React.ReactNode;
 }>) {
     return (
-
-        <main lang="en" className="flex flex-col h-[100dvh] ">
-            <Providers>
-                <Navbar />
-                {children}
-            </Providers>
+        <Providers>
+            {children}
             <Toaster position="top-center"/>
-        </main>
+        </Providers>
     );
 }
