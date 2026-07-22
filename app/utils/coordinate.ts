@@ -52,4 +52,11 @@ function getZoom(coordinates : number[][]) {
     return Math.log2(180/Math.abs(north - south)) + 1
 }
 
-export {getUserLocation , fromPostgresPolygon , getZoom};
+function getZoomForBounds(latSpan: number, lonSpan: number, centerLat: number, containerWidth: number, containerHeight: number) {
+    const tileSize = 256;
+    const latZoom = Math.log2((containerHeight * 180) / (latSpan * tileSize));
+    const lonZoom = Math.log2((containerWidth * 180) / (lonSpan * tileSize * Math.cos(centerLat * Math.PI / 180)));
+    return Math.floor(Math.min(latZoom, lonZoom));
+}
+
+export {getUserLocation , fromPostgresPolygon , getZoom, getZoomForBounds};
