@@ -8,7 +8,8 @@ Geo_Harvest is a precision agriculture web application built with Next.js that i
 - **Multi-Spectral Analysis** – Four analysis types: Water Requirement (NDMI), Nitrogen, Phosphorus, and Crop Stress
 - **Satellite Data Pipeline** – Automatic fetching of Sentinel-2 imagery via Copernicus Data Space Ecosystem API, processed with custom evalscripts
 - **Crop Management** – Supports wheat, rice, and cotton with variety selection and growth stage tracking
-- **Analytics Dashboard** – KPIs, overview charts, field comparison, crop distribution, and data freshness tracking
+- **Farm at a Glance Dashboard** – Overview map, KPI cards, recent field activity, and field health table at `/app`
+- **Analytics Dashboard** – Cross-field KPIs, vegetation index trends, field comparison bar chart, crop distribution donut, and data freshness tracking at `/app/analytics`
 - **Scheduled Updates** – Weekly cron job (Vercel Cron) updates imagery automatically
 - **Authentication** – Secure login via email/password or Google OAuth using Better-Auth
 - **Dark Mode** – Full theme support with next-themes
@@ -93,12 +94,16 @@ next-app/
 │   ├── api/               # API routes (auth, cron, test)
 │   ├── app/               # Authenticated app pages
 │   │   ├── (dashboard)/   # Dashboard layout (sidebar + navbar)
-│   │   │   ├── fields/    # Field list page
-│   │   │   └── analytics/ # Analytics dashboard
+│   │   │   ├── page.tsx   # Farm at a Glance dashboard (map, KPIs, field cards, table)
+│   │   │   ├── fields/    # Field list page (header + create button + field cards)
+│   │   │   └── analytics/ # Cross-field analytics (KPIs, charts, crop distribution, freshness)
 │   │   ├── (detail)/      # Detail layout (full-screen)
-│   │   │   └── fields/    # Field detail (map + charts) + create field
+│   │   │   └── fields/
+│   │   │       ├── [id]/  # Field detail (map, charts, analysis config)
+│   │   │       └── create/# Draw boundaries + create field form
 │   │   └── auth/          # Authentication pages
-│   ├── components/        # Shared UI components (navbar, sidebar, cards, map)
+│   ├── components/        # Shared UI components (navbar, sidebar, FieldCard, MapOverview)
+│   │   └── ui/            # shadcn/ui primitives (button, card, chart, dialog, select, etc.)
 │   ├── hooks/             # Custom React hooks
 │   ├── lib/               # Library configs (auth, drizzle, supabase, utils)
 │   ├── style/             # Global styles (map, theme toggle)
