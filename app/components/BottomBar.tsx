@@ -20,10 +20,10 @@ export default function BottomBar() {
     return (
         <div className="sm:hidden flex flex-row w-full h-16 px-4 bg-white dark:bg-[#262626] sticky bottom-0 justify-between items-center border-t border-black/20 dark:border-white/20">
             {Pages.map((page, index) => (
-                <Link href={`/app/${page}`} key={index} 
+                <Link href={page === "dashboard" ? "/app" : `/app/${page}`} key={index} 
                     className={`  rounded-r1 border flex flex-col items-center text-sm 
                     hover:bg-bg1 hover:border-black/10 
-                    ${pathname.split(`/app/`).at(-1) == page ? "bg-bg1  border-black/20 dark:border-white/20" : "border-transparent"} 
+                    ${(page === "dashboard" && (pathname === "/app" || pathname.split(`/app/`).at(-1) == page)) || (page !== "dashboard" && pathname.split(`/app/`).at(-1) == page) ? "bg-bg1  border-black/20 dark:border-white/20" : "border-transparent"} 
                     p-2 px-2 leading-none font-medium text-black/85 dark:text-white/85 `} >
                     <IconComponent page={page} />
                     <span className={`  `}>
