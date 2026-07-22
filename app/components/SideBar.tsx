@@ -38,10 +38,10 @@ export default function SideBar() {
             </div>
             <div className="px-4 flex flex-col gap-1 flex-1 group sideBar-child overflow-hidden">
                 {Pages.map((page, index) => (
-                    <Link href={`/app/${page}`} key={index} 
+                    <Link href={page === "dashboard" ? "/app" : `/app/${page}`} key={index} 
                         className={` ${open ? "w-52 " : "w-[2.375rem]"} rounded-r1 border flex flex-row items-center  transition-[width] duration-300 ease-in-out 
                             group-hover:w-52 hover:bg-bg1 hover:border-black/10 
-                        ${pathname.split(`/app/`).at(-1) == page ? "bg-bg1  border-black/20 dark:border-white/20" : "border-transparent"} 
+                        ${(page === "dashboard" && (pathname === "/app" || pathname.split(`/app/`).at(-1) == page)) || (page !== "dashboard" && pathname.split(`/app/`).at(-1) == page) ? "bg-bg1  border-black/20 dark:border-white/20" : "border-transparent"} 
                         p-2 px-2 leading-none font-medium text-black/85 dark:text-white/85 `} >
                         <IconComponent page={page} />
                         <span className={`${open ? "w-24" : "w-0 "} overflow-hidden whitespace-nowrap  transition-[width] duration-300 ease-in-out group-hover:w-24 `}>
