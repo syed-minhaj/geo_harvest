@@ -1,58 +1,147 @@
 # Geo_Harvest
 
-Geo_Harvest is a web application built with Next.js for agricultural data visualization and management. It allows users to view and analyze data related to their fields, including information fetched from third-party APIs.
+Geo_Harvest is a precision agriculture web application built with Next.js that integrates satellite imagery from Copernicus Sentinel-2 to help farmers monitor field health indicators — water requirement (NDMI), nitrogen, phosphorus, and crop stress — through an interactive map interface.
 
-## Functionality
+## Features
 
-*   **Field Visualization:** Visualize geographic data for agricultural fields on a map.
-*   **Data Integration:** Fetches and displays data from external sources, including satellite imagery and other agricultural data, using third-party APIs.
-*   **Cron Jobs:** Automatically updates data, such as fetching new images, on a regular schedule.
-*   **Authentication:** Secure user authentication and authorization.
-
-## Getting Started
-
-To get a local copy up and running, follow these simple steps.
-
-
-### Installation
-
-1. Clone the repo
-   ```sh
-   git clone https://github.com/syed-minhaj/geo_harvest.git
-   ```
-2. Install NPM packages
-   ```sh
-   npm install
-   ```
-3. Run the development server
-    ```sh
-    npm run dev
-    ```
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Interactive Field Maps** – Draw field boundaries on a Leaflet map and visualize satellite-derived indices as color-ramped overlays
+- **Multi-Spectral Analysis** – Four analysis types: Water Requirement (NDMI), Nitrogen, Phosphorus, and Crop Stress
+- **Satellite Data Pipeline** – Automatic fetching of Sentinel-2 imagery via Copernicus Data Space Ecosystem API, processed with custom evalscripts
+- **Crop Management** – Supports wheat, rice, and cotton with variety selection and growth stage tracking
+- **Analytics Dashboard** – KPIs, overview charts, field comparison, crop distribution, and data freshness tracking
+- **Scheduled Updates** – Weekly cron job (Vercel Cron) updates imagery automatically
+- **Authentication** – Secure login via email/password or Google OAuth using Better-Auth
+- **Dark Mode** – Full theme support with next-themes
+- **Responsive Design** – Mobile bottom navigation, desktop sidebar, and adaptive layouts
+- **PWA Support** – Progressive Web App with standalone display mode
 
 ## Tech Stack
 
-*   [Next.js](https://nextjs.org/) - React Framework
-*   [TypeScript](https://www.typescriptlang.org/) - JavaScript with syntax for types.
-*   [Drizzle ORM](https://orm.drizzle.team/) - TypeScript ORM for SQL databases
-*   [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework
+- **Framework:** [Next.js](https://nextjs.org/) 16 (App Router) with TypeScript
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) v4, shadcn/ui, Radix UI, Lucide Icons
+- **Database:** PostgreSQL ([Neon](https://neon.tech/)) with [Drizzle ORM](https://orm.drizzle.team/)
+- **Authentication:** [Better-Auth](https://www.better-auth.com/) with email/password + Google OAuth
+- **Mapping:** [Leaflet](https://leafletjs.com/) + react-leaflet, Leaflet Draw / Geoman
+- **Charts:** [Recharts](https://recharts.org/)
+- **Storage:** [Supabase](https://supabase.com/) (file storage for satellite overlays)
+- **Satellite API:** [Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/) (Sentinel-2)
+- **Image Processing:** [sharp](https://sharp.pixelplumbing.com/) + GeoTIFF
+- **DevOps:** Docker, Vercel (Cron Jobs), pnpm workspaces
+
+## Prerequisites
+
+- Node.js 20+
+- pnpm (recommended) or npm
+- PostgreSQL database (Neon or local)
+- Supabase project (for file storage)
+- Copernicus Data Space Ecosystem account (free)
+- Google OAuth credentials (optional)
+
+## Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/syed-minhaj/geo_harvest.git
+cd geo_harvest/next-app
+```
+
+### 2. Install dependencies
+
+```bash
+pnpm install
+```
+
+### 3. Set up environment variables
+
+Copy `.env.example` to `.env` and fill in the required values:
+
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | PostgreSQL connection string (Neon) |
+| `BETTER_AUTH_SECRET` | Better-Auth encryption secret |
+| `BETTER_AUTH_URL` | Base URL (e.g. `http://localhost:3000`) |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
+| `COPERNICUS_CLIENT_ID` | Copernicus Data Space Ecosystem client ID |
+| `COPERNICUS_CLIENT_SECRET` | Copernicus Data Space Ecosystem client secret |
+| `SUPABASE_URL` | Supabase project URL |
+| `SUPABASE_ANON_KEY` | Supabase anonymous key |
+| `APP_PASSWORD` | Gmail app password (for password reset emails) |
+| `CRON_SECRET` | Secret to secure the cron endpoint |
+
+### 4. Push the database schema
+
+```bash
+pnpm drizzle
+```
+
+### 5. Run the development server
+
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
 ## Project Structure
 
-The project structure is based on the Next.js `app` directory.
+```
+next-app/
+├── app/
+│   ├── actions/           # Server Actions (revalidation, field CRUD, graph data)
+│   ├── api/               # API routes (auth, cron, test)
+│   ├── app/               # Authenticated app pages
+│   │   ├── (dashboard)/   # Dashboard layout (sidebar + navbar)
+│   │   │   ├── fields/    # Field list page
+│   │   │   └── analytics/ # Analytics dashboard
+│   │   ├── (detail)/      # Detail layout (full-screen)
+│   │   │   └── fields/    # Field detail (map + charts) + create field
+│   │   └── auth/          # Authentication pages
+│   ├── components/        # Shared UI components (navbar, sidebar, cards, map)
+│   ├── hooks/             # Custom React hooks
+│   ├── lib/               # Library configs (auth, drizzle, supabase, utils)
+│   ├── style/             # Global styles (map, theme toggle)
+│   └── utils/             # Utilities (evalscripts, area calc, dates, color ramps, sentinel API)
+├── db/                    # Database schema (auth + app tables)
+├── drizzle/               # SQL migration files
+├── public/                # Static assets
+└── data/                  # Crop data, color palettes
+```
+
+## Available Scripts
+
+| Script | Description |
+|--------|-------------|
+| `pnpm dev` | Start development server with Turbopack |
+| `pnpm build` | Run migrations + build for production |
+| `pnpm start` | Start production server |
+| `pnpm lint` | Run Next.js lint |
+| `pnpm drizzle` | Generate + apply database migrations |
+
+## Data Flow
 
 ```
-.
-├── app
-│   ├── api         # API routes
-|   ├── actions     # server actions
-│   ├── app         # Application pages
-│   ├── components  # Reusable components
-│   ├── lib         # Library function (supabase)
-|   ├── utils       # utility functions
-|   ├── hooks       # custom hooks
-│   └── style       # Global styles
-├── db              # Database schema
-├── public          # Static assets
-└── ...
+Copernicus Sentinel-2 API
+        │
+        ▼
+  Server Actions / Cron Job
+        │
+        ▼
+  [sharp] Process evalscript → PNG
+        │
+        ▼
+  Supabase Storage (image overlays)
+        │
+        ▼
+  Avg pixel values → PostgreSQL (Neon)
+        │
+        ▼
+  Next.js App → Leaflet Map + Recharts
 ```
+
+## Deployment
+
+The app is designed to be deployed on [Vercel](https://vercel.com/). The `vercel.json` includes a cron job configuration that triggers the imagery update endpoint weekly.
+
+A Dockerfile and `docker-compose.yml` are also provided for containerized deployment.

@@ -45,3 +45,5 @@ certificates
 docker-compose.yml
 dockerfile
 .dockerignore
+.env*.local
+app/api/test
