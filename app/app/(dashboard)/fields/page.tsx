@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/app/components/ui/button";
 import { Plus } from "lucide-react";
-import { Fields, FieldsLoader } from "./components/fileds";
+import { Fields, FieldsLoader } from "./components/fields";
 import { Suspense } from "react";
 
 export default async function FieldsPage() {
