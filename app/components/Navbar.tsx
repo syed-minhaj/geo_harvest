@@ -35,7 +35,7 @@ export  function HomeNavbar() {
         <nav className="flex flex-row items-center justify-center h-16 px-4">
             <Logo />
             <div className="ml-auto gap-4 flex flex-row">
-                <Link className="" href='/app/fields' >
+                <Link className="" href='/app' >
                     <Button variant={"link"}>Try Now</Button>
                 </Link>
                 <ThemeSwitcher/>
