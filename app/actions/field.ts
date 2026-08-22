@@ -58,28 +58,31 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
         dates.sort((a:string, b:string) => new Date(b).getTime() - new Date(a).getTime());
 
         if (dates.length === 0) return {err : null , data : {id: feildId}}
-        await db.update(field)
-            .set({
-                imagesDates: sql`array_append(${field.imagesDates}, ${dates[0]})`
-            })
-            .where(eq(field.id, feildId))
 
         const pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
-        
+        const uploadedPaths : string[] = []
+        let failed : string | null = null
         for(const to  of ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"] as ImageType[]) {
 
             const res = await sentinel_image({coordinates , date:dates[0]  , imageType : to , crop : fcrop.name , plantingDate : fcrop.plantedDate})
             if(res.err || res.data === null) {
                 console.error(res.err);
-                return {err : res.err , data : null};
+                failed = `image generation failed for ${to}: ${res.err ?? "no data"}`;
+                break;
             }
             const { data, error } = await supabase.storage
                 .from("field")
                 .upload(`${feildId}/${dates[0]}/${to}.png`, res.data, {
                     cacheControl: '3600', 
                     contentType: 'image/png', 
-                    upsert: false, 
+                    upsert: true, 
                 });
+            if (error) {
+                console.error('Error uploading image:', error.message);
+                failed = `upload failed for ${to}: ${error.message}`;
+                break;
+            }
+            uploadedPaths.push(`${feildId}/${dates[0]}/${to}.png`)
 
             const rampRGB =  getColorRamp(fcrop.name , to , fcrop.plantedDate).map(([value, intColor]) => {
                 const r = (intColor >> 16) & 255;
@@ -87,15 +90,32 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
                 const b = intColor & 255;
                 return { value, r, g, b };
             });
-            const value = await getAverageRampValueFromUrl_Server(feildId , dates[0] , to , rampRGB)
-            pixelValues.push({fieldId : feildId , imageType : to , imageDate : dates[0] , value : value})
-            
-            if (error) {
-                console.error('Error uploading image:', error.message);
-                return {err : "backend error : contact admin." , data : null};
+            let value : number | null = null
+            try {
+                value = await getAverageRampValueFromUrl_Server(feildId , dates[0] , to , rampRGB)
+            } catch (e : any) {
+                console.error(e);
+                failed = `value computation failed for ${to}: ${e?.message ?? e}`;
+                break;
             }
-            
+            pixelValues.push({fieldId : feildId , imageType : to , imageDate : dates[0] , value : value})
         }
+
+        if (failed) {
+            // All-or-none: clean up partial images and never record the date.
+            if (uploadedPaths.length > 0) {
+                await supabase.storage.from("field").remove(uploadedPaths);
+            }
+            console.error(failed);
+            return {err : "backend error : contact admin." , data : null};
+        }
+
+        // Only record the date once every image type exists.
+        await db.update(field)
+            .set({
+                imagesDates: sql`array_append(${field.imagesDates}, ${dates[0]})`
+            })
+            .where(eq(field.id, feildId))
         if (pixelValues.length != 0) await db.insert(avgPixelValue).values(pixelValues)
         
         return {err : null , data : {id : feildId}}
