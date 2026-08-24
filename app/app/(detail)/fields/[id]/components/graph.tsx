@@ -143,7 +143,9 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
                 <div className="flex flex-col gap-1.5">
                     <CardTitle className="w-full flex flex-row">{hash} graph over {type == "yearly" && "time"} {type}</CardTitle>
                     <CardDescription>
-                        Showing total visitors for the last 6 months
+                        {type === "yearly"
+                            ? `${getDateShort(new Date(field.imagesDates[field.imagesDates.length - 1]))} - ${getDateShort(new Date(field.imagesDates[0]))}`
+                            : "Average score per growth stage"}
                     </CardDescription>
                 </div>
                 <div className="flex flex-row gap-2 ml-auto">
@@ -216,11 +218,13 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
                     <div className="flex items-center gap-2 leading-none font-medium">
                         {(() => {
                             if (!done) return "Loading...";
-                            let lastValid = 0; 
-                            for(let i = 0; i < chartData.length ;i++) {if(chartData[i].value){lastValid=i}}
-                            if(!chartData[lastValid - 1]) return "No Change"
-                            const diff =  chartData[lastValid].value - chartData[lastValid - 1].value 
-                            const diffInPercent = (Math.abs(diff) / chartData[lastValid - 1].value * 100).toFixed(2)
+                            let lastValid = -1;
+                            for(let i = 0; i < chartData.length ;i++) {if(Number.isFinite(chartData[i].value)){lastValid=i}}
+                            let prevValid = -1;
+                            for(let i = lastValid - 1 ; i >= 0 ; i--) {if(Number.isFinite(chartData[i].value)){prevValid=i;break}}
+                            if(lastValid < 0 || prevValid < 0) return "No Change"
+                            const diff =  chartData[lastValid].value - chartData[prevValid].value
+                            const diffInPercent = (Math.abs(diff) / chartData[prevValid].value * 100).toFixed(2)
                             if (diff > 0) 
                                 return (
                                     <>{"Trending up by"} {diffInPercent} {"% "} <TrendingUp className="h-4 w-4" /></>
