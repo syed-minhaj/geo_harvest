@@ -97,44 +97,20 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
     }
     
     else{
-        let valuesOfCycle :number[] = []
-        let cycleOfCurrentValue;
+        const cycleValues : number[][] = [[], [], [], []]
         for(let i = noOfValues-1 ; i >= 0 ; i--) {
-            cycleOfCurrentValue = getAgriCycle(new Date(field.imagesDates[i]) , field.crop[0].name , field.crop[0].planted_at);
-            const cycleOfLastValue =field.imagesDates[i+1] ? getAgriCycle(new Date(field.imagesDates[i+1]) , field.crop[0].name , field.crop[0].planted_at) : "no_last_value";
-            
-            if (cycleOfCurrentValue === cycleOfLastValue || cycleOfLastValue === "no_last_value") {
-                const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
-                if(a !== null && !Number.isNaN(a)) valuesOfCycle.push(a < 0 ? 0 : a)
-            }else if(valuesOfCycle.length != 0){
-                graphData.push({
-                    date : getCycleByIndex(getCycleIndex(cycleOfLastValue , field.crop[0].name)  , field.crop[0].name),
-                    value : average(valuesOfCycle) ,
-                })
-                lasthex ="#" + findClosestColorFromHex(average(valuesOfCycle) , getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at) , ImageType).toString(16).padStart(6,'0').toUpperCase();
-                valuesOfCycle = []
-                i++
-            }else {
-                const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
-                if(a !== null && !Number.isNaN(a)) valuesOfCycle.push(a < 0 ? 0 : a)
+            const cycleIndex = getCycleIndex(getAgriCycle(new Date(field.imagesDates[i]) , field.crop[0].name , field.crop[0].planted_at) , field.crop[0].name);
+            if (cycleIndex < 0 || cycleIndex > 3) continue;
+            const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
+            if(a !== null && !Number.isNaN(a)) cycleValues[cycleIndex].push(a < 0 ? 0 : a)
+        }
+        for(let i = 0 ; i < 4 ; i++) {
+            if (cycleValues[i].length != 0){
+                lasthex ="#" + findClosestColorFromHex(average(cycleValues[i]) , getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at) , ImageType).toString(16).padStart(6, '0').toUpperCase();
             }
-        
-        }
-        if (valuesOfCycle.length != 0){
-            graphData.push({
-                date : getCycleByIndex(getCycleIndex(cycleOfCurrentValue , field.crop[0].name)  , field.crop[0].name),
-                value : average(valuesOfCycle),
-            })
-            lasthex ="#" + findClosestColorFromHex(average(valuesOfCycle) , getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at) , ImageType).toString(16).padStart(6, '0').toUpperCase();
-            valuesOfCycle = []
-        }
-
-        let currentIndex = getCycleIndex(cycleOfCurrentValue , field.crop[0].name)
-        
-        for(let i = currentIndex + 1 ; i < 4 ; i++) {
             graphData.push({
                 date : getCycleByIndex(i, field.crop[0].name),
-                value : NaN,
+                value : cycleValues[i].length != 0 ? average(cycleValues[i]) : NaN,
             })
         }
     }
