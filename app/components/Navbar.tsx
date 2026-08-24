@@ -12,7 +12,7 @@ export   function Navbar({ showOnDesktop }: { showOnDesktop?: boolean }) {
 
     return (
         <nav className={`${showOnDesktop ? "" : "sm:hidden"} flex flex-row items-center h-16 px-4 w-full `}>
-            <Link href={"/app/fields"} className="mr-auto" >
+            <Link href={"/app"} className="mr-auto" >
                 <Logo />
             </Link>
             <div className="ml-auto gap-4 flex flex-row">
