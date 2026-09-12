@@ -322,8 +322,8 @@ const otherRamps: Record<GenericStage, Record<ImageType, number[][]>> = {
 };
 
 
-export function getColorRamp(crop: string, imageType: ImageType, plantingDate: Date): number[][] {
-    const days = daysAfter(plantingDate);
+export function getColorRamp(crop: string, imageType: ImageType, plantingDate: Date, asOf?: Date): number[][] {
+    const days = daysAfter(plantingDate, asOf);
 
     if (crop === "wheat")  return wheatRamps[wheatStage(days)][imageType];
     if (crop === "rice")   return riceRamps[riceStage(days)][imageType];

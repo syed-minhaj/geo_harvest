@@ -2,8 +2,8 @@
 import { WheatStage , RiceStage , CottonStage , GenericStage } from "@/app/types";
 
 
-export function daysAfter(plantingDate: Date): number {
-    return Math.floor((Date.now() - plantingDate.getTime()) / 86_400_000);
+export function daysAfter(plantingDate: Date, asOf = new Date()): number {
+    return Math.floor((asOf.getTime() - plantingDate.getTime()) / 86_400_000);
 }
 
 const wStage = ["seedling", "elongation", "heading", "maturity"] as WheatStage[];
