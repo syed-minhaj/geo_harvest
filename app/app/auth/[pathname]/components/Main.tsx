@@ -5,14 +5,16 @@ export default function Main({referrerUrl , pathname}:{referrerUrl:string|null ,
     
     const redirectPath = 
         (!referrerUrl || referrerUrl.split("/app")[1].includes("auth")) ?
-            (localStorage.getItem("referrerUrl")) ?
+            (typeof window !== "undefined" && localStorage.getItem("referrerUrl")) ?
                 "/app" + localStorage.getItem("referrerUrl")?.split("/app")[1]
-            : "app/fields"
+            : "/app/fields"
         :
             "/app" + referrerUrl.split("/app")[1]
         
     if (referrerUrl && !referrerUrl.split("/app")[1].includes("auth")){
-        localStorage.setItem("referrerUrl", referrerUrl)
+        if (typeof window !== "undefined") {
+            localStorage.setItem("referrerUrl", referrerUrl)
+        }
     }
     
     return (
