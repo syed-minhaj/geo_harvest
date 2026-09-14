@@ -167,8 +167,8 @@ const STRESS_SCRIPT = ({colorRamp} : {colorRamp : number[][]}) => {
 };
 
   
-export function SCRIPT(imageType : ImageType , crop : keyof typeof availableCrops , plantingDate : Date) {
-    const colorRamp = getColorRamp(crop, imageType , plantingDate);
+export function SCRIPT(imageType : ImageType , crop : keyof typeof availableCrops , plantingDate : Date , asOf?: Date) {
+    const colorRamp = getColorRamp(crop, imageType , plantingDate , asOf);
     switch(imageType) {
         case "waterRequirement":
             return NDMI_SCRIPT({colorRamp});

@@ -84,7 +84,7 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
             }
             uploadedPaths.push(`${feildId}/${dates[0]}/${to}.png`)
 
-            const rampRGB =  getColorRamp(fcrop.name , to , fcrop.plantedDate).map(([value, intColor]) => {
+            const rampRGB =  getColorRamp(fcrop.name , to , fcrop.plantedDate , new Date(dates[0])).map(([value, intColor]) => {
                 const r = (intColor >> 16) & 255;
                 const g = (intColor >> 8) & 255;
                 const b = intColor & 255;

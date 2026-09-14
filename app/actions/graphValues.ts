@@ -61,7 +61,8 @@ async function getAverageRampValueFromUrl(fieldId : string , imageDate : string 
 
 async function getGraphData(field : tfield & {crop : {name : string , planted_at : Date}[]}  , avgPixelValue : avgPixelValue[]  , graphType : "yearly" | "crop cycle" , ImageType : ImageType) {
     
-    const rampRGB =  getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at).map(([value, intColor]) => {
+    const cropColorRamp = (date : string) => getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at , new Date(date));
+    const cropRampRGB = (date : string) : rampRGB => cropColorRamp(date).map(([value, intColor]) => {
         const r = (intColor >> 16) & 255;
         const g = (intColor >> 8) & 255;
         const b = intColor & 255;
@@ -80,16 +81,18 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
 
     if (graphType == "yearly"){
         for(let i = noOfValues-1 ; i >= 0 ; i--) {
-            const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
+            const date = field.imagesDates[i];
+            const rampRGB = cropRampRGB(date);
+            const a = dateToValue[date] ?? await getAverageRampValueFromUrl(field.id , date , ImageType , rampRGB)
             if(a !== null && !Number.isNaN(a)) {
-                lasthex ="#" + findClosestColorFromHex(a , getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at) , ImageType).toString(16).padStart(6, '0').toUpperCase();
+                lasthex ="#" + findClosestColorFromHex(a , cropColorRamp(date) , ImageType).toString(16).padStart(6, '0').toUpperCase();
                 graphData.push({
-                    date :  getDateShort(new Date(field.imagesDates[i])),
+                    date :  getDateShort(new Date(date)),
                     value : a < 0 ? 0 : a,
                 })
             }else{
                 graphData.push({
-                    date :  getDateShort(new Date(field.imagesDates[i])),
+                    date :  getDateShort(new Date(date)),
                     value : NaN,
                 })
             }
@@ -98,15 +101,22 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
     
     else{
         const cycleValues : number[][] = [[], [], [], []]
+        const cycleDates : string[][] = [[], [], [], []]
         for(let i = noOfValues-1 ; i >= 0 ; i--) {
-            const cycleIndex = getCycleIndex(getAgriCycle(new Date(field.imagesDates[i]) , field.crop[0].name , field.crop[0].planted_at) , field.crop[0].name);
+            const date = field.imagesDates[i];
+            const cycleIndex = getCycleIndex(getAgriCycle(new Date(date) , field.crop[0].name , field.crop[0].planted_at) , field.crop[0].name);
             if (cycleIndex < 0 || cycleIndex > 3) continue;
-            const a = dateToValue[field.imagesDates[i]] ?? await getAverageRampValueFromUrl(field.id , field.imagesDates[i] , ImageType , rampRGB)
-            if(a !== null && !Number.isNaN(a)) cycleValues[cycleIndex].push(a < 0 ? 0 : a)
+            const rampRGB = cropRampRGB(date);
+            const a = dateToValue[date] ?? await getAverageRampValueFromUrl(field.id , date , ImageType , rampRGB)
+            if(a !== null && !Number.isNaN(a)) {
+                cycleValues[cycleIndex].push(a < 0 ? 0 : a)
+                cycleDates[cycleIndex].push(date)
+            }
         }
         for(let i = 0 ; i < 4 ; i++) {
             if (cycleValues[i].length != 0){
-                lasthex ="#" + findClosestColorFromHex(average(cycleValues[i]) , getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at) , ImageType).toString(16).padStart(6, '0').toUpperCase();
+                const repDate = cycleDates[i][0];
+                lasthex ="#" + findClosestColorFromHex(average(cycleValues[i]) , cropColorRamp(repDate) , ImageType).toString(16).padStart(6, '0').toUpperCase();
             }
             graphData.push({
                 date : getCycleByIndex(i, field.crop[0].name),
