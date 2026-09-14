@@ -3,6 +3,8 @@ import { getDateShort } from "@/app/utils/Date";
 
 
 const SwitchDate = ({dates , imagesDate , setImagesDate} : {dates : string[] , imagesDate : string , setImagesDate : React.Dispatch<React.SetStateAction<string>>}) => {
+    
+    dates.sort((a,b) => new Date(b).getTime() - new Date(a).getTime());
     return (
         <div className='w-full  bottom-0 p-2 absolute object-top z-20 corner-squircle '>
             <div className=' w-full custom-scrollbar overflow-x-auto rounded-[0.5rem] text-white bg-[#28282b]/66 flex flex-row-reverse gap-2 p-2  '>
