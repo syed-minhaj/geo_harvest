@@ -89,7 +89,7 @@ export async function sentinel_image({coordinates , date , imageType , crop , pl
             body: JSON.stringify({
                 input: input(geometry , date),
                 output: output,
-                evalscript: SCRIPT(imageType , crop , plantingDate),
+                evalscript: SCRIPT(imageType , crop , plantingDate , new Date(date)),
             }),
         });
         if(!sentinelRes.ok){
@@ -108,7 +108,7 @@ export async function sentinel_image({coordinates , date , imageType , crop , pl
 }
 
 
-export async function sentinel_catalog({coordinates} : {coordinates : number[][]}) {
+export async function sentinel_catalog({coordinates, from, to} : {coordinates : number[][], from? : string, to? : string}) {
     
     if (!coordinates || coordinates.length === 0 ) {
         return {err : "No coordinates provided" , data: null};
@@ -126,34 +126,39 @@ export async function sentinel_catalog({coordinates} : {coordinates : number[][]
         coordinates: [coordinates] 
     };
 
-    const input = (geometry : {type : string , coordinates : number[][][]}) => {
-    
-        
-        const today = new Date().toISOString();
-        const from7daysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const fromDate = from ?? new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const toDate = to ?? new Date().toISOString();
+
+    const input = (geometry : {type : string , coordinates : number[][][]}, cloudCover : number) => {
         return{
             "collections": ["sentinel-2-l2a"],
-            "datetime": `${from7daysAgo}/${today}`,
+            "datetime": `${fromDate}/${toDate}`,
             "limit": 10,
             "filter": {
                 op: "<=",
-                args: [{ property: "eo:cloud_cover" }, 5],
+                args: [{ property: "eo:cloud_cover" }, cloudCover],
             },
             "filter-lang": "cql2-json",
             "intersects": geometry 
         };
     };
     try{
-        const sentinelRes = await fetch("https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search", {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-            signal: AbortSignal.timeout(30000),
-            body: JSON.stringify(input(geometry)),
-        });
-        return {err : null  ,data : await sentinelRes.json()};
+        for (const cloudCover of [5, 10, 15, 20]) {
+            const sentinelRes = await fetch("https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search", {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                signal: AbortSignal.timeout(30000),
+                body: JSON.stringify(input(geometry, cloudCover)),
+            });
+            const data = await sentinelRes.json();
+            if (data.features?.length > 0) {
+                return {err : null , data};
+            }
+        }
+        return {err : null , data : {features : []}};
     }catch(e){
         console.log(e);
         return {err : "backend error : contact admin." , data: null};
