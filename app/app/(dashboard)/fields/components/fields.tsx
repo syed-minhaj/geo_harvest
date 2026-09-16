@@ -2,11 +2,18 @@ import { db } from '@/app/lib/drizzle';
 import { Separator } from '@/app/components/ui/separator';
 import { auth } from '@/app/lib/auth';
 import { headers } from 'next/headers';
-import { or } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm';
 import { FieldCard } from '@/app/components/FieldCard';
 
+const defaultFieldIds = [
+    "06402424-72fa-4b52-8d2f-6bd81c56c2bf",
+    "9eee4301-3096-4d44-9542-8c31dccb520d",
+    "85e8602c-011d-4e24-8922-949bdd8db62b",
+    "4148ca06-e600-407f-8a67-93012e3ab4f3",
+];
+
 const default_fields =  await db.query.field.findMany({
-    where: (field , {eq}) => (or(eq(field.id , "06402424-72fa-4b52-8d2f-6bd81c56c2bf") , eq(field.id , "9eee4301-3096-4d44-9542-8c31dccb520d"))),
+    where: (field , {inArray}) => (inArray(field.id , defaultFieldIds)),
     columns : {
         id : true,
         name : true,

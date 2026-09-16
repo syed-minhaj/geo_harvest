@@ -3,16 +3,21 @@ import { auth } from "@/app/lib/auth";
 import { headers } from "next/headers";
 import { db } from "@/app/lib/drizzle";
 import { field, crop, avgPixelValue } from "@/db/schema";
-import { eq, inArray, or } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { MapOverview } from "@/app/components/MapOverview";
 import { getDateShort } from "@/app/utils/Date";
 import { FieldCard } from "@/app/components/FieldCard";
 import type { ImageType } from "@/app/types";
 
-const defaultFieldIds = ["06402424-72fa-4b52-8d2f-6bd81c56c2bf", "9eee4301-3096-4d44-9542-8c31dccb520d"];
+const defaultFieldIds = [
+    "06402424-72fa-4b52-8d2f-6bd81c56c2bf",
+    "9eee4301-3096-4d44-9542-8c31dccb520d",
+    "85e8602c-011d-4e24-8922-949bdd8db62b",
+    "4148ca06-e600-407f-8a67-93012e3ab4f3",
+];
 
 const defaultFields = await db.select().from(field).where(
-    or(eq(field.id, defaultFieldIds[0]), eq(field.id, defaultFieldIds[1]))
+    inArray(field.id, defaultFieldIds)
 );
 
 function getHealthDot(pixelValues: { fieldId: string; imageType: ImageType; imageDate: string; value: number | null }[], fieldId: string) {
