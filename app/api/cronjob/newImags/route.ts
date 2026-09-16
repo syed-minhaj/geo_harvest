@@ -84,7 +84,7 @@ export async function GET(req : NextRequest) {
                     continue;
                 }
                 uploadedPaths.push(`${field.id}/${dates[0]}/${to}.png`);
-                const rampRGB =  getColorRamp(field.crop[0].name , to , field.crop[0].planted_at).map(([value, intColor]) => {
+                const rampRGB =  getColorRamp(field.crop[0].name , to , field.crop[0].planted_at , new Date(dates[0])).map(([value, intColor]) => {
                     const r = (intColor >> 16) & 255;
                     const g = (intColor >> 8) & 255;
                     const b = intColor & 255;
