@@ -1,13 +1,13 @@
 
 .leaflet-bar a {
-    background-color: rgb(40, 40, 43);
+    background-color: #1B2420;
     border: none;
     color: #ffffff;
     border-radius: 0.25rem;
 }
 
 .leaflet-bar a:hover {
-    background-color: hsl(240, 4%, 16%);
+    background-color: #243029;
     border: none;
     color: #ffffff;
     border-radius: 0.25rem;
@@ -15,12 +15,12 @@
 }
 
 .leaflet-left .leaflet-bar a.leaflet-disabled {
-    background-color: rgb(40, 40, 43) ;
+    background-color: #1B2420;
     opacity: 0.66;
 }
 
 .leaflet-right .leaflet-bar a.leaflet-disabled {
-    background-color: #d8d8d5;
+    background-color: #E8EDEA;
     background-blend-mode: multiply;
     filter: invert(1) sepia(1) saturate(1) hue-rotate(180deg);
     opacity: 0.66;
@@ -60,20 +60,20 @@
 }
 
 .leaflet-draw-toolbar a {
-    background-color: #d8d8d5;
+    background-color: #E8EDEA;
     background-blend-mode: multiply;
     filter: invert(1) sepia(1) saturate(1) hue-rotate(180deg);
 }
 
 .leaflet-draw-toolbar a:hover {
-    background-color: #d8d8d5;
+    background-color: #E8EDEA;
     background-blend-mode: multiply;
     filter: invert(1) sepia(1) saturate(1) hue-rotate(180deg);
     opacity: 0.66;
 }
 
 .leaflet-draw-toolbar a:disabled {
-    background-color: #d8d8d5;
+    background-color: #E8EDEA;
     background-blend-mode: multiply;
     filter: invert(1) sepia(1) saturate(1) hue-rotate(180deg);
 }

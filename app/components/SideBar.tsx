@@ -33,16 +33,16 @@ export default function SideBar() {
                 <h1 className={`font-bold ${open ? "w-32" : "w-0"} overflow-hidden transition-[width] duration-300 ease-in-out logo `}>
                     <Logo />
                 </h1>
-                <MoveLeft className={` absolute right-[1.4375rem] top-1/2 -translate-y-1/2 p-1 text-black/85 dark:text-white/85 border border-black/20 dark:border-white/20 rounded  ${open ? "" : "rotate-180 "} `} 
+                <MoveLeft className={` absolute right-[1.4375rem] top-1/2 -translate-y-1/2 p-1 text-foreground border border-border rounded  ${open ? "" : "rotate-180 "} `} 
                 onClick={() => setOpen(!open)} />
             </div>
             <div className="px-4 flex flex-col gap-1 flex-1 group sideBar-child overflow-hidden">
                 {Pages.map((page, index) => (
                     <Link href={page === "dashboard" ? "/app" : `/app/${page}`} key={index} 
                         className={` ${open ? "w-52 " : "w-[2.375rem]"} rounded-r1 border flex flex-row items-center  transition-[width] duration-300 ease-in-out 
-                            group-hover:w-52 hover:bg-bg1 hover:border-black/10 
-                        ${(page === "dashboard" && (pathname === "/app" || pathname.split(`/app/`).at(-1) == page)) || (page !== "dashboard" && pathname.split(`/app/`).at(-1) == page) ? "bg-bg1  border-black/20 dark:border-white/20" : "border-transparent"} 
-                        p-2 px-2 leading-none font-medium text-black/85 dark:text-white/85 `} >
+                            group-hover:w-52 hover:bg-bg1 hover:border-border 
+                        ${(page === "dashboard" && (pathname === "/app" || pathname.split(`/app/`).at(-1) == page)) || (page !== "dashboard" && pathname.split(`/app/`).at(-1) == page) ? "bg-bg1  border-border" : "border-transparent"} 
+                        p-2 px-2 leading-none font-medium text-foreground `} >
                         <IconComponent page={page} />
                         <span className={`${open ? "w-24" : "w-0 "} overflow-hidden whitespace-nowrap  transition-[width] duration-300 ease-in-out group-hover:w-24 `}>
                             &nbsp;{page.charAt(0).toUpperCase() + page.slice(1)}
@@ -50,9 +50,9 @@ export default function SideBar() {
                     </Link>
                 ))}
                 <div onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                    className={`mt-auto ${open ? "w-52 " : "w-[2.375rem]"} rounded-r1 border flex flex-row items-center transition-[width] duration-300 ease-in-out border-black/20 dark:border-white/20
+                    className={`mt-auto ${open ? "w-52 " : "w-[2.375rem]"} rounded-r1 border flex flex-row items-center transition-[width] duration-300 ease-in-out border-border
                         group-hover:w-52 hover:bg-bg1  cursor-pointer mb-2
-                        p-2 px-2 leading-none font-medium text-black/85 dark:text-white/85`} >
+                        p-2 px-2 leading-none font-medium text-foreground`} >
                     {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
                     <span className={`${open ? "w-24" : "w-0 "} overflow-hidden whitespace-nowrap transition-[width] duration-300 ease-in-out group-hover:w-24`}>
                         &nbsp;{theme === "dark" ? "Light mode" : "Dark mode"}

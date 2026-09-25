@@ -76,7 +76,7 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
         dateToValue[avgPixelValue.imageDate] = avgPixelValue.value ?? NaN
     }
 
-    let lasthex = "#0ADD08";
+    let lasthex = "#4E9E6B";
     const noOfValues = Object.keys(field.imagesDates).length;
 
     if (graphType == "yearly"){

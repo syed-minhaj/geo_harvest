@@ -43,14 +43,14 @@ export default function RootLayout({
     return (
         <html lang="en" >
             <head>
-                <meta name="theme-color" content="#F8FDFB" media="(prefers-color-scheme: light)" />
-                <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+                <meta name="theme-color" content="#F2F0EA" media="(prefers-color-scheme: light)" />
+                <meta name="theme-color" content="#0B0E0C" media="(prefers-color-scheme: dark)" />
             </head>
             <body
                 className={`${geistSans.variable} ${geistMono.variable} ${josefinSans.variable} ${albertSans.variable} antialiased overflow-x-hidden`}
             >
                 <ThemeProvider>
-                    <NextTopLoader color="#004C20" showSpinner={false} />
+                    <NextTopLoader color="#0F5C36" showSpinner={false} />
                     {children}
                 </ThemeProvider>
             </body>

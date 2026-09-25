@@ -8,9 +8,9 @@ type FreshnessRow = {
 }
 
 const statusColor = {
-    Recent: "text-green-600 dark:text-green-400",
-    Normal: "text-yellow-600 dark:text-yellow-400",
-    Stale: "text-red-600 dark:text-red-400",
+    Recent: "text-[#2F7B4F] dark:text-[#5FAD7B]",
+    Normal: "text-[#A97A22] dark:text-[#E0A24E]",
+    Stale: "text-[#C5574E] dark:text-[#D87169]",
 }
 
 export function DataFreshnessTable({ data }: { data: FreshnessRow[] }) {

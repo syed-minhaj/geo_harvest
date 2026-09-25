@@ -8,9 +8,9 @@ export function FieldsLoader() {
     return (
         <div className='flex flex-col gap-4 p-4 max-w-4xl mx-auto w-full'>
             {[...Array(2)].map((_, i) => (
-                <div key={i} className='rounded-[0.75rem] border-1 bg-white dark:bg-secondary/15 shadow-sm overflow-hidden flex flex-col'>
+                <div key={i} className='rounded-[0.75rem] border-1 bg-card dark:bg-secondary/15 shadow-sm overflow-hidden flex flex-col'>
                     <div className='flex flex-row'>
-                        <div className='bg-green-50 dark:bg-green-950/20 border-r border-border flex flex-col items-center justify-center gap-3 p-4 shrink-0'>
+                        <div className='bg-[#EDF3EF] dark:bg-[#4E9E6B]/10 border-r border-border flex flex-col items-center justify-center gap-3 p-4 shrink-0'>
                             <Skeleton className='w-[148px] h-[130px] rounded-md' />
                             <div className='flex flex-col gap-1 w-[148px]'>
                                 <Skeleton className='h-3 w-full rounded' />

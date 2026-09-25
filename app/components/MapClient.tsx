@@ -85,7 +85,7 @@ export default function MapClient({}) {
                 url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                 attribution="© OpenStreetMap contributors"
                 />
-            <Polygon positions={polygon} color="green" />
+            <Polygon positions={polygon} color="#0F5C36" />
             {overlayUrl && overlayBounds && (
                 <ImageOverlay url={overlayUrl} bounds={overlayBounds} opacity={0.55} />
             )}

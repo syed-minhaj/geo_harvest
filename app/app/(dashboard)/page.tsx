@@ -69,10 +69,10 @@ async function Main() {
     }
 
     const healthDotColors: Record<string, string> = {
-        green: "bg-green-500",
-        yellow: "bg-yellow-500",
-        red: "bg-red-500",
-        gray: "bg-gray-400",
+        green: "bg-[#4E9E6B]",
+        yellow: "bg-[#D08A2E]",
+        red: "bg-[#C5574E]",
+        gray: "bg-[#9AA7A0]",
     };
 
     const recentThree = [...fields]
@@ -137,7 +137,7 @@ async function Main() {
                                 return (
                                     <tr key={f.id} className="border-b border-input/50">
                                         <td className="py-2 pr-4">
-                                            <a href={`/app/fields/${f.id}`} className="text-blue-500 hover:underline">{f.name}</a>
+                                            <a href={`/app/fields/${f.id}`} className="text-[#2F7D9E] dark:text-[#54A5C4] hover:underline">{f.name}</a>
                                         </td>
                                         <td className="py-2 pr-4 capitalize">{fieldCrop?.name ?? "—"}</td>
                                         <td className="py-2 pr-4">{latestDate}</td>
@@ -166,7 +166,7 @@ function Skeleton() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {Array(3).fill(0).map((_, i) => (
-                    <div key={i} className="p-4 rounded-[0.75rem] border bg-white dark:bg-secondary/15 shadow-sm flex flex-col gap-2 animate-pulse">
+                    <div key={i} className="p-4 rounded-[0.75rem] border bg-card dark:bg-secondary/15 shadow-sm flex flex-col gap-2 animate-pulse">
                         <div className="flex flex-row gap-4">
                             <div className="rounded-[0.5rem] w-55 h-55 bg-muted" />
                             <div className="flex flex-col gap-2">

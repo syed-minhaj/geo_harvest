@@ -16,7 +16,7 @@ type FieldData = {
     updated_at: Date;
 };
 
-const colors = ['#2563eb', '#16a34a', '#d97706', '#dc2626', '#8b5cf6', '#0891b2', '#be185d'];
+const colors = ['#2F7D9E', '#4E9E6B', '#D08A2E', '#C5574E', '#7D6FBE', '#3B8D89', '#B65D78'];
 
 export function MapOverview({ fields }: { fields: FieldData[] }) {
     const containerRef = useRef<HTMLDivElement>(null);

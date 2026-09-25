@@ -40,10 +40,10 @@ export function FieldCard({ id, name, coordinates, imagesDates, crop }: FieldCar
     const latestDate = imagesDates.length ? new Date(imagesDates[imagesDates.length - 1]).toDateString() : "No data";
     return (
         <Link href={`/app/fields/${id}`}
-            className="p-4 rounded-r1 border bg-white dark:bg-secondary/15 shadow-sm hover:shadow-lg dark:shadow-gray-900/25 flex flex-col gap-3">
+            className="p-4 rounded-r1 border bg-card dark:bg-secondary/15 shadow-sm hover:shadow-lg dark:shadow-gray-900/25 flex flex-col gap-3">
             <div className="flex flex-row gap-4">
                 <svg height={220} width={220}>
-                    <polygon points={pgpolygontosvgPolygon(coordinates)} fill="green" stroke="#004C20" fillOpacity={0.25} strokeWidth="2" />
+                    <polygon points={pgpolygontosvgPolygon(coordinates)} fill="#0F5C36" stroke="#0F5C36" fillOpacity={0.2} strokeWidth="2" />
                 </svg>
                 <div className="flex flex-col gap-2">
                     <h2 className="text-xl font-semibold min-w-24">{name}</h2>

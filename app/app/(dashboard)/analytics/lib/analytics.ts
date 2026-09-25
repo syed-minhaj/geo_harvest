@@ -92,7 +92,7 @@ export function getFieldComparisonData(fields: FieldData[], pixelValues: PixelVa
 export function getCropDistributionData(crops: CropData[]): CropDistributionItem[] {
     const counts: Record<string, number> = {};
     crops.forEach(c => { counts[c.name] = (counts[c.name] || 0) + 1; });
-    const colors = ["#2563eb", "#16a34a", "#d97706", "#dc2626", "#8b5cf6"];
+    const colors = ["#2F7D9E", "#4E9E6B", "#D08A2E", "#C5574E", "#7D6FBE"];
     return Object.entries(counts).map(([name, count], i) => ({ name, count, fill: colors[i % colors.length] }));
 }
 

@@ -4,10 +4,10 @@ import { CartesianGrid, XAxis, AreaChart, Area } from "recharts"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/app/components/ui/chart"
 
 const chartConfig = {
-    water: { label: "Water", color: "#2563eb" },
-    nitrogen: { label: "Nitrogen", color: "#16a34a" },
-    phosphorus: { label: "Phosphorus", color: "#d97706" },
-    stress: { label: "Crop Stress", color: "#dc2626" },
+    water: { label: "Water", color: "#2F7D9E" },
+    nitrogen: { label: "Nitrogen", color: "#4E9E6B" },
+    phosphorus: { label: "Phosphorus", color: "#D08A2E" },
+    stress: { label: "Crop Stress", color: "#C5574E" },
 } satisfies ChartConfig
 
 export function OverviewChart({ data }: { data: { date: string; water: number; nitrogen: number; phosphorus: number; stress: number }[] }) {

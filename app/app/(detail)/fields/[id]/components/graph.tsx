@@ -77,7 +77,7 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
     const [done , setDone] = useState(false)
     const [value , setValue] = useState<{label:string,color:string}>({
         label: "value",
-        color: "#0ADD08",
+        color: "#4E9E6B",
     });
 
 
@@ -95,7 +95,7 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
             }else{
                 setDone(false)
                 setChartData([])
-                setValue({label : "value" , color : "#0ADD08"})
+                setValue({label : "value" , color : "#4E9E6B"})
             }
         }
     },[hash , type , allData , year ])

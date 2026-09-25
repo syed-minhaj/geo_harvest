@@ -4,11 +4,20 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell } from "recharts"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/app/components/ui/chart"
 
 function valueToColor(v: number): string {
-    if (v <= 0) return "#ff0000"
-    if (v >= 1) return "#00cc00"
-    const r = v < 0.5 ? 255 : Math.round((1 - (v - 0.5) / 0.5) * 200)
-    const g = v < 0.5 ? Math.round((v / 0.5) * 200) : 200
-    return `rgb(${r}, ${g}, 40)`
+    if (v <= 0) return "#C5574E"
+    if (v >= 1) return "#4E9E6B"
+    if (v < 0.5) {
+        const t = v / 0.5
+        const r = Math.round(197 + (208 - 197) * t)
+        const g = Math.round(87 + (168 - 87) * t)
+        const b = Math.round(78 + (46 - 78) * t)
+        return `rgb(${r}, ${g}, ${b})`
+    }
+    const t = (v - 0.5) / 0.5
+    const r = Math.round(208 + (78 - 208) * t)
+    const g = Math.round(168 + (158 - 168) * t)
+    const b = Math.round(46 + (107 - 46) * t)
+    return `rgb(${r}, ${g}, ${b})`
 }
 
 const chartConfig = {

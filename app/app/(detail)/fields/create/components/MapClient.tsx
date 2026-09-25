@@ -71,7 +71,7 @@ export default function MapClient({cordinates , setCordinates} : {cordinates : n
                 attribution="© OpenStreetMap contributors"
                 />
             <FeatureGroup>
-                {cordinates && <Polygon color="blue" positions={cordinates.map((c:any) => [c[1], c[0]])} />}
+                {cordinates && <Polygon color="#2F7D9E" positions={cordinates.map((c:any) => [c[1], c[0]])} />}
                 <EditControl
                     position="topright"
                     onCreated={(e) => {
