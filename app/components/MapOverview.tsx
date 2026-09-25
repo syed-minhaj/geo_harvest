@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { fromPostgresPolygon, getZoomForBounds } from '@/app/utils/coordinate';
 import { LatLngExpression } from 'leaflet';
 import { useMemo, useRef, useState, useEffect } from 'react';
+import Link from 'next/link';
 
 type FieldData = {
     id: string;
@@ -21,6 +22,7 @@ const colors = ['#2F7D9E', '#4E9E6B', '#D08A2E', '#C5574E', '#7D6FBE', '#3B8D89'
 export function MapOverview({ fields }: { fields: FieldData[] }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [containerWidth, setContainerWidth] = useState(600);
+    const linkRefs = useRef(new Map<string, HTMLAnchorElement>());
 
     useEffect(() => {
         const el = containerRef.current;
@@ -61,12 +63,21 @@ export function MapOverview({ fields }: { fields: FieldData[] }) {
                     const coords = fromPostgresPolygon(field.coordinates);
                     const positions: LatLngExpression[] = coords.map(([lat, lng]) => [lat, lng]);
                     return (
-                        <Polygon
-                            key={field.id}
-                            positions={positions}
-                            color={colors[i % colors.length]}
-                            fillOpacity={0.2}
-                        />
+                        <div key={field.id}>
+                            <Link
+                                ref={el => {
+                                    if (el) linkRefs.current.set(field.id, el);
+                                }}
+                                href={`/app/fields/${field.id}`}
+                                aria-hidden="true"
+                                className="hidden"
+                            />
+                            <Polygon
+                                positions={positions}
+                                pathOptions={{ color: colors[i % colors.length], fillOpacity: 0.2 }}
+                                eventHandlers={{ click: () => linkRefs.current.get(field.id)?.click() }}
+                            />
+                        </div>
                     );
                 })}
             </MapContainer>
