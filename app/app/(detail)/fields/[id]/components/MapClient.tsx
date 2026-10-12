@@ -14,8 +14,8 @@ import { getColorRamp } from '@/app/utils/colorRamp';
 import { fromPostgresPolygon, getZoom } from '@/app/utils/coordinate';
 
 
-function RampBar({crop , hash , plantingDate} : {crop : string , hash : ImageType , plantingDate : Date}) {
-    const colors = getColorRamp(crop , hash , plantingDate);
+function RampBar({crop , hash , plantingDate , date} : {crop : string , hash : ImageType , plantingDate : Date , date : string}) {
+    const colors = getColorRamp(crop , hash , plantingDate , new Date(date));
     if (!colors) return null;
     const gradient = `linear-gradient(to top, ${colors
         .map(([, hex]) => `#${hex.toString(16).padStart(6, "0")}`)
@@ -81,7 +81,7 @@ export default function MapClient({field} : {field : tfield & {crop : {name : st
                 </FeatureGroup>
             </MapContainer>
             <SwitchDate dates={field.imagesDates} imagesDate={imagesDate} setImagesDate={setImagesDate} />
-            <RampBar crop={field.crop[0].name} hash={hash as ImageType} plantingDate={field.crop[0].planted_at} />
+            <RampBar crop={field.crop[0].name} hash={hash as ImageType} plantingDate={field.crop[0].planted_at} date={imagesDate} />
         </div>
     );
 }
