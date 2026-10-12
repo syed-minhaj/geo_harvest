@@ -1,9 +1,9 @@
 "use server";
 import { tfield , ImageType } from "@/app/types";
 import { getDateShort } from "../utils/Date";
-import { getAverageRampValueFromUrl_Server, revalidatePath_fromClient, setAvgPixelValueBatch, RAMP_MAX } from "./actions";
+import { getAverageRampValueFromUrl_Server, revalidatePath_fromClient, setAvgPixelValueBatch } from "./actions";
 import { revalidatePath } from "next/cache";
-import { getColorRamp } from "../utils/colorRamp";
+import { getColorRamp, RAMP_MAX } from "../utils/colorRamp";
 import { getAgriCycle, getCycleByIndex, getCycleIndex } from "../utils/agriCycle";
 
 type rampRGB = {

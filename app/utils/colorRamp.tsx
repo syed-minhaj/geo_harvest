@@ -9,6 +9,13 @@ export type ImageType =
     | "phosphorusRequirement"
     | "cropStress";
 
+export const RAMP_MAX: Record<ImageType, number> = {
+    waterRequirement:      1.0,  // NDMI normalised to 0..1
+    nitrogenRequirement:   0.6,  // NDRE practical max
+    phosphorusRequirement: 3.5,  // CIre practical max
+    cropStress:            1.0,  // NDVI normalised to 0..1
+};
+
 
 const makeHealthRamp = (
     badThreshold: number,

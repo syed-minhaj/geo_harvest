@@ -4,6 +4,7 @@ import { avgPixelValue } from "@/db/schema";
 import { db } from "../lib/drizzle";
 import { and, eq } from "drizzle-orm";
 import { ImageType } from "../types";
+import { RAMP_MAX } from "../utils/colorRamp";
 import { auth } from "../lib/auth";
 import { headers } from "next/headers";
 import sharp from "sharp";
@@ -16,13 +17,6 @@ type rampRGB = {
     g : number,
     b : number,
 }[]
-
-export const RAMP_MAX: Record<ImageType, number> = {
-    waterRequirement:      1.0,  // NDMI normalised to 0..1
-    nitrogenRequirement:   0.6,  // NDRE practical max
-    phosphorusRequirement: 3.5,  // CIre practical max
-    cropStress:            1.0,  // NDVI normalised to 0..1
-};
 
 export async function revalidatePath_fromClient(path : string) {
     await revalidatePath(path);
