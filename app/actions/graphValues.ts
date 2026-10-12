@@ -22,18 +22,24 @@ type avgPixelValue = {
 
 let pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
 
-function findClosestColorFromHex(target:number , colorRamp : number[][] , imageType : ImageType) {
+function interpolateColorFromHex(target:number , colorRamp : number[][] , imageType : ImageType) {
     target = target * RAMP_MAX[imageType]
-    let closestValue = NaN;
-    let smallestDist = Infinity;
-    for (const [value, intColor] of colorRamp) {
-        const dist = Math.abs(target - value);
-        if (dist < smallestDist) {
-            smallestDist = dist;
-            closestValue = intColor;
+    const stops = [...colorRamp].sort((a, b) => a[0] - b[0]);
+    if (stops.length === 0) return 0;
+    if (target <= stops[0][0]) return stops[0][1];
+    if (target >= stops[stops.length - 1][0]) return stops[stops.length - 1][1];
+    for (let i = 0; i < stops.length - 1; i++) {
+        const [v0, c0] = stops[i];
+        const [v1, c1] = stops[i + 1];
+        if (target >= v0 && target <= v1) {
+            const t = v1 === v0 ? 0 : (target - v0) / (v1 - v0);
+            const r = Math.round(((c0 >> 16) & 255) * (1 - t) + ((c1 >> 16) & 255) * t);
+            const g = Math.round(((c0 >> 8) & 255) * (1 - t) + ((c1 >> 8) & 255) * t);
+            const b = Math.round((c0 & 255) * (1 - t) + (c1 & 255) * t);
+            return (r << 16) | (g << 8) | b;
         }
     }
-    return closestValue;
+    return stops[stops.length - 1][1];
 }
 
 
@@ -85,7 +91,7 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
             const rampRGB = cropRampRGB(date);
             const a = dateToValue[date] ?? await getAverageRampValueFromUrl(field.id , date , ImageType , rampRGB)
             if(a !== null && !Number.isNaN(a)) {
-                lasthex ="#" + findClosestColorFromHex(a , cropColorRamp(date) , ImageType).toString(16).padStart(6, '0').toUpperCase();
+                lasthex ="#" + interpolateColorFromHex(a , cropColorRamp(date) , ImageType).toString(16).padStart(6, '0').toUpperCase();
                 graphData.push({
                     date :  getDateShort(new Date(date)),
                     value : a < 0 ? 0 : a,
@@ -116,7 +122,7 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
         for(let i = 0 ; i < 4 ; i++) {
             if (cycleValues[i].length != 0){
                 const repDate = cycleDates[i][0];
-                lasthex ="#" + findClosestColorFromHex(average(cycleValues[i]) , cropColorRamp(repDate) , ImageType).toString(16).padStart(6, '0').toUpperCase();
+                lasthex ="#" + interpolateColorFromHex(average(cycleValues[i]) , cropColorRamp(repDate) , ImageType).toString(16).padStart(6, '0').toUpperCase();
             }
             graphData.push({
                 date : getCycleByIndex(i, field.crop[0].name),
