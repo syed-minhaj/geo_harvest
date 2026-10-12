@@ -52,7 +52,8 @@ export const NDMI_SCRIPT = ({colorRamp} : {colorRamp : number[][]}) => {
     }
     
     function evaluatePixel(samples) {
-      let val = index(samples.B8A, samples.B11);
+      // NDMI ranges -1..1; rescale to a 0..1 score (0 = driest).
+      let val = (index(samples.B8A, samples.B11) + 1) / 2;
       // The library for tiffs works well only if there is only one channel returned.
       // So we encode the "no data" as NaN here and ignore NaNs on frontend.
       const indexVal = samples.dataMask === 1 ? val : NaN;
@@ -152,8 +153,9 @@ const STRESS_SCRIPT = ({colorRamp} : {colorRamp : number[][]}) => {
     }
 
     function evaluatePixel(samples) {
-    // NDVI as stress indicator; low NDVI = high stress
-    let val = (samples.B08 - samples.B04) / (samples.B08 + samples.B04);
+    // NDVI as stress indicator; low NDVI = high stress.
+    // Rescale NDVI -1..1 to a 0..1 score.
+    let val = ((samples.B08 - samples.B04) / (samples.B08 + samples.B04) + 1) / 2;
     const indexVal = samples.dataMask === 1 ? val : NaN;
     return {
         default: [...viz.process(val), samples.dataMask],

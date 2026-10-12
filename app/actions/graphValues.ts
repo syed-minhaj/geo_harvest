@@ -1,7 +1,7 @@
 "use server";
 import { tfield , ImageType } from "@/app/types";
 import { getDateShort } from "../utils/Date";
-import { getAverageRampValueFromUrl_Server, revalidatePath_fromClient, setAvgPixelValueBatch } from "./actions";
+import { getAverageRampValueFromUrl_Server, revalidatePath_fromClient, setAvgPixelValueBatch, RAMP_MAX } from "./actions";
 import { revalidatePath } from "next/cache";
 import { getColorRamp } from "../utils/colorRamp";
 import { getAgriCycle, getCycleByIndex, getCycleIndex } from "../utils/agriCycle";
@@ -23,7 +23,7 @@ type avgPixelValue = {
 let pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
 
 function findClosestColorFromHex(target:number , colorRamp : number[][] , imageType : ImageType) {
-    if (imageType != "cropStress") target = target * 0.6
+    target = target * RAMP_MAX[imageType]
     let closestValue = NaN;
     let smallestDist = Infinity;
     for (const [value, intColor] of colorRamp) {

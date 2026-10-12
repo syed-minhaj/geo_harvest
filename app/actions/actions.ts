@@ -17,11 +17,11 @@ type rampRGB = {
     b : number,
 }[]
 
-const RAMP_MAX: Record<ImageType, number> = {
-    waterRequirement:      0.8,  // NDMI max
+export const RAMP_MAX: Record<ImageType, number> = {
+    waterRequirement:      1.0,  // NDMI normalised to 0..1
     nitrogenRequirement:   0.6,  // NDRE practical max
     phosphorusRequirement: 3.5,  // CIre practical max
-    cropStress:            1.0,  // NDVI max (no normalization)
+    cropStress:            1.0,  // NDVI normalised to 0..1
 };
 
 export async function revalidatePath_fromClient(path : string) {
@@ -75,22 +75,14 @@ function findClosestValue(r: number, g: number, b: number ,  rampRGB : rampRGB) 
     return closestValue;
 }
 
-export async function getAverageRampValueFromUrl_Server(
-        fieldId: string,
-        imageDate: string,
+export async function getAverageRampValueFromBuffer(
+        buffer: Buffer | Uint8Array,
         imageType: ImageType,
-        rampRGB: { value: number; r: number; g: number; b: number }[]
+        rampRGB: rampRGB
     ): Promise<number | null> {
-    
-    const imageUrl = `https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${fieldId}/${imageDate}/${imageType}.png`;
-    
-    // Fetch image as buffer
-    const response = await fetch(imageUrl);
-    if (!response.ok) throw new Error(`Failed to fetch image: ${imageUrl}`);
-    const buffer = await response.arrayBuffer();
 
     // Decode image to raw pixel data
-    const { data, info } = await sharp(Buffer.from(buffer))
+    const { data } = await sharp(Buffer.from(buffer))
         .ensureAlpha()
         .raw()
         .toBuffer({ resolveWithObject: true });
@@ -114,4 +106,21 @@ export async function getAverageRampValueFromUrl_Server(
 
     if (count === 0) return null;
     return sum / count / RAMP_MAX[imageType];
+}
+
+export async function getAverageRampValueFromUrl_Server(
+        fieldId: string,
+        imageDate: string,
+        imageType: ImageType,
+        rampRGB: { value: number; r: number; g: number; b: number }[]
+    ): Promise<number | null> {
+    
+    const imageUrl = `https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${fieldId}/${imageDate}/${imageType}.png`;
+    
+    // Fetch image as buffer
+    const response = await fetch(imageUrl);
+    if (!response.ok) throw new Error(`Failed to fetch image: ${imageUrl}`);
+    const buffer = await response.arrayBuffer();
+
+    return getAverageRampValueFromBuffer(Buffer.from(buffer), imageType, rampRGB);
 }
