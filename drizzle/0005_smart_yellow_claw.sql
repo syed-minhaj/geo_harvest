@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "avgPixelValue_key_idx" ON "avg_pixel_value" USING btree ("field_id","image_type","image_date");

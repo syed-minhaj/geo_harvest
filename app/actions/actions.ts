@@ -2,7 +2,7 @@
 
 import { avgPixelValue } from "@/db/schema";
 import { db } from "../lib/drizzle";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { ImageType } from "../types";
 import { RAMP_MAX } from "../utils/colorRamp";
 import { auth } from "../lib/auth";
@@ -41,8 +41,15 @@ export async function setAvgPixelValueBatch(values : {fieldId : string , imageTy
     if (!session) {
         return {err : "Please login to create a field."}
     }
+    // Collapse duplicate keys: a single ON CONFLICT statement cannot update the
+    // same row twice.
+    const unique = [...new Map(values.map((v) => [`${v.fieldId}|${v.imageType}|${v.imageDate}`, v])).values()];
+    if (unique.length === 0) return {err : null};
     try {
-        await db.insert(avgPixelValue).values(values)
+        await db.insert(avgPixelValue).values(unique).onConflictDoUpdate({
+            target: [avgPixelValue.fieldId, avgPixelValue.imageType, avgPixelValue.imageDate],
+            set: { value: sql`excluded.value`, updated_at: new Date() },
+        })
         return {err : null}
     } catch (e :any) {
         console.log(e)

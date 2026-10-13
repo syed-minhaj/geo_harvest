@@ -116,7 +116,12 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
                 imagesDates: sql`array_append(${field.imagesDates}, ${dates[0]})`
             })
             .where(eq(field.id, feildId))
-        if (pixelValues.length != 0) await db.insert(avgPixelValue).values(pixelValues)
+        if (pixelValues.length != 0) {
+            await db.insert(avgPixelValue).values(pixelValues).onConflictDoUpdate({
+                target: [avgPixelValue.fieldId, avgPixelValue.imageType, avgPixelValue.imageDate],
+                set: { value: sql`excluded.value`, updated_at: new Date() },
+            })
+        }
         
         return {err : null , data : {id : feildId}}
     } catch (e :any) {

@@ -1,4 +1,4 @@
-import { pgEnum , pgTable, text, timestamp , customType, varchar,real, index} from "drizzle-orm/pg-core";
+import { pgEnum , pgTable, text, timestamp , customType, varchar,real, index, uniqueIndex} from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 import { randomUUID } from "crypto";
 import { availableCrops } from "../data/crop";
@@ -51,6 +51,7 @@ export const avgPixelValue = pgTable("avg_pixel_value", {
     value : real("value"),
 } , (table) => [
     index("avgPixelValueId_idx").on(table.fieldId),
+    uniqueIndex("avgPixelValue_key_idx").on(table.fieldId, table.imageType, table.imageDate),
 ]);
 
 export const avgPixelValueRelations = relations(avgPixelValue, ({one}) => ({
