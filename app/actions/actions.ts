@@ -52,21 +52,41 @@ export async function setAvgPixelValueBatch(values : {fieldId : string , imageTy
 }
 
 
-function findClosestValue(r: number, g: number, b: number ,  rampRGB : rampRGB) {
-    let closestValue: number | null = null;
-    let minDist = Infinity;
-    for (let i = 0; i < rampRGB.length; i++) {
-        const c = rampRGB[i];
-        const dr = r - c.r;
-        const dg = g - c.g;
-        const db = b - c.b;
+function estimateRampValueFromColor(r: number, g: number, b: number, rampRGB: rampRGB) {
+    if (rampRGB.length === 0) return null;
+    if (rampRGB.length === 1) return rampRGB[0].value;
+
+    // The map renders each pixel by interpolating between the two nearest ramp
+    // stops, so a pixel colour lies somewhere along the piecewise-linear path
+    // through the stops. Invert that mapping by projecting the pixel colour
+    // onto every segment and taking the closest projection; return the value
+    // at that projection. This preserves sub-stop precision instead of snapping
+    // to the nearest stop (which quantised the average badly in sparse regions).
+    let bestDist = Infinity;
+    let bestValue = rampRGB[0].value;
+    for (let i = 0; i < rampRGB.length - 1; i++) {
+        const a = rampRGB[i];
+        const c = rampRGB[i + 1];
+        const dx = c.r - a.r;
+        const dy = c.g - a.g;
+        const dz = c.b - a.b;
+        const len2 = dx * dx + dy * dy + dz * dz;
+        let t = len2 === 0 ? 0 : ((r - a.r) * dx + (g - a.g) * dy + (b - a.b) * dz) / len2;
+        if (t < 0) t = 0;
+        else if (t > 1) t = 1;
+        const qr = a.r + t * dx;
+        const qg = a.g + t * dy;
+        const qb = a.b + t * dz;
+        const dr = r - qr;
+        const dg = g - qg;
+        const db = b - qb;
         const dist = dr * dr + dg * dg + db * db;
-        if (dist < minDist) {
-            minDist = dist;
-            closestValue = c.value;
+        if (dist < bestDist) {
+            bestDist = dist;
+            bestValue = a.value + t * (c.value - a.value);
         }
     }
-    return closestValue;
+    return bestValue;
 }
 
 export async function getAverageRampValueFromBuffer(
@@ -91,7 +111,7 @@ export async function getAverageRampValueFromBuffer(
         const a = pixelArray[i + 3];
         if (a === 0) continue;
 
-        const val = findClosestValue(r, g, b, rampRGB);
+        const val = estimateRampValueFromColor(r, g, b, rampRGB);
         if (val !== null && val !== undefined) {
         sum += val;
         count++;
