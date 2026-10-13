@@ -20,8 +20,6 @@ type avgPixelValue = {
     value : number | null,
 }
 
-let pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
-
 function interpolateColorFromHex(target:number , colorRamp : number[][] , imageType : ImageType) {
     target = target * RAMP_MAX[imageType]
     const stops = [...colorRamp].sort((a, b) => a[0] - b[0]);
@@ -51,22 +49,25 @@ function average(numbers : number[]) {
     return sum / numbers.length;
 }
 
-async function getAverageRampValueFromUrl(fieldId : string , imageDate : string , ImageType : ImageType , rampRGB : rampRGB): Promise<number | null> {
-    const a  = pixelValues.find((p) => p.fieldId == fieldId && p.imageType == ImageType && p.imageDate == imageDate)
+async function getAverageRampValueFromUrl(fieldId : string , imageDate : string , ImageType : ImageType , rampRGB : rampRGB , cache : avgPixelValue[]): Promise<number | null> {
+    const a  = cache.find((p) => p.fieldId == fieldId && p.imageType == ImageType && p.imageDate == imageDate)
     if (a) return a.value
     try{
         const res = await getAverageRampValueFromUrl_Server(fieldId , imageDate , ImageType , rampRGB)
-        pixelValues.push({fieldId , imageType : ImageType , imageDate , value : res})
+        cache.push({fieldId , imageType : ImageType , imageDate , value : res})
         return res;
     }catch(e){
         console.log(e)
-        pixelValues.push({fieldId , imageType : ImageType , imageDate , value : null})
+        cache.push({fieldId , imageType : ImageType , imageDate , value : null})
         return null;
     }
 }
 
 async function getGraphData(field : tfield & {crop : {name : string , planted_at : Date}[]}  , avgPixelValue : avgPixelValue[]  , graphType : "yearly" | "crop cycle" , ImageType : ImageType) {
-    
+    // Request-local: values fetched on demand for this call, flushed (yearly) at
+    // the end. Kept off module scope so concurrent requests/users can't mix or
+    // clobber each other's pending rows.
+    const pendingValues : avgPixelValue[] = []
     const cropColorRamp = (date : string) => getColorRamp(field.crop[0].name , ImageType , field.crop[0].planted_at , new Date(date));
     const cropRampRGB = (date : string) : rampRGB => cropColorRamp(date).map(([value, intColor]) => {
         const r = (intColor >> 16) & 255;
@@ -89,7 +90,7 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
         for(let i = noOfValues-1 ; i >= 0 ; i--) {
             const date = field.imagesDates[i];
             const rampRGB = cropRampRGB(date);
-            const a = dateToValue[date] ?? await getAverageRampValueFromUrl(field.id , date , ImageType , rampRGB)
+            const a = dateToValue[date] ?? await getAverageRampValueFromUrl(field.id , date , ImageType , rampRGB , pendingValues)
             if(a !== null && !Number.isNaN(a)) {
                 lasthex ="#" + interpolateColorFromHex(a , cropColorRamp(date) , ImageType).toString(16).padStart(6, '0').toUpperCase();
                 graphData.push({
@@ -113,7 +114,7 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
             const cycleIndex = getCycleIndex(getAgriCycle(new Date(date) , field.crop[0].name , field.crop[0].planted_at) , field.crop[0].name);
             if (cycleIndex < 0 || cycleIndex > 3) continue;
             const rampRGB = cropRampRGB(date);
-            const a = dateToValue[date] ?? await getAverageRampValueFromUrl(field.id , date , ImageType , rampRGB)
+            const a = dateToValue[date] ?? await getAverageRampValueFromUrl(field.id , date , ImageType , rampRGB , pendingValues)
             if(a !== null && !Number.isNaN(a)) {
                 cycleValues[cycleIndex].push(a < 0 ? 0 : a)
                 cycleDates[cycleIndex].push(date)
@@ -131,10 +132,9 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
         }
     }
 
-    if (graphType == "yearly") {
-        if (pixelValues.length != 0) {await setAvgPixelValueBatch(pixelValues); revalidatePath(`/app/fields/${field.id}`)}
-    }else {
-        pixelValues = []
+    if (graphType == "yearly" && pendingValues.length != 0) {
+        await setAvgPixelValueBatch(pendingValues);
+        revalidatePath(`/app/fields/${field.id}`);
     }
     return {graphData , lasthex}
 }
