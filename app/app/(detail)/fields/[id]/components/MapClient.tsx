@@ -1,6 +1,6 @@
 'use client';
 
-import { MapContainer, TileLayer, Polygon, FeatureGroup , ImageOverlay } from 'react-leaflet';
+import { MapContainer, TileLayer, Polygon, FeatureGroup , ImageOverlay, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { LatLngExpression ,LatLngBoundsExpression  } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -11,7 +11,27 @@ import { ImageType, tfield } from '@/app/types';
 import { useHash } from '@/app/hooks/hash';
 import SwitchDate from './switchDate';
 import { getColorRamp } from '@/app/utils/colorRamp';
-import { fromPostgresPolygon, getZoom } from '@/app/utils/coordinate';
+import { fromPostgresPolygon, getZoom, getMinZoomForContainer } from '@/app/utils/coordinate';
+
+
+function BoundZoomToContainer() {
+    const map = useMap();
+
+    useEffect(() => {
+        const container = map.getContainer();
+        const update = () => {
+            const minZoom = getMinZoomForContainer(container.clientHeight);
+            map.setMinZoom(minZoom);
+            if (map.getZoom() < minZoom) map.setZoom(minZoom);
+        };
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(container);
+        return () => observer.disconnect();
+    }, [map]);
+
+    return null;
+}
 
 
 function RampBar({crop , hash , plantingDate , date} : {crop : string , hash : ImageType , plantingDate : Date , date : string}) {
@@ -67,6 +87,7 @@ export default function MapClient({field} : {field : tfield & {crop : {name : st
     return (
         <div className="relative flex-1 min-h-0  "> 
             <MapContainer center={position} zoom={getZoom(coordinates)} scrollWheelZoom={true} style={{}} className="w-full h-full rounded-[0.75rem] corner-squircle z-20 " >
+                <BoundZoomToContainer />
                 <TileLayer
                     url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                     attribution="© OpenStreetMap contributors"

@@ -59,4 +59,14 @@ function getZoomForBounds(latSpan: number, lonSpan: number, centerLat: number, c
     return Math.floor(Math.min(latZoom, lonZoom));
 }
 
-export {getUserLocation , fromPostgresPolygon , getZoom, getZoomForBounds};
+// Smallest zoom at which the Web-Mercator world (256 * 2^z px tall) still covers
+// the container vertically, i.e. the point past which Leaflet shows empty
+// background bars above/below the map. Tiles repeat horizontally, so only the
+// container height constrains it.
+function getMinZoomForContainer(containerHeight: number) {
+    const tileSize = 256;
+    if (!containerHeight) return 0;
+    return Math.max(0, Math.ceil(Math.log2(containerHeight / tileSize)));
+}
+
+export {getUserLocation , fromPostgresPolygon , getZoom, getZoomForBounds, getMinZoomForContainer};

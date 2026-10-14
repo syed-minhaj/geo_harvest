@@ -2,7 +2,7 @@
 
 import { MapContainer, TileLayer, Polygon } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { fromPostgresPolygon, getZoomForBounds } from '@/app/utils/coordinate';
+import { fromPostgresPolygon, getZoomForBounds, getMinZoomForContainer } from '@/app/utils/coordinate';
 import { LatLngExpression } from 'leaflet';
 import { useMemo, useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -54,7 +54,7 @@ export function MapOverviewInner({ fields }: { fields: FieldData[] }) {
 
     return (
         <div ref={containerRef} className="w-full h-[300px] rounded-r1 overflow-hidden border border-input">
-            <MapContainer center={center} zoom={zoom} scrollWheelZoom={true} className="w-full h-full">
+            <MapContainer center={center} zoom={zoom} minZoom={Math.max(zoom, getMinZoomForContainer(300))} scrollWheelZoom={true} className="w-full h-full">
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="© OpenStreetMap contributors"
