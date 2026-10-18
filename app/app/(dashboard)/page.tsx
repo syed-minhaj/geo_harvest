@@ -104,7 +104,7 @@ async function Main() {
                     <p className="font-medium text-2xl">{recentFields}</p>
                 </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {recentThree.map(f => (
                     <FieldCard
                         key={f.id}
@@ -164,23 +164,23 @@ function Skeleton() {
                     <div key={i} className="w-full bg-bg2 rounded-r1 border border-input h-24.5 p-4" />
                 ))}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {Array(3).fill(0).map((_, i) => (
                     <div key={i} className="p-4 rounded-[0.75rem] border bg-card dark:bg-secondary/15 shadow-sm flex flex-col gap-2 animate-pulse">
                         <div className="flex flex-row gap-4">
-                            <div className="rounded-[0.5rem] w-55 h-55 bg-muted" />
-                            <div className="flex flex-col gap-2">
-                                <div className="h-6 w-24 bg-muted rounded-md" />
-                                <div className="h-4 w-20 bg-muted rounded-md" />
+                            <div className="rounded-[0.5rem] w-55 max-w-[50%] aspect-square shrink-0 self-start bg-muted" />
+                            <div className="flex flex-1 min-w-0 flex-col gap-2">
+                                <div className="h-6 w-24 max-w-full bg-muted rounded-md" />
+                                <div className="h-4 w-20 max-w-full bg-muted rounded-md" />
                             </div>
                         </div>
                         <div className="h-px bg-border my-1" />
-                        <div className="h-10 w-70 flex gap-8">
+                        <div className="h-10 w-full max-w-70 flex gap-8">
                             <div className="h-4 w-14 bg-muted rounded-md" />
                             <div className="h-4 w-20 bg-muted rounded-md" />
                         </div>
                         <div className="h-px bg-border my-1" />
-                        <div className="h-11 w-70 space-y-2">
+                        <div className="h-11 w-full max-w-70 space-y-2">
                             <div className="h-4 w-28 bg-muted rounded-md" />
                             <div className="h-4 w-24 bg-muted rounded-md" />
                         </div>

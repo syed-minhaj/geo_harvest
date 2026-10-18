@@ -94,9 +94,9 @@ export function FieldsLoader() {
             {[...Array(3)].map((_, i) => (  
                 <div key={i} className='p-4 rounded-r1 border bg-card dark:bg-secondary/15 shadow-sm transition-all duration-200 ease-out hover:bg-accent/30 dark:hover:bg-secondary/30 hover:border-primary/20 dark:hover:border-primary/20 hover:shadow-[0_10px_18px_-12px_rgba(0,0,0,0.14)] dark:hover:shadow-[0_10px_20px_-12px_rgba(70,180,110,0.14),0_0_8px_rgba(70,180,110,0.05)] flex flex-col gap-3'>
                     <div className='flex flex-row gap-4'>
-                        <Skeleton className='rounded-[0.5rem] w-55 h-55 '  />
-                        <div className='flex flex-col gap-2'>
-                            <Skeleton className='h-6 w-24 rounded-md' />
+                        <Skeleton className='rounded-[0.5rem] w-55 max-w-[50%] aspect-square shrink-0 self-start'  />
+                        <div className='flex flex-1 min-w-0 flex-col gap-2'>
+                            <Skeleton className='h-6 w-24 max-w-full rounded-md' />
                             <div className='flex flex-col gap-1'>
                                 <Skeleton className='h-4 w-10 rounded-md' />
                                 <Skeleton className='h-4 w-20 rounded-md' />
@@ -104,7 +104,7 @@ export function FieldsLoader() {
                         </div>
                     </div>
                     <Separator />
-                    <div className='text-sm flex flex-row h-10 w-70 justify-between'>
+                    <div className='text-sm flex flex-row h-10 w-full max-w-70 justify-between'>
                         <div className='flex flex-col  gap-1'>
                             <Skeleton className='h-4 w-10 rounded-md' />
                             <Skeleton className='h-4 w-20 rounded-md' />
@@ -115,7 +115,7 @@ export function FieldsLoader() {
                         </div>
                     </div>
                     <Separator />
-                    <div className='flex flex-col gap-1 h-11 w-70'>
+                    <div className='flex flex-col gap-1 h-11 w-full max-w-70'>
                         <div className='flex flex-row justify-between'>
                             <Skeleton className='h-4 w-28 rounded-md' />
                             <Skeleton className='h-3 w-20 rounded-md' />

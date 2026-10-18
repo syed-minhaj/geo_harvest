@@ -42,11 +42,17 @@ export function FieldCard({ id, name, coordinates, imagesDates, crop }: FieldCar
         <Link href={`/app/fields/${id}`}
             className="p-4 rounded-r1 border bg-card dark:bg-secondary/15 shadow-sm transition-all duration-200 ease-out hover:bg-accent/30 dark:hover:bg-secondary/30 hover:border-primary/20 dark:hover:border-primary/20 hover:shadow-[0_10px_18px_-12px_rgba(0,0,0,0.14)] dark:hover:shadow-[0_10px_20px_-12px_rgba(70,180,110,0.14),0_0_8px_rgba(70,180,110,0.05)] flex flex-col gap-3">
             <div className="flex flex-row gap-4">
-                <svg height={220} width={220}>
+                <svg
+                    viewBox="0 0 220 220"
+                    preserveAspectRatio="xMidYMid meet"
+                    className="w-55 h-auto max-w-[50%] shrink-0 self-start"
+                    role="img"
+                    aria-label={`Map of ${name}`}
+                >
                     <polygon points={pgpolygontosvgPolygon(coordinates)} fill="#0F5C36" stroke="#0F5C36" fillOpacity={0.2} strokeWidth="2" />
                 </svg>
-                <div className="flex flex-col gap-2">
-                    <h2 className="text-xl font-semibold min-w-24">{name}</h2>
+                <div className="flex flex-1 flex-col gap-2 min-w-0">
+                    <h2 className="text-xl font-semibold break-words">{name}</h2>
                     <div className="flex flex-col">
                         <span className="opacity-66">Area:</span>
                         <span className="font-medium">{calculateAreaInAcres(fromPostgresPolygon(coordinates)).toFixed(2)} acres</span>
@@ -57,12 +63,12 @@ export function FieldCard({ id, name, coordinates, imagesDates, crop }: FieldCar
             <div className="text-sm flex flex-row justify-between">
                 <div className="flex flex-col w-1/2">
                     <span className="opacity-66">Crop:</span>
-                    <span className="font-medium capitalize">{crop?.name ?? "—"}</span>
+                    <span className="font-medium capitalize break-words">{crop?.name ?? "—"}</span>
                 </div>
                 {crop && crop.seedVariety != "other" ? (
                     <div className="flex flex-col w-1/2">
                         <span className="opacity-66">Variety:</span>
-                        <span className="font-medium">{crop.seedVariety}</span>
+                        <span className="font-medium break-words">{crop.seedVariety}</span>
                     </div>
                 ) : null}
             </div>
