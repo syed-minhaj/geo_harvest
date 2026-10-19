@@ -135,7 +135,7 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
     }
 
     return (
-        <Card className={`${!done ? "animate-pulse" : ""} relative corner-squircle`}>
+        <Card className={`${!done ? "animate-pulse" : ""} relative corner-squircle bg-graph-bg`}>
             <div className={`absolute w-full h-full flex justify-center items-center  ${!done ? "": "hidden"}`}>
                 <div className="">loading...</div>
             </div>

@@ -46,8 +46,9 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --color-bg1: var(--bg-bg1)  ;
+  --color-bg1: var(--bg-bg1);
   --color-bg2: var(--bg-bg2);
+  --color-graph-bg: var(--graph-bg);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -56,9 +57,10 @@
 
 :root {
   --bg-bg1: var(--background);
-  --bg-bg2: #F8F6EF;
+  --bg-bg2: #F5F2EA;
+  --graph-bg: #E7E3D8;
   --radius: 0.625rem;
-  --background: #F2F0EA;
+  --background: #EEEAE1;
   --foreground: #3A4239;
   --card: #F6F4ED;
   --card-foreground: #3A4239;
@@ -94,6 +96,7 @@
 .dark {
   --bg-bg1: var(--background);
   --bg-bg2: #131614;
+  --graph-bg: #151A16;
   --background: #0B0E0C;
   --color-main: #3C9A63;
   --foreground: #E7EDE8;
