@@ -72,7 +72,10 @@ const chartDataByYear = (rawData: { date: string; value: number }[] , year : num
 const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield , allData : allData}) => {
     const {hash} = useHash("")
     const [type , setType] = useState<"yearly" | "crop cycle">(typeP)
-    const [year , setYear] = useState(new Date().getFullYear())
+    const years = [...new Set(field.imagesDates.map((d) => new Date(d).getFullYear()))]
+        .filter((y) => Number.isFinite(y))
+        .sort((a, b) => a - b)
+    const [year , setYear] = useState(() => years.length ? years[years.length - 1] : new Date().getFullYear())
     const [chartData , setChartData] = useState < {date : string , value : number}[]>([])
     const [done , setDone] = useState(false)
     const [value , setValue] = useState<{label:string,color:string}>({
@@ -150,7 +153,7 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
                 </div>
                 <div className="flex flex-row gap-2 ml-auto">
                     {type === "yearly" && 
-                        <ChangeGraphYear year={year} setYear={setYear} years={[2025,2026]} />
+                        <ChangeGraphYear year={year} setYear={setYear} years={years} />
                     }
                     <ChangeGraphType type={type} setType={setType} />
                 </div>
