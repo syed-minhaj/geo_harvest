@@ -7,6 +7,7 @@ import { DeleteField as DeleteFieldAction, getAvgPixelValueByFieldIdImageType } 
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/app/components/ui/dialog";
 import { ChevronRight, Settings2 } from "lucide-react";
 import { useHash } from "@/app/hooks/hash";
 import {ChevronLeft } from "lucide-react"
@@ -40,6 +41,8 @@ export default function Main({field} : {field : tfield & {crop : {name : string 
     const router = useRouter();
     const {hash} = useHash("waterRequirement")
     const [openMenu, setOpenMenu] = useState(false);
+    const [settingsOpen, setSettingsOpen] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
     const [allData, setAllData] = useState<allData>(() => {
         const initialState = {} as allData;
         ImagesTypes.forEach((img : ImageType) => {
@@ -74,31 +77,21 @@ export default function Main({field} : {field : tfield & {crop : {name : string 
         AsyncFunc();
     },[])
 
-    function DeleteField() {
-        toast.info("Do you want to delete this field ?", {
-            id : "confirm",
-            action : 
-                {
-                    label : "Yes",
-                    onClick : () => {
-                        toast.dismiss("confirm");
-                        toast.loading("Deleting field" , {
-                            id : "loading",
-                        });
-                        DeleteFieldAction({id : field.id}).then((res) => {
-                            if(res && res.err) {
-                                toast.error(res.err);
-                                return;
-                            }
-                            toast.dismiss("loading");
-                            toast.success("Successfully deleted");
-                            router.push("/app/fields");
-                        })
-                    }
-                }
-            
+    function confirmDelete() {
+        toast.loading("Deleting field", {
+            id: "loading",
         });
-        
+        DeleteFieldAction({ id: field.id }).then((res) => {
+            if (res && res.err) {
+                toast.dismiss("loading");
+                toast.error(res.err);
+                return;
+            }
+            toast.dismiss("loading");
+            toast.success("Successfully deleted");
+            setDeleteOpen(false);
+            router.push("/app/fields");
+        })
     }
     return (
         <>
@@ -126,17 +119,31 @@ export default function Main({field} : {field : tfield & {crop : {name : string 
                         </div>
                     </ChartWrapper>
                 </div>
-                <Popover >
+                <Popover open={settingsOpen} onOpenChange={setSettingsOpen}>
                     <PopoverTrigger className="ml-auto rounded border flex flex-row items-center gap-2 p-2 ">
                         <Settings2/> Settings
                     </PopoverTrigger>
                     <PopoverContent className="w-fit z-300">
-                        <Button  className='bg-destructive ml-auto hover:bg-destructive/85 ' onClick={() => {DeleteField()}}>
+                        <Button variant="destructive" className='ml-auto' onClick={() => {setSettingsOpen(false); setDeleteOpen(true)}}>
                             Delete field
                         </Button>
                     </PopoverContent>
                 </Popover>
             </div>
+            <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+                <DialogContent className="w-full max-w-md" onDilogClose={() => setDeleteOpen(false)}>
+                    <DialogHeader>
+                        <DialogTitle>Delete this field?</DialogTitle>
+                        <DialogDescription>
+                            {field.name} and all of its data will be permanently deleted. This cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setDeleteOpen(false)}>Cancel</Button>
+                        <Button variant="destructive" onClick={confirmDelete}>Delete field</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
 
     )

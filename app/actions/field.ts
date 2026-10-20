@@ -27,7 +27,7 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
 
     const session = await auth.api.getSession({headers : await headers()});
     if (!session) {
-            return {err : "Please login to create a field."}
+            return {err : "Please sign in or sign up to create a field."}
     }
 
     if (!await userAllowedToCreateField(session.user.id)) {
