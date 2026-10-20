@@ -2,6 +2,7 @@
   "name": "geo_harvest",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@12.14.0",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "npm run drizzle && next build",
