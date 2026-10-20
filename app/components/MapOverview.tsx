@@ -4,7 +4,12 @@ import dynamic from 'next/dynamic';
 
 const MapOverviewInner = dynamic(
   () => import('./MapOverviewInner').then((mod) => mod.MapOverviewInner),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[300px] rounded-r1 border border-input" />
+    ),
+  }
 );
 
 type FieldData = {
