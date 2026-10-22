@@ -8,8 +8,8 @@ import { RAMP_MAX } from "../utils/colorRamp";
 import { auth } from "../lib/auth";
 import { headers } from "next/headers";
 import sharp from "sharp";
-import fetch from "node-fetch";
 import { revalidatePath } from "next/cache";
+import { fieldImageUrl } from "../utils/fieldImage";
 
 type rampRGB = {
     value : number,
@@ -135,10 +135,9 @@ export async function getAverageRampValueFromUrl_Server(
         imageType: ImageType,
         rampRGB: { value: number; r: number; g: number; b: number }[]
     ): Promise<number | null> {
-    
-    const imageUrl = `https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${fieldId}/${imageDate}/${imageType}.png`;
-    
-    // Fetch image as buffer
+
+    const imageUrl = fieldImageUrl(fieldId, imageDate, imageType);
+
     const response = await fetch(imageUrl);
     if (!response.ok) throw new Error(`Failed to fetch image: ${imageUrl}`);
     const buffer = await response.arrayBuffer();

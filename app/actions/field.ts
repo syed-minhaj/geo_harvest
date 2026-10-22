@@ -7,8 +7,15 @@ import { supabase } from "@/app/lib/supabase";
 import { sentinel_catalog, sentinel_image } from "../utils/sentinel";
 import { and, count, eq, sql } from "drizzle-orm";
 import { ImageType } from "../types";
-import { getAverageRampValueFromUrl_Server } from "@/app/actions/actions";
+import { getAverageRampValueFromBuffer } from "@/app/actions/actions";
 import { getColorRamp } from "../utils/colorRamp";
+import {
+    FIELD_IMAGE_CACHE_CONTROL,
+    FIELD_IMAGE_CONTENT_TYPE,
+    FIELD_IMAGE_TYPES,
+    fieldImagePath,
+} from "../utils/fieldImage";
+import { encodeFieldImage } from "../utils/fieldImageEncode";
 
 type CropType = {
     name : CropName,
@@ -62,7 +69,7 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
         const pixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = []
         const uploadedPaths : string[] = []
         let failed : string | null = null
-        for(const to  of ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"] as ImageType[]) {
+        for(const to of FIELD_IMAGE_TYPES) {
 
             const res = await sentinel_image({coordinates , date:dates[0]  , imageType : to , crop : fcrop.name , plantingDate : fcrop.plantedDate})
             if(res.err || res.data === null) {
@@ -70,19 +77,29 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
                 failed = `image generation failed for ${to}: ${res.err ?? "no data"}`;
                 break;
             }
-            const { data, error } = await supabase.storage
+            const imagePath = fieldImagePath(feildId, dates[0], to);
+            let imageData: Buffer;
+            try {
+                imageData = await encodeFieldImage(res.data);
+            } catch (e) {
+                const message = e instanceof Error ? e.message : String(e);
+                console.error(e);
+                failed = `image encoding failed for ${to}: ${message}`;
+                break;
+            }
+            const { error } = await supabase.storage
                 .from("field")
-                .upload(`${feildId}/${dates[0]}/${to}.png`, res.data, {
-                    cacheControl: '3600', 
-                    contentType: 'image/png', 
-                    upsert: true, 
+                .upload(imagePath, imageData, {
+                    cacheControl: FIELD_IMAGE_CACHE_CONTROL,
+                    contentType: FIELD_IMAGE_CONTENT_TYPE,
+                    upsert: true,
                 });
             if (error) {
                 console.error('Error uploading image:', error.message);
                 failed = `upload failed for ${to}: ${error.message}`;
                 break;
             }
-            uploadedPaths.push(`${feildId}/${dates[0]}/${to}.png`)
+            uploadedPaths.push(imagePath)
 
             const rampRGB =  getColorRamp(fcrop.name , to , fcrop.plantedDate , new Date(dates[0])).map(([value, intColor]) => {
                 const r = (intColor >> 16) & 255;
@@ -92,7 +109,7 @@ export async function CreateField({name , coordinates , fcrop} : {name : string,
             });
             let value : number | null = null
             try {
-                value = await getAverageRampValueFromUrl_Server(feildId , dates[0] , to , rampRGB)
+                value = await getAverageRampValueFromBuffer(res.data, to, rampRGB)
             } catch (e : any) {
                 console.error(e);
                 failed = `value computation failed for ${to}: ${e?.message ?? e}`;
@@ -157,14 +174,16 @@ export async function DeleteField({id} : {id : string }) {
         await db.delete(field).where(eq(field.id , id))
         await db.delete(crop).where(eq(crop.fieldId , id))
         await db.delete(avgPixelValue).where(eq(avgPixelValue.fieldId , id))
-        const paths = selectedField.imagesDates.map((date : string) => {
-            const p = ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"].map((type : string) => {
-                return `${id}/${date}/${type}.png`
-            })
-            return p;
-        })
-        for(const path of paths) {
-            await supabase.storage.from("field").remove(path)
+        const paths: string[] = [];
+        for (const date of selectedField.imagesDates) {
+            for (const type of FIELD_IMAGE_TYPES) {
+                paths.push(fieldImagePath(id, date, type));
+                paths.push(`${id}/${date}/${type}.png`);
+            }
+        }
+        if (paths.length > 0) {
+            const { error: removeError } = await supabase.storage.from("field").remove(paths);
+            if (removeError) console.error('Error removing field images:', removeError.message);
         }
     } catch (e :any) {
         console.log(e)

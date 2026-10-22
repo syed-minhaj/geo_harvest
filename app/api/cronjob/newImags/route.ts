@@ -6,8 +6,15 @@ import { sentinel_image , sentinel_catalog } from "@/app/utils/sentinel";
 import { fromPostgresPolygon } from "@/app/utils/coordinate";
 import { eq, sql } from "drizzle-orm";
 import { ImageType } from "@/app/types";
-import { getAverageRampValueFromUrl_Server } from "@/app/actions/actions";
+import { getAverageRampValueFromBuffer } from "@/app/actions/actions";
 import { getColorRamp } from "@/app/utils/colorRamp";
+import {
+    FIELD_IMAGE_CACHE_CONTROL,
+    FIELD_IMAGE_CONTENT_TYPE,
+    FIELD_IMAGE_TYPES,
+    fieldImagePath,
+} from "@/app/utils/fieldImage";
+import { encodeFieldImage } from "@/app/utils/fieldImageEncode";
 
 export async function GET(req : NextRequest) {
     
@@ -62,7 +69,7 @@ export async function GET(req : NextRequest) {
             const fieldPixelValues : {fieldId : string , imageType : ImageType , imageDate : string , value : number|null}[] = [];
             const uploadedPaths : string[] = [];
     
-            for(const to  of ["waterRequirement" , "nitrogenRequirement" , "phosphorusRequirement" , "cropStress"] as ImageType[]) {
+            for(const to of FIELD_IMAGE_TYPES) {
                 const res = await sentinel_image({coordinates : coor.map((c : number[]) => [c[1], c[0]]) , date:dates[0]  , imageType : to , crop : field.crop[0].name , plantingDate : field.crop[0].planted_at})
                     
                 if(res.err || res.data === null) {
@@ -70,12 +77,22 @@ export async function GET(req : NextRequest) {
                     errors.push(`${field.id}/${dates[0]}/${to}: image ${res.err ?? "no data"}`);
                     continue;
                 }
-                const { data, error } = await supabase.storage
+                const imagePath = fieldImagePath(field.id, dates[0], to);
+                let imageData: Buffer;
+                try {
+                    imageData = await encodeFieldImage(res.data);
+                } catch (e) {
+                    const message = e instanceof Error ? e.message : String(e);
+                    console.error('Error encoding image:', message);
+                    errors.push(`${field.id}/${dates[0]}/${to}: encode ${message}`);
+                    continue;
+                }
+                const { error } = await supabase.storage
                     .from("field")
-                    .upload(`${field.id}/${dates[0]}/${to}.png`, res.data, {
-                        cacheControl: '3600', 
-                        contentType: 'image/png', 
-                        upsert: true, 
+                    .upload(imagePath, imageData, {
+                        cacheControl: FIELD_IMAGE_CACHE_CONTROL,
+                        contentType: FIELD_IMAGE_CONTENT_TYPE,
+                        upsert: true,
                     });
                 
                 if (error) {
@@ -83,7 +100,7 @@ export async function GET(req : NextRequest) {
                     errors.push(`${field.id}/${dates[0]}/${to}: upload ${error.message}`);
                     continue;
                 }
-                uploadedPaths.push(`${field.id}/${dates[0]}/${to}.png`);
+                uploadedPaths.push(imagePath);
                 const rampRGB =  getColorRamp(field.crop[0].name , to , field.crop[0].planted_at , new Date(dates[0])).map(([value, intColor]) => {
                     const r = (intColor >> 16) & 255;
                     const g = (intColor >> 8) & 255;
@@ -91,14 +108,10 @@ export async function GET(req : NextRequest) {
                     return { value, r, g, b };
                 });
                 let value : number | null = null;
-                for (let attempt = 1; attempt <= 2; attempt++) {
-                    try {
-                        value = await getAverageRampValueFromUrl_Server(field.id , dates[0] , to , rampRGB)
-                        break;
-                    } catch (e : any) {
-                        console.error('Error computing value:', e?.message ?? e);
-                        await new Promise((r) => setTimeout(r, 1500));
-                    }
+                try {
+                    value = await getAverageRampValueFromBuffer(res.data, to, rampRGB);
+                } catch (e : any) {
+                    console.error('Error computing value:', e?.message ?? e);
                 }
                 if (value === null) errors.push(`${field.id}/${dates[0]}/${to}: value null (image uploaded but no valid pixels)`);
                 fieldPixelValues.push({fieldId : field.id , imageType : to , imageDate : dates[0] , value : value})

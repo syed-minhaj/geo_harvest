@@ -12,6 +12,7 @@ import { useHash } from '@/app/hooks/hash';
 import SwitchDate from './switchDate';
 import { getColorRamp } from '@/app/utils/colorRamp';
 import { fromPostgresPolygon, getZoom, getMinZoomForContainer } from '@/app/utils/coordinate';
+import { fieldImageUrl } from '@/app/utils/fieldImage';
 
 
 function BoundZoomToContainer() {
@@ -80,7 +81,7 @@ export default function MapClient({field} : {field : tfield & {crop : {name : st
     
 
     function getImageUrl(date : string , type : string) {
-        return `https://gjrjmfbkexmuhyaajypa.supabase.co/storage/v1/object/public/field/${field.id}/${date}/${type}.png`
+        return fieldImageUrl(field.id, date, type);
     }
 
 
