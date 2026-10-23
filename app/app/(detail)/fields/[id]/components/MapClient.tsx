@@ -13,6 +13,7 @@ import SwitchDate from './switchDate';
 import { getColorRamp } from '@/app/utils/colorRamp';
 import { fromPostgresPolygon, getZoom, getMinZoomForContainer } from '@/app/utils/coordinate';
 import { fieldImageUrl } from '@/app/utils/fieldImage';
+import { useFieldImagePrefetch } from '@/app/hooks/useFieldImagePrefetch';
 
 
 function BoundZoomToContainer() {
@@ -62,6 +63,12 @@ export default function MapClient({field} : {field : tfield & {crop : {name : st
     const [overlayBounds, setOverlayBounds] = useState<LatLngBoundsExpression | null>(null);
     const [position, setPosition] = useState<LatLngExpression | null>(null);
 
+    const { handleVisibleDatesChange, handleInitialOverlaySettled } = useFieldImagePrefetch({
+        fieldId: field.id,
+        imageType: hash,
+        imagesDate,
+    });
+
     useEffect(() => {
         const lats = coordinates.map((c:any) => c[0]);
         const lngs = coordinates.map((c:any) => c[1]);
@@ -95,14 +102,15 @@ export default function MapClient({field} : {field : tfield & {crop : {name : st
                     />
                 {overlayBounds && hash ?
                     <ImageOverlay url={getImageUrl(imagesDate , hash)}
-                    bounds={overlayBounds} opacity={0.55} />
+                    bounds={overlayBounds} opacity={0.55}
+                    eventHandlers={{ load: handleInitialOverlaySettled, error: handleInitialOverlaySettled }} />
                     :
                     <Polygon positions={coordinates as LatLngExpression[]} color="white" fillOpacity={0.15} fillColor="white" /> 
                 }
                 <FeatureGroup>
                 </FeatureGroup>
             </MapContainer>
-            <SwitchDate dates={field.imagesDates} imagesDate={imagesDate} setImagesDate={setImagesDate} />
+            <SwitchDate dates={field.imagesDates} imagesDate={imagesDate} setImagesDate={setImagesDate} onVisibleDatesChange={handleVisibleDatesChange} />
             <RampBar crop={field.crop[0].name} hash={hash as ImageType} plantingDate={field.crop[0].planted_at} date={imagesDate} />
         </div>
     );
