@@ -18,7 +18,7 @@ export default function Main({referrerUrl , pathname}:{referrerUrl:string|null ,
     }
     
     return (
-        <main className="flex grow  flex-col items-center justify-center gap-3 self-center p-4 md:p-6 mt-4 w-full">
+        <main className="flex grow  flex-col items-center justify-center gap-3 self-center p-4 md:p-6 w-full h-dvh">
             <AuthCard pathname={pathname} redirectTo={redirectPath} />
         </main>
     )
