@@ -56,9 +56,6 @@ export default function Main({field} : {field : tfield & {crop : {name : string 
 
     useEffect(() => {
         const AsyncFunc = async () => {
-            // Single round trip for all stored averages; getGraphData filters
-            // by image type itself. Graph requests fire immediately after so
-            // the 8 calls run in parallel instead of behind a serial chain.
             const res = await getAvgPixelValuesByFieldId(field.id);
             for(const img of ImagesTypes) {
                 for(const type of ["yearly", "crop cycle"] as graphType[]) {

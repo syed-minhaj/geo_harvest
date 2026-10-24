@@ -62,7 +62,6 @@ export function getCycleByIndex(index : number , cropType : string) {
         cotton: cStage,
     };
 
-    // Fallback must be the stage-name array, not the genericStage() function.
     const determineStage = stageMap[cropType] || gStage;
 
     return determineStage[index];
@@ -76,7 +75,6 @@ export function getCycleIndex(cycle : string | undefined , cropType : string) {
         cotton: cStage,
     };
 
-    // Fallback must be the stage-name array, not the genericStage() function.
     const determineStage = stageMap[cropType] || gStage;
 
     if (cycle === undefined) return -1;
