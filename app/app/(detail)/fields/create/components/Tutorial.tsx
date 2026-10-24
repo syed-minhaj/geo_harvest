@@ -27,7 +27,7 @@ export default function Tutorial({open , setOpen} : {open : boolean , setOpen : 
                     </ul>
                     <div className="w-full lg:flex-1 shrink-0">
                         <video preload="auto" className="w-full h-auto rounded-xl" autoPlay loop muted >
-                            <source src={`${process.env.NEXT_PUBLIC_APP_URL}/tutorial.mp4`} type="video/mp4" />
+                            <source src="/tutorial.mp4" type="video/mp4" />
                         </video>
                     </div>
                 </div>
