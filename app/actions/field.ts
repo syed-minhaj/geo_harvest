@@ -5,7 +5,7 @@ import { db } from "@/app/lib/drizzle";
 import { Crop as CropName , field , crop, avgPixelValue } from "@/db/schema";
 import { supabase } from "@/app/lib/supabase";
 import { sentinel_catalog, sentinel_image } from "../utils/sentinel";
-import { and, count, eq, sql } from "drizzle-orm";
+import { count, eq, sql } from "drizzle-orm";
 import { ImageType } from "../types";
 import { getAverageRampValueFromBuffer } from "@/app/actions/actions";
 import { getColorRamp } from "../utils/colorRamp";
@@ -197,16 +197,16 @@ function toPostgresPolygon(coords: number[][]): string {
 }
 
 
-export async function getAvgPixelValueByFieldIdImageType(fieldId : string , imageType : ImageType) {
+export async function getAvgPixelValuesByFieldId(fieldId : string) {
     const avgPixelValues = await db
         .select({
             fieldId : avgPixelValue.fieldId ,
             imageType : avgPixelValue.imageType ,
-            imageDate : avgPixelValue.imageDate , 
+            imageDate : avgPixelValue.imageDate ,
             value : avgPixelValue.value
         })
         .from(avgPixelValue)
-        .where(and(eq(avgPixelValue.fieldId , fieldId), eq(avgPixelValue.imageType , imageType)))
+        .where(eq(avgPixelValue.fieldId , fieldId))
 
     return avgPixelValues;
 }

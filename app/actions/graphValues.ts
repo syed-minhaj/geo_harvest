@@ -1,7 +1,7 @@
 "use server";
 import { tfield , ImageType } from "@/app/types";
 import { getDateShort } from "../utils/Date";
-import { getAverageRampValueFromUrl_Server, revalidatePath_fromClient, setAvgPixelValueBatch } from "./actions";
+import { getAverageRampValueFromUrl_Server, setAvgPixelValueBatch } from "./actions";
 import { revalidatePath } from "next/cache";
 import { getColorRamp, RAMP_MAX } from "../utils/colorRamp";
 import { getAgriCycle, getCycleByIndex, getCycleIndex } from "../utils/agriCycle";
@@ -132,9 +132,11 @@ async function getGraphData(field : tfield & {crop : {name : string , planted_at
         }
     }
 
-    if (graphType == "yearly" && pendingValues.length != 0) {
+    if (pendingValues.length != 0) {
         await setAvgPixelValueBatch(pendingValues);
-        revalidatePath(`/app/fields/${field.id}`);
+        if (graphType == "yearly") {
+            revalidatePath(`/app/fields/${field.id}`);
+        }
     }
     return {graphData , lasthex}
 }

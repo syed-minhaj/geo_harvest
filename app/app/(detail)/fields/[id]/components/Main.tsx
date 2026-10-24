@@ -3,7 +3,7 @@ import { ImageType, tfield } from "@/app/types";
 import dynamic from "next/dynamic"
 import Config from "./Config";
 import { Button } from "@/app/components/ui/button";
-import { DeleteField as DeleteFieldAction, getAvgPixelValueByFieldIdImageType } from "@/app/actions/field";
+import { DeleteField as DeleteFieldAction, getAvgPixelValuesByFieldId } from "@/app/actions/field";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
@@ -56,8 +56,11 @@ export default function Main({field} : {field : tfield & {crop : {name : string 
 
     useEffect(() => {
         const AsyncFunc = async () => {
+            // Single round trip for all stored averages; getGraphData filters
+            // by image type itself. Graph requests fire immediately after so
+            // the 8 calls run in parallel instead of behind a serial chain.
+            const res = await getAvgPixelValuesByFieldId(field.id);
             for(const img of ImagesTypes) {
-                const res = await getAvgPixelValueByFieldIdImageType(field.id , img)
                 for(const type of ["yearly", "crop cycle"] as graphType[]) {
                     getGraphData(field  , res , type, img ).then((res) => {
                         setAllData(prev => ({
