@@ -49,18 +49,21 @@
   transition: all 0.3s ease;
 }
 
-.container input:checked + div {
+/* Visual state keyed off the .dark class on <html> (next-themes sets it pre-paint),
+   so the switch renders correctly from the first paint with no state read.
+   (The checkbox is a purely hidden click target; do NOT style on :checked.) */
+.dark .container input + div {
   box-shadow: inset 32px -32px 0 0 #fff;
   transform: scale(0.5) rotate(0deg);
   transition: transform 0.3s ease 0.1s, box-shadow 0.2s ease 0s;
 }
 
-.container input:checked + div::before {
+.dark .container input + div::before {
   background: var(--color-toggle-light, #eee);
   transition: background 0.3s ease 0.1s;
 }
 
-.container input:checked + div::after {
+.dark .container input + div::after {
   transform: scale(1.5);
   transition: transform 0.5s ease 0.15s;
 }

@@ -4,11 +4,9 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {LayoutDashboard , Leaf, BarChart, MoveLeft, Moon, Sun  } from "lucide-react"
 import { UserButton } from "@daveyplate/better-auth-ui"
-import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 import Logo from "./navbar/logo";
-
-const ThemeSwitcher = dynamic(() => import("./navbar/ThemeSwitch"), { ssr: false });
+import ThemeSwitcher from "./navbar/ThemeSwitch";
  
 const Pages = ["dashboard", "fields" , "analytics"] as const
 

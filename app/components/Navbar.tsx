@@ -1,12 +1,9 @@
 "use client"
 import {UserButton} from "@daveyplate/better-auth-ui"
 import {LogoNav as Logo} from "./navbar/logo";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-
-
-const ThemeSwitcher = dynamic(() => import("./navbar/ThemeSwitch"), { ssr: false });
+import ThemeSwitcher from "./navbar/ThemeSwitch";
 
 export   function Navbar({ showOnDesktop }: { showOnDesktop?: boolean }) {
 

@@ -1,23 +1,25 @@
 "use client";
-import  '../../style/themeToggle.css';
+import '../../style/themeToggle.css';
 import { useTheme } from 'next-themes';
 
 const ThemeSwitcher = () => {
-    const { theme, setTheme } = useTheme();
+    const { setTheme } = useTheme();
 
     const toggleTheme = () => {
-        setTheme(theme === "light" ? "dark" : "light");
+        const isDark = document.documentElement.classList.contains("dark");
+        setTheme(isDark ? "light" : "dark");
     };
 
     return (
         <label
             className="container"
-            title={theme == "dark" ? "Activate light mode" : "Activate dark mode"}
-            aria-label={theme == "dark" ? "Activate light mode" : "Activate dark mode"}
+            title="Toggle theme"
+            aria-label="Toggle theme"
         >
             <input
                 type="checkbox"
-                defaultChecked={theme == 'dark'}
+                aria-hidden="true"
+                tabIndex={-1}
                 onChange={toggleTheme}
             />
             <div />
