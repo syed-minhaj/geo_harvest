@@ -26,7 +26,7 @@ const getUserLocation = () : Promise<{location : location , err : null} | {locat
                         resolve({location : null, err : "The request to get user location timed out."});
                         break;
                 }
-            });
+            }, { enableHighAccuracy: false, timeout: 10_000, maximumAge: 600_000 });
         }else{
             resolve({location : null, err : "Geolocation is not supported by this browser."});
         }

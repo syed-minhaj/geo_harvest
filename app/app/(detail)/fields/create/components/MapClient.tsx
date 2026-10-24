@@ -1,6 +1,6 @@
 'use client';
 
-import { MapContainer, TileLayer, FeatureGroup, Polygon  } from 'react-leaflet';
+import { MapContainer, TileLayer, FeatureGroup, Polygon, useMap  } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { LatLngExpression   } from 'leaflet';
 import { getUserLocation, getZoom } from '@/app/utils/coordinate';
@@ -16,9 +16,19 @@ type location = {
     longitude : number
 }
 
+const DEFAULT_CENTER: LatLngExpression = [30.3753, 69.3451];
+const DEFAULT_ZOOM = 5;
+
+function Recenter({ lat, lng, zoom } : { lat : number, lng : number, zoom : number }) {
+    const map = useMap();
+    useEffect(() => {
+        map.setView([lat, lng], zoom);
+    }, [map, lat, lng, zoom]);
+    return null;
+}
 
 export default function MapClient({cordinates , setCordinates} : {cordinates : number[][] | null , setCordinates : (c : number[][] | null) => void}) {
-    
+
     const [location, setLocation] = useState<location | null>(null);
     const [err, setErr] = useState<string | null>(null);
 
@@ -34,11 +44,11 @@ export default function MapClient({cordinates , setCordinates} : {cordinates : n
     }, []);
 
 
-    if (err || !location) {
+    if (err) {
         return  (
             <div className='w-full h-[30rem] 2xl:h-[35rem] rounded-[0.75rem] z-20 corner-squircle bg-muted flex flex-col gap-4 justify-center items-center'>
                 <div className='max-w-[80%] text-center'>{err}</div>
-                <Button onClick={() => getLocation()}>Allow Location Access</Button>
+                <Button onClick={() => {setErr(null); getLocation()}}>Allow Location Access</Button>
             </div>
         )
     }
@@ -53,11 +63,6 @@ export default function MapClient({cordinates , setCordinates} : {cordinates : n
         return [(north + south)/2, (east + west)/2] as LatLngExpression;
     }
 
-    const position: LatLngExpression = cordinates ? centerOfCoordinates(cordinates) : [location.latitude, location.longitude]; // Center 
-    
-    
-
-
     const shape = async (data : any) => {
         const c = data.geometry.coordinates[0].map((c: number[]) => [c[0], c[1]]);
         setCordinates(c);
@@ -65,11 +70,15 @@ export default function MapClient({cordinates , setCordinates} : {cordinates : n
 
 
     return (
-        <MapContainer center={position} zoom={cordinates ? getZoom(cordinates) : 18} scrollWheelZoom={true} style={{}} className='w-full h-[30rem] 2xl:h-[35rem] rounded-[0.75rem] z-20 corner-squircle ' >
+        <MapContainer
+            center={cordinates ? centerOfCoordinates(cordinates) : DEFAULT_CENTER}
+            zoom={cordinates ? getZoom(cordinates) : DEFAULT_ZOOM}
+            scrollWheelZoom={true} style={{}} className='w-full h-[30rem] 2xl:h-[35rem] rounded-[0.75rem] z-20 corner-squircle ' >
             <TileLayer
                 url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                 attribution="© OpenStreetMap contributors"
                 />
+            {location && <Recenter lat={location.latitude} lng={location.longitude} zoom={18} />}
             <FeatureGroup>
                 {cordinates && <Polygon color="#2F7D9E" positions={cordinates.map((c:any) => [c[1], c[0]])} />}
                 <EditControl
