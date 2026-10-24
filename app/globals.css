@@ -7,12 +7,26 @@
 @theme {
     --transition-property: none;
     --color-main: #0F5C36;
+    --color-ink: #141414;
+    --color-ink-soft: #787774;
+    --color-line: #EAEAEA;
+    --color-canvas: #F7F6F3;
+    --color-surface: #FFFFFF;
+    --color-blue-pale: #E1F3FE;
+    --color-blue-ink: #1F6C9F;
+    --color-green-pale: #EDF3EC;
+    --color-green-ink: #346538;
+    --color-yellow-pale: #FBF3DB;
+    --color-yellow-ink: #956400;
+    --color-purple-pale: #EEEAF8;
+    --color-purple-ink: #5B4FA8;
 }
 
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --font-display: var(--font-instrument-serif);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-alpet-sans: var(--font-alpet-sans);
@@ -193,4 +207,65 @@ body {
 
 .sideBar-parent:has(.sideBar-child:hover) {
     @apply w-60;
+}
+
+/* ——— Landing: field-survey motifs ——— */
+
+/* Map graticule: faint grid + horizontal/vertical rules on imagery */
+.survey-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.14) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.14) 1px, transparent 1px);
+  background-size: 12.5% 12.5%;
+}
+
+.rule-h,
+.rule-v {
+  position: absolute;
+  background-color: currentColor;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.rule-h {
+  height: 1px;
+  width: 100%;
+  left: 0;
+}
+
+.rule-v {
+  width: 1px;
+  height: 100%;
+  top: 0;
+}
+
+/* Raw index rasters: keep pixels hard, like 10 m/px Sentinel tiles */
+.pixelated {
+  image-rendering: pixelated;
+}
+
+/* Zero-JS scroll entry: only when scroll-driven timelines are supported */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 38%;
+  }
+
+  @keyframes reveal-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      animation: none;
+    }
+  }
 }

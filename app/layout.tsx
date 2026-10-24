@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Albert_Sans, Geist, Geist_Mono , Josefin_Sans} from "next/font/google";
+import { Albert_Sans, Geist, Geist_Mono , Instrument_Serif, Josefin_Sans} from "next/font/google";
 import "./globals.css";
 import 'leaflet/dist/leaflet.css';
 import NextTopLoader from "nextjs-toploader";
@@ -18,6 +18,13 @@ const geistMono = Geist_Mono({
 const josefinSans = Josefin_Sans({
     variable: "--font-josefin-sans",
     subsets: ["latin"],
+});
+
+const instrumentSerif = Instrument_Serif({
+    variable: "--font-instrument-serif",
+    subsets: ["latin"],
+    weight: "400",
+    style: ["normal", "italic"],
 });
 
 const albertSans = Albert_Sans({
@@ -41,13 +48,13 @@ export default function RootLayout({
 
 
     return (
-        <html lang="en" >
+        <html lang="en" suppressHydrationWarning>
             <head>
                 <meta name="theme-color" content="#F2F0EA" media="(prefers-color-scheme: light)" />
                 <meta name="theme-color" content="#0B0E0C" media="(prefers-color-scheme: dark)" />
             </head>
             <body
-                className={`${geistSans.variable} ${geistMono.variable} ${josefinSans.variable} ${albertSans.variable} antialiased overflow-x-hidden`}
+                className={`${geistSans.variable} ${geistMono.variable} ${josefinSans.variable} ${albertSans.variable} ${instrumentSerif.variable} antialiased overflow-x-hidden`}
             >
                 <ThemeProvider>
                     <NextTopLoader color="#0F5C36" showSpinner={false} />
