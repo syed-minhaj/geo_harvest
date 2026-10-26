@@ -161,7 +161,7 @@ const steps = [
         mock: (
             /* structure + classes copied from fields/[id]/components/graph.tsx */
             <Card className="relative corner-squircle bg-background">
-                <CardHeader className="flex flex-row">
+                <CardHeader className="flex flex-row max-sm:flex-wrap gap-y-1">
                     <div className="flex flex-col gap-1.5">
                         <CardTitle className="w-full flex flex-row">waterRequirement graph over time yearly</CardTitle>
                         <CardDescription>12 Jun&apos;24 - 18 Oct&apos;25</CardDescription>
@@ -261,7 +261,7 @@ export function Storyboard() {
                         </h3>
                         <p className="text-sm leading-relaxed text-ink-soft dark:text-[#96A29A]">{s.copy}</p>
                     </div>
-                    <div className="reveal xl:col-span-1 col-span-2">{s.mock}</div>
+                    <div className="reveal lg:col-span-2 xl:col-span-1">{s.mock}</div>
                 </li>
             ))}
         </ol>
