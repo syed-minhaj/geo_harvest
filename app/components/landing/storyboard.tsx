@@ -160,7 +160,7 @@ const steps = [
         copy: "Every pass lands as one of the four index maps plus a chart on the field page — switch yearly or crop-cycle to see how water requirement has moved since planting.",
         mock: (
             /* structure + classes copied from fields/[id]/components/graph.tsx */
-            <Card className="relative corner-squircle bg-graph-bg">
+            <Card className="relative corner-squircle bg-background">
                 <CardHeader className="flex flex-row">
                     <div className="flex flex-col gap-1.5">
                         <CardTitle className="w-full flex flex-row">waterRequirement graph over time yearly</CardTitle>
