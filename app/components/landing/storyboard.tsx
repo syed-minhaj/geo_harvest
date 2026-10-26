@@ -248,11 +248,11 @@ const steps = [
 
 export function Storyboard() {
     return (
-        <ol className="space-y-16">
+        <ol className="divide-y divide-[#EAEAEA] dark:divide-[#242D27]">
             {steps.map((s) => (
                 <li
                     key={s.n}
-                    className="grid grid-cols-1 lg:grid-cols-[56px_1fr] xl:grid-cols-[56px_1fr_minmax(320px,400px)] gap-6 xl:gap-12 items-start"
+                    className="grid grid-cols-1 lg:grid-cols-[56px_1fr] xl:grid-cols-[56px_1fr_minmax(340px,460px)] gap-5 xl:gap-10 items-center py-10 first:pt-0 last:pb-0"
                 >
                     <span className="font-mono text-2xl text-[#D6D5D0] dark:text-[#333F37] leading-none pt-1">{s.n}</span>
                     <div className="max-w-xl">
