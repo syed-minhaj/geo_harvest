@@ -67,9 +67,9 @@ export default function LandingPage() {
                             </p>
                             <h1 className="font-display text-5xl md:text-7xl leading-[1.02] tracking-[-0.03em] text-ink dark:text-[#E7EDE8]">
                                 Farming from{" "}
-<em className="italic text-green-ink dark:text-[#5FAD7B]">
-    orbit
-</em>
+                                <em className="italic text-green-ink dark:text-[#5FAD7B]">
+                                    orbit
+                                </em>
                                 ,<br />
                                 decided on the ground.
                             </h1>
