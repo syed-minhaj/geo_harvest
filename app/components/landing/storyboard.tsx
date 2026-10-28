@@ -172,61 +172,83 @@ const steps = [
                     </div>
                 </CardHeader>
                 <CardContent className="p-0 sm:p-6">
-                    <div className="aspect-[56/31] w-full relative">
-                        <svg viewBox="0 0 360 200" className="w-full h-full" aria-hidden>
-                            <defs>
-                                <linearGradient id="mockFillValue" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="var(--chart-1)" stopOpacity="0.8" />
-                                    <stop offset="95%" stopColor="var(--chart-1)" stopOpacity="0.1" />
-                                </linearGradient>
-                            </defs>
-                            {/* CartesianGrid vertical={false} opacity=0.4 */}
-                            <g stroke="var(--border)" opacity="0.4">
-                                <line x1="44" y1="150" x2="348" y2="150" />
-                                <line x1="44" y1="112" x2="348" y2="112" />
-                                <line x1="44" y1="74" x2="348" y2="74" />
-                                <line x1="44" y1="36" x2="348" y2="36" />
-                            </g>
-                            {/* YAxis tick labels — CustomTick rotated -45 */}
-                            <g fill="var(--sidebar-ring)" fontSize="10">
-                                <text x="40" y="154" textAnchor="end" transform="rotate(-45 40 154)">very poor</text>
-                                <text x="40" y="116" textAnchor="end" transform="rotate(-45 40 116)">poor</text>
-                                <text x="40" y="78" textAnchor="end" transform="rotate(-45 40 78)">average</text>
-                                <text x="40" y="40" textAnchor="end" transform="rotate(-45 40 40)">good</text>
-                            </g>
-                            {/* Area fill fillOpacity 0.4 + dots */}
-                            <path
-                                d="M52 132 L86 118 L120 96 L154 108 L188 66 L222 76 L256 48 L290 66 L324 40 L348 50 L348 150 L52 150 Z"
-                                fill="url(#mockFillValue)"
-                                stroke="none"
-                            />
-                            <path
-                                d="M52 132 L86 118 L120 96 L154 108 L188 66 L222 76 L256 48 L290 66 L324 40 L348 50"
-                                fill="none"
-                                stroke="var(--chart-1)"
-                                strokeWidth="1.75"
-                            />
-                            <g fill="var(--chart-1)">
-                                <circle cx="52" cy="132" r="3" />
-                                <circle cx="86" cy="118" r="3" />
-                                <circle cx="120" cy="96" r="3" />
-                                <circle cx="154" cy="108" r="3" />
-                                <circle cx="188" cy="66" r="3" />
-                                <circle cx="222" cy="76" r="3" />
-                                <circle cx="256" cy="48" r="3" />
-                                <circle cx="290" cy="66" r="3" />
-                                <circle cx="324" cy="40" r="3" />
-                                <circle cx="348" cy="50" r="3" />
-                            </g>
-                            {/* XAxis date ticks */}
-                            <g fill="var(--sidebar-ring)" fontSize="10" textAnchor="middle">
-                                <text x="52" y="176">Feb 23</text>
-                                <text x="120" y="176">May 15</text>
-                                <text x="188" y="176">Jul 6</text>
-                                <text x="256" y="176">Sep 2</text>
-                                <text x="324" y="176">Oct 18</text>
-                            </g>
-                        </svg>
+                    {/* fixed-px axis strips (like Recharts margins); plot svg below scales, strokes don't */}
+                    <div className="aspect-[56/31] w-full relative overflow-hidden">
+                        <div className="absolute left-[62px] right-[8px] top-[30px] bottom-[34px]">
+                            <svg viewBox="0 0 320 152" preserveAspectRatio="none" className="w-full h-full" aria-hidden>
+                                <defs>
+                                    <linearGradient id="mockFillValue" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="var(--chart-1)" stopOpacity="0.8" />
+                                        <stop offset="95%" stopColor="var(--chart-1)" stopOpacity="0.1" />
+                                    </linearGradient>
+                                </defs>
+                                {/* CartesianGrid vertical={false} opacity=0.4 */}
+                                <g stroke="var(--border)" opacity="0.4" vectorEffect="non-scaling-stroke">
+                                    <line x1="0" y1="4" x2="320" y2="4" />
+                                    <line x1="0" y1="52" x2="320" y2="52" />
+                                    <line x1="0" y1="100" x2="320" y2="100" />
+                                    <line x1="0" y1="148" x2="320" y2="148" />
+                                </g>
+                                {/* Area fill fillOpacity 0.4 + dots */}
+                                <path
+                                    d="M6 125 L37 107 L73 79 L110 93 L147 37 L184 50 L220 15 L257 37 L294 6 L314 19 L314 148 L6 148 Z"
+                                    fill="url(#mockFillValue)"
+                                    stroke="none"
+                                />
+                                <path
+                                    d="M6 125 L37 107 L73 79 L110 93 L147 37 L184 50 L220 15 L257 37 L294 6 L314 19"
+                                    fill="none"
+                                    stroke="var(--chart-1)"
+                                    strokeWidth="1.75"
+                                    vectorEffect="non-scaling-stroke"
+                                    strokeLinejoin="round"
+                                />
+                                <g fill="var(--chart-1)">
+                                    <circle cx="6" cy="125" r="2.25" />
+                                    <circle cx="37" cy="107" r="2.25" />
+                                    <circle cx="73" cy="79" r="2.25" />
+                                    <circle cx="110" cy="93" r="2.25" />
+                                    <circle cx="147" cy="37" r="2.25" />
+                                    <circle cx="184" cy="50" r="2.25" />
+                                    <circle cx="220" cy="15" r="2.25" />
+                                    <circle cx="257" cy="37" r="2.25" />
+                                    <circle cx="294" cy="6" r="2.25" />
+                                    <circle cx="314" cy="19" r="2.25" />
+                                </g>
+                            </svg>
+                            {/* Fixed-size axis tick labels (HTML so they never scale with the chart) */}
+                            <div aria-hidden>
+                                {[
+                                    { v: "very poor", y: "97.4%" },
+                                    { v: "poor", y: "65.8%" },
+                                    { v: "average", y: "34.2%" },
+                                    { v: "good", y: "2.63%" },
+                                ].map((t) => (
+                                    <span
+                                        key={t.v}
+                                        className="absolute whitespace-nowrap text-[10px] leading-none text-muted-foreground dark:text-[#E7EDE8] [transform:translate(-50%,-50%)_rotate(-45deg)]"
+                                        style={{ left: "-31px", top: t.y }}
+                                    >
+                                        {t.v}
+                                    </span>
+                                ))}
+                                {[
+                                    { v: "Feb 23", x: "1.88%" },
+                                    { v: "May 15", x: "22.8%" },
+                                    { v: "Jul 6", x: "45.94%" },
+                                    { v: "Sep 2", x: "68.95%" },
+                                    { v: "Oct 18", x: "91.89%" },
+                                ].map((t) => (
+                                    <span
+                                        key={t.v}
+                                        className="absolute whitespace-nowrap text-[10px] leading-none -translate-x-1/2 text-muted-foreground dark:text-[#E7EDE8]"
+                                        style={{ left: t.x, top: "calc(100% + 6px)" }}
+                                    >
+                                        {t.v}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </CardContent>
                 <CardFooter>
