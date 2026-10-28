@@ -163,7 +163,7 @@ const steps = [
             <Card className="relative corner-squircle bg-background">
                 <CardHeader className="flex flex-row max-sm:flex-wrap gap-y-1">
                     <div className="flex flex-col gap-1.5">
-                        <CardTitle className="w-full flex flex-row">waterRequirement graph over time yearly</CardTitle>
+                        <CardTitle className="w-full flex flex-row">Water requirement graph over time yearly</CardTitle>
                         <CardDescription>12 Jun&apos;24 - 18 Oct&apos;25</CardDescription>
                     </div>
                     <div className="flex flex-row gap-2 ml-auto">

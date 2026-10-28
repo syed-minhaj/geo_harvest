@@ -20,6 +20,13 @@ type avgPixelValue = {
     value : number | null,
 }
 
+const ImageTypeGraphText = {
+    waterRequirement: "Water requirement",
+    nitrogenRequirement: "Nitrogen requirement",
+    phosphorusRequirement: "Phosphorus requirement",
+    cropStress: "Crop Stress"
+}
+
 
 const chartDataByYear = (rawData: { date: string; value: number }[] , year : number) => {
     
@@ -144,7 +151,7 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
             </div>
             <CardHeader className="flex flex-row">
                 <div className="flex flex-col gap-1.5">
-                    <CardTitle className="w-full flex flex-row">{hash} graph over {type == "yearly" && "time"} {type}</CardTitle>
+                    <CardTitle className="w-full flex flex-row">{ImageTypeGraphText[hash as keyof typeof ImageTypeGraphText]} graph over {type == "yearly" && "time"} {type}</CardTitle>
                     <CardDescription>
                         {type === "yearly"
                             ? `${getDateShort(new Date(field.imagesDates[field.imagesDates.length - 1]))} - ${getDateShort(new Date(field.imagesDates[0]))}`
