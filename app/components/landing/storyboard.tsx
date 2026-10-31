@@ -67,6 +67,109 @@ function MockSelectContent({
     );
 }
 
+/* ——— Graph mock pieces (step 03) ——— */
+
+const YTICKS = [
+    { v: "very poor", y: "97.4%" },
+    { v: "poor", y: "65.8%" },
+    { v: "average", y: "34.2%" },
+    { v: "good", y: "2.63%" },
+];
+
+function MockTicks({ xs }: { xs: { v: string; x: string }[] }) {
+    return (
+        <div aria-hidden>
+            {YTICKS.map((t) => (
+                <span
+                    key={t.v}
+                    className="absolute whitespace-nowrap text-[10px] leading-none text-muted-foreground dark:text-[#E7EDE8] [transform:translate(-50%,-50%)_rotate(-45deg)]"
+                    style={{ left: "-31px", top: t.y }}
+                >
+                    {t.v}
+                </span>
+            ))}
+            {xs.map((t) => (
+                <span
+                    key={t.v}
+                    className="absolute whitespace-nowrap text-[10px] leading-none -translate-x-1/2 text-muted-foreground dark:text-[#E7EDE8]"
+                    style={{ left: t.x, top: "calc(100% + 6px)" }}
+                >
+                    {t.v}
+                </span>
+            ))}
+        </div>
+    );
+}
+
+type MockPoint = [number, number];
+
+/* PTS_Y2025 ends where PTS_Y2026 starts — year switch reads as one continuous season */
+const PTS_Y2025: MockPoint[] = [[6, 83], [70, 67], [133, 47], [196, 37], [259, 73], [314, 79]];
+const PTS_Y2026: MockPoint[] = [[6, 80], [37, 72], [73, 62], [110, 49], [147, 35], [184, 14], [220, 12], [257, 22], [294, 42], [314, 52]];
+const PTS_CYCLE: MockPoint[] = [[6, 98], [104, 59], [202, 30], [300, 36]];
+
+const XS_Y2025 = [
+    { v: "Feb 18", x: "1.88%" },
+    { v: "Jun 27", x: "41.6%" },
+    { v: "Oct 24", x: "80.9%" },
+];
+const XS_Y2026 = [
+    { v: "Feb 23", x: "1.88%" },
+    { v: "May 15", x: "22.8%" },
+    { v: "Jul 6", x: "45.94%" },
+    { v: "Sep 2", x: "68.95%" },
+    { v: "Oct 18", x: "91.89%" },
+];
+const XS_CYCLE = [
+    { v: "sowing", x: "1.88%" },
+    { v: "tillering", x: "32.5%" },
+    { v: "heading", x: "63.1%" },
+    { v: "maturity", x: "93.75%" },
+];
+
+function MockChart({ pts, gradId, xs }: { pts: MockPoint[]; gradId: string; xs: { v: string; x: string }[] }) {
+    const line = pts.map((p, i) => (i === 0 ? "M" : "L") + p[0] + " " + p[1]).join(" ");
+    const x0 = pts[0][0];
+    const x1 = pts[pts.length - 1][0];
+    return (
+        <div className="aspect-[56/31] w-full relative overflow-hidden">
+            <div className="absolute left-[62px] right-[8px] top-[30px] bottom-[34px]">
+                <svg viewBox="0 0 320 152" preserveAspectRatio="none" className="w-full h-full" aria-hidden>
+                    <defs>
+                        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="var(--chart-1)" stopOpacity="0.8" />
+                            <stop offset="95%" stopColor="var(--chart-1)" stopOpacity="0.1" />
+                        </linearGradient>
+                    </defs>
+                    {/* CartesianGrid vertical={false} opacity=0.4 */}
+                    <g stroke="var(--border)" opacity="0.4" vectorEffect="non-scaling-stroke">
+                        <line x1="0" y1="4" x2="320" y2="4" />
+                        <line x1="0" y1="52" x2="320" y2="52" />
+                        <line x1="0" y1="100" x2="320" y2="100" />
+                        <line x1="0" y1="148" x2="320" y2="148" />
+                    </g>
+                    {/* Area fill fillOpacity 0.4 + dots */}
+                    <path d={`${line} L${x1} 148 L${x0} 148 Z`} fill={`url(#${gradId})`} stroke="none" />
+                    <path
+                        d={line}
+                        fill="none"
+                        stroke="var(--chart-1)"
+                        strokeWidth="1.75"
+                        vectorEffect="non-scaling-stroke"
+                        strokeLinejoin="round"
+                    />
+                    <g fill="var(--chart-1)">
+                        {pts.map((p) => (
+                            <circle key={`${p[0]}-${p[1]}`} cx={p[0]} cy={p[1]} r="2.25" />
+                        ))}
+                    </g>
+                </svg>
+                <MockTicks xs={xs} />
+            </div>
+        </div>
+    );
+}
+
 const steps = [
     {
         n: "01",
@@ -159,106 +262,138 @@ const steps = [
         title: "Read the satellite pass",
         copy: "Every pass lands as one of the four index maps plus a chart on the field page — switch yearly or crop-cycle to see how water requirement has moved since planting.",
         mock: (
-            /* structure + classes copied from fields/[id]/components/graph.tsx */
-            <Card className="relative corner-squircle bg-background">
+            /* structure + classes copied from fields/[id]/components/graph.tsx + chageGraphSettting.tsx */
+            /* dropdowns are a static CSS-only state machine — no client JS, page stays static */
+            <Card id="mgGraph" className="relative corner-squircle bg-graph-bg">
+                <input type="radio" name="mgYear" id="mgY2026" className="hidden" defaultChecked />
+                <input type="radio" name="mgYear" id="mgY2025" className="hidden" />
+                <input type="radio" name="mgType" id="mgTYear" className="hidden" defaultChecked />
+                <input type="radio" name="mgType" id="mgTCycle" className="hidden" />
+                <input type="checkbox" id="mgOpenY" className="hidden" />
+                <input type="checkbox" id="mgOpenT" className="hidden" />
+                <style>{`
+#mgGraph .mg-vy-2025,#mgGraph .mg-vy-2026,#mgGraph .mg-vt-cycle,#mgGraph .mg-t-c,#mgGraph .mg-d-c{display:none}
+#mgGraph:has(#mgY2026:checked) .mg-vy-2025,#mgGraph:has(#mgTCycle:checked) .mg-vt-year{display:none}
+#mgGraph:has(#mgY2025:checked) .mg-vy-2025,#mgGraph:has(#mgY2026:checked) .mg-vy-2026,#mgGraph:has(#mgTCycle:checked) .mg-vt-cycle{display:inline-block}
+#mgGraph:has(#mgTCycle:checked) .mg-t-y,#mgGraph:has(#mgTCycle:checked) .mg-d-y{display:none}
+#mgGraph:has(#mgTCycle:checked) .mg-t-c,#mgGraph:has(#mgTCycle:checked) .mg-d-c{display:inline-block}
+#mgGraph:has(#mgTCycle:checked) .mg-ywrap,#mgGraph:has(#mgTCycle:checked) .mg-close-y{display:none}
+#mgGraph .mg-menu,#mgGraph .mg-close,#mgGraph .mg-chart,#mgGraph .mg-f,#mgGraph .mg-ck{display:none}
+#mgGraph:has(#mgOpenY:checked) .mg-menu-y,#mgGraph:has(#mgOpenY:checked) .mg-close-y{display:block}
+#mgGraph:has(#mgOpenT:checked) .mg-menu-t,#mgGraph:has(#mgOpenT:checked) .mg-close-t{display:block}
+#mgGraph:has(#mgTYear:checked):has(#mgY2026:checked) .mg-chart-y2026,#mgGraph:has(#mgTYear:checked):has(#mgY2025:checked) .mg-chart-y2025,#mgGraph:has(#mgTCycle:checked) .mg-chart-cycle{display:block}
+#mgGraph:has(#mgTYear:checked):has(#mgY2026:checked) .mg-f-y2026,#mgGraph:has(#mgTYear:checked):has(#mgY2025:checked) .mg-f-y2025,#mgGraph:has(#mgTCycle:checked) .mg-f-cycle{display:flex}
+#mgGraph:has(#mgY2026:checked) .mg-it-2026,#mgGraph:has(#mgY2025:checked) .mg-it-2025,#mgGraph:has(#mgTYear:checked) .mg-it-tyear,#mgGraph:has(#mgTCycle:checked) .mg-it-tcycle{background-color:var(--accent);color:var(--accent-foreground)}
+#mgGraph:has(#mgY2026:checked) .mg-ck-2026,#mgGraph:has(#mgY2025:checked) .mg-ck-2025,#mgGraph:has(#mgTYear:checked) .mg-ck-tyear,#mgGraph:has(#mgTCycle:checked) .mg-ck-tcycle{display:flex}
+`}</style>
+                <label htmlFor="mgOpenY" className="mg-close mg-close-y absolute inset-0 z-40 cursor-default" aria-hidden />
+                <label htmlFor="mgOpenT" className="mg-close mg-close-t absolute inset-0 z-40 cursor-default" aria-hidden />
                 <CardHeader className="flex flex-row max-sm:flex-wrap gap-y-1">
                     <div className="flex flex-col gap-1.5">
-                        <CardTitle className="w-full flex flex-row">Water requirement graph over time yearly</CardTitle>
-                        <CardDescription>12 Jun&apos;24 - 18 Oct&apos;25</CardDescription>
+                        <CardTitle className="w-full flex flex-row">
+                            <span>
+                                Water requirement graph over
+                                <span className="mg-t-y"> time yearly</span>
+                                <span className="mg-t-c"> crop cycle</span>
+                            </span>
+                        </CardTitle>
+                        <CardDescription>
+                            <span className="mg-d-y">12 Jun&apos;25 - 18 Oct&apos;26</span>
+                            <span className="mg-d-c">Average score per growth stage</span>
+                        </CardDescription>
                     </div>
                     <div className="flex flex-row gap-2 ml-auto">
-                        <MockSelectTrigger value="2025" />
-                        <MockSelectTrigger value="yearly" />
+                        <div className="relative mg-ywrap">
+                            <label
+                                htmlFor="mgOpenY"
+                                data-slot="select-trigger"
+                                data-size="default"
+                                className={cn(PARAM_TRIGGER_BASE, "cursor-pointer mg-trig")}
+                            >
+                                <span data-slot="select-value" className={cn("flex items-center gap-2", "line-clamp-1")}>
+                                    <span className="mg-vy-2026">2026</span>
+                                    <span className="mg-vy-2025">2025</span>
+                                </span>
+                                <ChevronDownIcon className="size-4 opacity-50" />
+                            </label>
+                            <div
+                                data-slot="select-content"
+                                className={cn(PARAM_CONTENT_BASE, "mg-menu mg-menu-y absolute right-0 top-full mt-1 min-w-[8rem]")}
+                            >
+                                <div data-slot="select-label" className={PARAM_LABEL_BASE}>Year</div>
+                                <label htmlFor="mgY2026" className={cn(PARAM_ITEM_BASE, "mg-it-2026 cursor-pointer")}>
+                                    2026
+                                    <span className="mg-ck mg-ck-2026 absolute right-2 flex size-3.5 items-center justify-center">
+                                        <CheckIcon className="size-4" />
+                                    </span>
+                                </label>
+                                <label htmlFor="mgY2025" className={cn(PARAM_ITEM_BASE, "mg-it-2025 cursor-pointer")}>
+                                    2025
+                                    <span className="mg-ck mg-ck-2025 absolute right-2 flex size-3.5 items-center justify-center">
+                                        <CheckIcon className="size-4" />
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div className="relative">
+                            <label
+                                htmlFor="mgOpenT"
+                                data-slot="select-trigger"
+                                data-size="default"
+                                className={cn(PARAM_TRIGGER_BASE, "cursor-pointer mg-trig")}
+                            >
+                                <span data-slot="select-value" className={cn("flex items-center gap-2", "line-clamp-1")}>
+                                    <span className="mg-vt-year">yearly</span>
+                                    <span className="mg-vt-cycle">crop cycle</span>
+                                </span>
+                                <ChevronDownIcon className="size-4 opacity-50" />
+                            </label>
+                            <div
+                                data-slot="select-content"
+                                className={cn(PARAM_CONTENT_BASE, "mg-menu mg-menu-t absolute right-0 top-full mt-1 min-w-[8rem]")}
+                            >
+                                <div data-slot="select-label" className={PARAM_LABEL_BASE}>Time period</div>
+                                <label htmlFor="mgTYear" className={cn(PARAM_ITEM_BASE, "mg-it-tyear cursor-pointer")}>
+                                    Yearly
+                                    <span className="mg-ck mg-ck-tyear absolute right-2 flex size-3.5 items-center justify-center">
+                                        <CheckIcon className="size-4" />
+                                    </span>
+                                </label>
+                                <label htmlFor="mgTCycle" className={cn(PARAM_ITEM_BASE, "mg-it-tcycle cursor-pointer")}>
+                                    Crop Cycle
+                                    <span className="mg-ck mg-ck-tcycle absolute right-2 flex size-3.5 items-center justify-center">
+                                        <CheckIcon className="size-4" />
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </CardHeader>
                 <CardContent className="p-0 sm:p-6">
-                    {/* fixed-px axis strips (like Recharts margins); plot svg below scales, strokes don't */}
-                    <div className="aspect-[56/31] w-full relative overflow-hidden">
-                        <div className="absolute left-[62px] right-[8px] top-[30px] bottom-[34px]">
-                            <svg viewBox="0 0 320 152" preserveAspectRatio="none" className="w-full h-full" aria-hidden>
-                                <defs>
-                                    <linearGradient id="mockFillValue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="var(--chart-1)" stopOpacity="0.8" />
-                                        <stop offset="95%" stopColor="var(--chart-1)" stopOpacity="0.1" />
-                                    </linearGradient>
-                                </defs>
-                                {/* CartesianGrid vertical={false} opacity=0.4 */}
-                                <g stroke="var(--border)" opacity="0.4" vectorEffect="non-scaling-stroke">
-                                    <line x1="0" y1="4" x2="320" y2="4" />
-                                    <line x1="0" y1="52" x2="320" y2="52" />
-                                    <line x1="0" y1="100" x2="320" y2="100" />
-                                    <line x1="0" y1="148" x2="320" y2="148" />
-                                </g>
-                                {/* Area fill fillOpacity 0.4 + dots */}
-                                <path
-                                    d="M6 125 L37 107 L73 79 L110 93 L147 37 L184 50 L220 15 L257 37 L294 6 L314 19 L314 148 L6 148 Z"
-                                    fill="url(#mockFillValue)"
-                                    stroke="none"
-                                />
-                                <path
-                                    d="M6 125 L37 107 L73 79 L110 93 L147 37 L184 50 L220 15 L257 37 L294 6 L314 19"
-                                    fill="none"
-                                    stroke="var(--chart-1)"
-                                    strokeWidth="1.75"
-                                    vectorEffect="non-scaling-stroke"
-                                    strokeLinejoin="round"
-                                />
-                                <g fill="var(--chart-1)">
-                                    <circle cx="6" cy="125" r="2.25" />
-                                    <circle cx="37" cy="107" r="2.25" />
-                                    <circle cx="73" cy="79" r="2.25" />
-                                    <circle cx="110" cy="93" r="2.25" />
-                                    <circle cx="147" cy="37" r="2.25" />
-                                    <circle cx="184" cy="50" r="2.25" />
-                                    <circle cx="220" cy="15" r="2.25" />
-                                    <circle cx="257" cy="37" r="2.25" />
-                                    <circle cx="294" cy="6" r="2.25" />
-                                    <circle cx="314" cy="19" r="2.25" />
-                                </g>
-                            </svg>
-                            {/* Fixed-size axis tick labels (HTML so they never scale with the chart) */}
-                            <div aria-hidden>
-                                {[
-                                    { v: "very poor", y: "97.4%" },
-                                    { v: "poor", y: "65.8%" },
-                                    { v: "average", y: "34.2%" },
-                                    { v: "good", y: "2.63%" },
-                                ].map((t) => (
-                                    <span
-                                        key={t.v}
-                                        className="absolute whitespace-nowrap text-[10px] leading-none text-muted-foreground dark:text-[#E7EDE8] [transform:translate(-50%,-50%)_rotate(-45deg)]"
-                                        style={{ left: "-31px", top: t.y }}
-                                    >
-                                        {t.v}
-                                    </span>
-                                ))}
-                                {[
-                                    { v: "Feb 23", x: "1.88%" },
-                                    { v: "May 15", x: "22.8%" },
-                                    { v: "Jul 6", x: "45.94%" },
-                                    { v: "Sep 2", x: "68.95%" },
-                                    { v: "Oct 18", x: "91.89%" },
-                                ].map((t) => (
-                                    <span
-                                        key={t.v}
-                                        className="absolute whitespace-nowrap text-[10px] leading-none -translate-x-1/2 text-muted-foreground dark:text-[#E7EDE8]"
-                                        style={{ left: t.x, top: "calc(100% + 6px)" }}
-                                    >
-                                        {t.v}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
+                    <div className="mg-chart mg-chart-y2026">
+                        <MockChart pts={PTS_Y2026} gradId="mockFillY2026" xs={XS_Y2026} />
+                    </div>
+                    <div className="mg-chart mg-chart-y2025">
+                        <MockChart pts={PTS_Y2025} gradId="mockFillY2025" xs={XS_Y2025} />
+                    </div>
+                    <div className="mg-chart mg-chart-cycle">
+                        <MockChart pts={PTS_CYCLE} gradId="mockFillCycle" xs={XS_CYCLE} />
                     </div>
                 </CardContent>
                 <CardFooter>
                     <div className="flex w-full items-start gap-2 text-sm">
                         <div className="grid gap-2">
-                            <div className="flex items-center gap-2 leading-none font-medium">
-                                Trending down by 9.62 % <TrendingDown className="h-4 w-4" />
+                            <div className="mg-f mg-f-y2026 items-center gap-2 leading-none font-medium">
+                                Trending down by 9.43 % <TrendingDown className="h-4 w-4" />
+                            </div>
+                            <div className="mg-f mg-f-y2025 items-center gap-2 leading-none font-medium">
+                                Trending down by 7.99 % <TrendingDown className="h-4 w-4" />
+                            </div>
+                            <div className="mg-f mg-f-cycle items-center gap-2 leading-none font-medium">
+                                Trending down by 5.09 % <TrendingDown className="h-4 w-4" />
                             </div>
                             <div className="text-muted-foreground flex items-center gap-2 leading-none">
-                                12 Jun&apos;24 - 18 Oct&apos;25
+                                12 Jun&apos;25 - 18 Oct&apos;26
                             </div>
                         </div>
                     </div>
