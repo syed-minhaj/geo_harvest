@@ -29,12 +29,12 @@ const SwitchDate = ({dates , imagesDate , setImagesDate , onVisibleDatesChange} 
     }, [datesKey, onVisibleDatesChange]);
 
     return (
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20">
-            <div className="flex max-w-[min(92vw,52rem)] items-center gap-3 rounded-xl border border-white/10 bg-[#111111]/70 pl-4 pr-3 py-2 backdrop-blur-md shadow-[0_2px_12px_rgba(0,0,0,0.15)]">
+        <div className="pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-center">
+            <div className="pointer-events-auto flex w-full max-w-[min(94vw,52rem)] items-center gap-3 rounded-xl border border-white/10 bg-[#111111]/70 pl-4 pr-3 py-2 backdrop-blur-md shadow-[0_2px_12px_rgba(0,0,0,0.15)]">
                 <span className="flex-shrink-0 font-mono text-xs uppercase tracking-[0.14em] text-white/40 select-none">
                     Date
                 </span>
-                <div ref={scrollerRef} className="w-full custom-scrollbar overflow-x-auto flex flex-row-reverse items-center [mask-image:linear-gradient(to_right,transparent,black_14px,black_calc(100%-14px),transparent)]">
+                <div ref={scrollerRef} className="datebar-scroller custom-scrollbar min-w-0 flex-1 overflow-x-auto flex flex-row-reverse items-center">
                     {sortedDates.map((date) => {
                         const active = date === imagesDate;
                         return (

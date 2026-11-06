@@ -201,6 +201,11 @@ body {
     corner-shape : squircle;
 }
 
+.datebar-scroller {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 14px, #000 calc(100% - 14px), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 14px, #000 calc(100% - 14px), transparent);
+}
+
 .rounded-r1 {
     border-radius: 0.375rem ;
 }
