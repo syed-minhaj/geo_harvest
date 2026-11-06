@@ -1,7 +1,6 @@
 "use client";
-import { Separator } from "@/app/components/ui/separator";
 import { getDateShort } from "@/app/utils/Date";
-import { Fragment, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 
 const SwitchDate = ({dates , imagesDate , setImagesDate , onVisibleDatesChange} : {dates : string[] , imagesDate : string , setImagesDate : React.Dispatch<React.SetStateAction<string>> , onVisibleDatesChange? : (dates : string[]) => void}) => {
@@ -30,17 +29,31 @@ const SwitchDate = ({dates , imagesDate , setImagesDate , onVisibleDatesChange} 
     }, [datesKey, onVisibleDatesChange]);
 
     return (
-        <div className='w-full  bottom-0 p-4 absolute object-top z-20 '>
-            <div className="h-full w-full px-2 rounded-[0.5rem] text-white bg-[#0B120D]/75">
-                <div ref={scrollerRef} className=' w-full custom-scrollbar overflow-x-auto  flex flex-row-reverse gap-2 py-2  '>
-                    {sortedDates.map((date , index) => {
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20">
+            <div className="flex max-w-[min(92vw,52rem)] items-center gap-3 rounded-xl border border-white/10 bg-[#111111]/70 pl-4 pr-3 py-2 backdrop-blur-md shadow-[0_2px_12px_rgba(0,0,0,0.15)]">
+                <span className="flex-shrink-0 font-mono text-xs uppercase tracking-[0.14em] text-white/40 select-none">
+                    Date
+                </span>
+                <div ref={scrollerRef} className="w-full custom-scrollbar overflow-x-auto flex flex-row-reverse items-center [mask-image:linear-gradient(to_right,transparent,black_14px,black_calc(100%-14px),transparent)]">
+                    {sortedDates.map((date) => {
+                        const active = date === imagesDate;
                         return (
-                            <Fragment key={date}>
-                                {index != 0 ? <div><Separator orientation='vertical' className='bg-white '/></div> : null}
-                                <button className={`rounded px-2 w-fit hover:bg-white/30 whitespace-nowrap ${date == imagesDate ? 'bg-white/30' : ''}`} 
-                                data-date={date} onClick={() => setImagesDate(date)}>{getDateShort(new Date(date))}</button>
-                            </Fragment>
-                    )})}
+                            <div key={date} className="flex items-center">
+                                <button
+                                    data-date={date}
+                                    onClick={() => setImagesDate(date)}
+                                    className={`whitespace-nowrap rounded-md px-3 py-1.5 font-mono text-sm tracking-[0.02em] transition-[background-color,color,transform] duration-150 active:scale-[0.97] ${
+                                        active
+                                            ? "bg-white text-[#111111]"
+                                            : "text-white/70 hover:bg-white/10 hover:text-white"
+                                    }`}
+                                >
+                                    {getDateShort(new Date(date))}
+                                </button>
+                                <div className="h-5 w-px flex-shrink-0 bg-white/10" />
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>
