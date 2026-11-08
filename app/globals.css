@@ -215,6 +215,65 @@ body {
     @apply w-60;
 }
 
+/* Dashboard map: survey-benchmark pins. Strip Leaflet's default div-icon box
+   so the diamond + annotation tag float directly on the map. */
+.field-glow-pin {
+    /* Leaflet writes inline width/height (default iconSize 12x12) on the
+       icon div. Override with !important so the wrapper is content-sized:
+       the whole row — diamond, leader and tag — becomes one hit/hover area. */
+    width: max-content !important;
+    height: auto !important;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.field-glow-pin .orbit-spin {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: geo-orbit 12s linear infinite;
+}
+
+@keyframes geo-orbit {
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .field-glow-pin .orbit-spin {
+        animation: none;
+    }
+}
+
+/* Click affordance: the whole pin (diamond + tag) is one hit area, so hover
+   feedback is driven from the wrapper for both elements. */
+.field-glow-pin .pin-diamond {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 150ms ease;
+}
+
+.field-glow-pin:hover .pin-diamond {
+    transform: scale(1.2);
+}
+
+.field-glow-pin .field-tag {
+    transition: background-color 120ms ease, border-color 120ms ease,
+        color 120ms ease, box-shadow 120ms ease;
+}
+
+.field-glow-pin:hover .field-tag {
+    background-color: #ffffff;
+    border-color: #b3aea1;
+    color: #141414;
+    box-shadow: 0 2px 6px rgba(20, 20, 20, 0.16);
+}
+
+.field-glow-pin:active .pin-diamond {
+    transform: scale(1.05);
+}
+
 /* ——— Landing: field-survey motifs ——— */
 
 /* Map graticule: faint grid + horizontal/vertical rules on imagery */
