@@ -1,6 +1,6 @@
 'use client';
 
-import { MapContainer, TileLayer, Polygon, FeatureGroup , ImageOverlay, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Polygon, FeatureGroup , ImageOverlay, useMap, LayersControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { LatLngExpression ,LatLngBoundsExpression  } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -94,12 +94,26 @@ export default function MapClient({field} : {field : tfield & {crop : {name : st
 
     return (
         <div className="relative flex-1 min-h-0  "> 
-            <MapContainer center={position} zoom={getZoom(coordinates)} scrollWheelZoom={true} attributionControl={false} style={{}} className="w-full h-full rounded-[0.75rem] corner-squircle z-20 " >
+            <MapContainer center={position} zoom={getZoom(coordinates)} maxZoom={21} scrollWheelZoom={true} attributionControl={false} style={{}} className="w-full h-full rounded-[0.75rem] corner-squircle z-20 " >
                 <BoundZoomToContainer />
-                <TileLayer
-                    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                    attribution="© OpenStreetMap contributors"
-                    />
+                <LayersControl position="bottomright">
+                    <LayersControl.BaseLayer checked name="Esri (fresher)">
+                        <TileLayer
+                            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                            maxNativeZoom={17}
+                            maxZoom={21}
+                            attribution="Tiles © Esri"
+                            />
+                    </LayersControl.BaseLayer>
+                    <LayersControl.BaseLayer name="Google">
+                        <TileLayer
+                            url="https://mt{s}.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}"
+                            subdomains={["0", "1", "2", "3"]}
+                            maxZoom={21}
+                            attribution="© Google"
+                            />
+                    </LayersControl.BaseLayer>
+                </LayersControl>
                 {overlayBounds && hash ?
                     <ImageOverlay url={getImageUrl(imagesDate , hash)}
                     bounds={overlayBounds} opacity={0.55}

@@ -1,6 +1,6 @@
 'use client';
 
-import { MapContainer, TileLayer, FeatureGroup, Polygon, useMap  } from 'react-leaflet';
+import { MapContainer, TileLayer, FeatureGroup, Polygon, useMap, LayersControl  } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { LatLngExpression   } from 'leaflet';
 import { getUserLocation, getZoom } from '@/app/utils/coordinate';
@@ -73,11 +73,25 @@ export default function MapClient({cordinates , setCordinates} : {cordinates : n
         <MapContainer
             center={cordinates ? centerOfCoordinates(cordinates) : DEFAULT_CENTER}
             zoom={cordinates ? getZoom(cordinates) : DEFAULT_ZOOM}
-            scrollWheelZoom={true} style={{}} className='w-full h-[30rem] 2xl:h-[35rem] rounded-[0.75rem] z-20 corner-squircle ' >
-            <TileLayer
-                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                attribution="© OpenStreetMap contributors"
-                />
+            scrollWheelZoom={true} maxZoom={21} style={{}} className='w-full h-[30rem] 2xl:h-[35rem] rounded-[0.75rem] z-20 corner-squircle ' >
+            <LayersControl position="bottomright">
+                <LayersControl.BaseLayer checked name="Esri (fresher)">
+                    <TileLayer
+                        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                        maxNativeZoom={17}
+                        maxZoom={21}
+                        attribution="Tiles © Esri"
+                        />
+                </LayersControl.BaseLayer>
+                <LayersControl.BaseLayer name="Google">
+                    <TileLayer
+                        url="https://mt{s}.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}"
+                        subdomains={["0", "1", "2", "3"]}
+                        maxZoom={21}
+                        attribution="© Google"
+                        />
+                </LayersControl.BaseLayer>
+            </LayersControl>
             {location && <Recenter lat={location.latitude} lng={location.longitude} zoom={18} />}
             <FeatureGroup>
                 {cordinates && <Polygon color="#2F7D9E" positions={cordinates.map((c:any) => [c[1], c[0]])} />}
