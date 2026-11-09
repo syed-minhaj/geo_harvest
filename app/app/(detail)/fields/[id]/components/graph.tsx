@@ -144,6 +144,30 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
         );
     }
 
+    const singlePoint = chartData.length > 0 && chartData.filter((d) => Number.isFinite(d.value)).length === 1
+
+    function SinglePointDot({ cx, cy, payload }: any) {
+        if (cx == null || cy == null || !Number.isFinite(payload.value)) return null;
+        const showLabelAbove = cy >= 24;
+        return (
+            <g>
+                <circle cx={cx} cy={cy} r={6} fill="none" stroke="var(--color-value)" strokeOpacity={0.3} strokeWidth={12} />
+                <circle cx={cx} cy={cy} r={6} fill="var(--color-value)" />
+                <text
+                    x={cx}
+                    y={cy}
+                    dy={showLabelAbove ? -16 : 22}
+                    textAnchor="middle"
+                    fontSize={12}
+                    fontWeight={600}
+                    fill="var(--sidebar-ring)"
+                >
+                    {payload.value.toFixed(2)}
+                </text>
+            </g>
+        );
+    }
+
     return (
         <Card className={`${!done ? "animate-pulse" : ""} relative corner-squircle bg-graph-bg`}>
             <div className={`absolute w-full h-full flex justify-center items-center  ${!done ? "": "hidden"}`}>
@@ -217,7 +241,8 @@ const Graph = ({typeP , field , allData} : {typeP : graphType , field : tfield ,
                         fillOpacity={0.4}
                         stroke="var(--color-value)"
                         stackId="a"
-                        dot={true}
+                        isAnimationActive={!singlePoint}
+                        dot={singlePoint ? <SinglePointDot /> : true}
                     />
                 </AreaChart>
                 </ChartContainer>
