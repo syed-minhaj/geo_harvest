@@ -126,10 +126,9 @@ export async function sentinel_catalog({coordinates, from, to} : {coordinates : 
         coordinates: [coordinates] 
     };
 
-    const fromDate = from ?? new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const toDate = to ?? new Date().toISOString();
 
-    const input = (geometry : {type : string , coordinates : number[][][]}, cloudCover : number) => {
+    const input = (geometry : {type : string , coordinates : number[][][]}, cloudCover : number, fromDate : string) => {
         return{
             "collections": ["sentinel-2-l2a"],
             "datetime": `${fromDate}/${toDate}`,
@@ -143,19 +142,22 @@ export async function sentinel_catalog({coordinates, from, to} : {coordinates : 
         };
     };
     try{
-        for (const cloudCover of [5, 10, 15, 20]) {
-            const sentinelRes = await fetch("https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search", {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                signal: AbortSignal.timeout(30000),
-                body: JSON.stringify(input(geometry, cloudCover)),
-            });
-            const data = await sentinelRes.json();
-            if (data.features?.length > 0) {
-                return {err : null , data};
+        for (const days of [7, 10, 14, 21]) {
+            const fromDate = from ?? new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+            for (const cloudCover of [5, 10, 15, 20]) {
+                const sentinelRes = await fetch("https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search", {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    signal: AbortSignal.timeout(30000),
+                    body: JSON.stringify(input(geometry, cloudCover, fromDate)),
+                });
+                const data = await sentinelRes.json();
+                if (data.features?.length > 0) {
+                    return {err : null , data};
+                }
             }
         }
         return {err : null , data : {features : []}};
