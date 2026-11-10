@@ -17,18 +17,18 @@ const getUserLocation = () : Promise<{location : location , err : null} | {locat
                 switch (error.code) {
                     case error.PERMISSION_DENIED:
                         // return error to the user if permission is denied
-                        resolve({location : null, err : "User denied the request for Geolocation."});
+                        resolve({location : null, err : "Location permission was denied, so we can't auto-center the map on your location."});
                         break;
                     case error.POSITION_UNAVAILABLE:
-                        resolve({location : null, err : "Location information is unavailable."});
+                        resolve({location : null, err : "Your location isn't available right now — it may be off or temporarily blocked."});
                         break;
                     case error.TIMEOUT:
-                        resolve({location : null, err : "The request to get user location timed out."});
+                        resolve({location : null, err : "Getting your location took too long. Please try again."});
                         break;
                 }
             }, { enableHighAccuracy: false, timeout: 10_000, maximumAge: 600_000 });
         }else{
-            resolve({location : null, err : "Geolocation is not supported by this browser."});
+            resolve({location : null, err : "Your browser doesn't support location. You can skip this and find your location manually on the map."});
         }
     })
 }

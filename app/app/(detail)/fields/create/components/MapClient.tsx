@@ -46,9 +46,12 @@ export default function MapClient({cordinates , setCordinates} : {cordinates : n
 
     if (err) {
         return  (
-            <div className='w-full h-[30rem] 2xl:h-[35rem] rounded-[0.75rem] z-20 corner-squircle bg-muted flex flex-col gap-4 justify-center items-center'>
+            <div className='w-full h-[30rem] 2xl:h-[35rem] rounded-[0.75rem] z-20 corner-squircle bg-muted flex flex-col gap-4 justify-center items-center relative'>
                 <div className='max-w-[80%] text-center'>{err}</div>
-                <Button onClick={() => {setErr(null); getLocation()}}>Allow Location Access</Button>
+                <div className="flex gap-3">
+                    <Button onClick={() => {setErr(null); setLocation(null); getLocation()}}>Allow Location Access</Button>
+                    <Button variant="outline" onClick={() => {setErr(null); setLocation(null);}}>Find Location Manually</Button>
+                </div>
             </div>
         )
     }
