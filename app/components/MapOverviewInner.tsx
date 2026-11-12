@@ -1,6 +1,6 @@
 'use client';
 
-import { MapContainer, TileLayer, Polygon, Marker, useMap, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Polygon, Marker, useMap, useMapEvents, AttributionControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { fromPostgresPolygon, getZoomForBounds, getMinZoomForContainer } from '@/app/utils/coordinate';
 import { DivIcon, Map as LeafletMap, LatLngBounds, LatLngExpression, latLngBounds } from 'leaflet';
@@ -156,10 +156,12 @@ export function MapOverviewInner({ fields }: { fields: FieldData[] }) {
     return (
         <div ref={containerRef} className="relative w-full h-[300px] rounded-r1 overflow-hidden border border-input">
             {containerWidth !== null && (
-                <MapContainer ref={mapRef} center={center} zoom={initialZoom} minZoom={Math.max(initialZoom, getMinZoomForContainer(300))} scrollWheelZoom={true} className="w-full h-full">
+                <MapContainer ref={mapRef} center={center} zoom={initialZoom} minZoom={Math.max(initialZoom, getMinZoomForContainer(300))} scrollWheelZoom={true} attributionControl={false} className="w-full h-full">
+                    <AttributionControl position="bottomright" prefix={false} />
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         attribution="© OpenStreetMap contributors"
+                        maxZoom={19}
                     />
                     <ZoomTracker onZoom={handleZoom} />
                     {shapes.map(shape => {
