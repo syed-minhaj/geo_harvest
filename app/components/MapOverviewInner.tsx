@@ -1,10 +1,11 @@
-﻿'use client';
+'use client';
 
 import { MapContainer, TileLayer, Polygon, Marker, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { fromPostgresPolygon, getZoomForBounds, getMinZoomForContainer } from '@/app/utils/coordinate';
 import { DivIcon, Map as LeafletMap, LatLngBounds, LatLngExpression, latLngBounds } from 'leaflet';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 
 type FieldData = {
     id: string;
@@ -101,6 +102,8 @@ export function MapOverviewInner({ fields }: { fields: FieldData[] }) {
     const [containerWidth, setContainerWidth] = useState<number | null>(null);
     const [zoom, setZoom] = useState<number | null>(null);
     const [focusedId, setFocusedId] = useState<string | null>(null);
+    const [hoveredId, setHoveredId] = useState<string | null>(null);
+    const linkRefs = useRef(new Map<string, HTMLAnchorElement>());
 
     useEffect(() => {
         const el = containerRef.current;
@@ -156,7 +159,7 @@ export function MapOverviewInner({ fields }: { fields: FieldData[] }) {
                 <MapContainer ref={mapRef} center={center} zoom={initialZoom} minZoom={Math.max(initialZoom, getMinZoomForContainer(300))} scrollWheelZoom={true} className="w-full h-full">
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution="Â© OpenStreetMap contributors"
+                        attribution="© OpenStreetMap contributors"
                     />
                     <ZoomTracker onZoom={handleZoom} />
                     {shapes.map(shape => {
@@ -166,30 +169,50 @@ export function MapOverviewInner({ fields }: { fields: FieldData[] }) {
                             : focusedId
                                 ? { color: shape.color, weight: 1, fillOpacity: 0.06, opacity: 0.35 }
                                 : { color: shape.color, weight: 1.5, fillOpacity: 0.2, opacity: 1 };
+                        const hidden = zoom !== null && polygonPixelSize(shape, zoom) < PIN_VISIBLE_BELOW_PX;
                         return (
-                            <Polygon
-                                key={shape.id}
-                                positions={shape.positions}
-                                pathOptions={baseStyle}
-                                eventHandlers={{
-                                    click: () => focusField(shape),
-                                    mouseover: e => e.target.setStyle({ weight: 3, fillOpacity: 0.45, opacity: 1 }),
-                                    mouseout: e => e.target.setStyle(baseStyle),
-                                }}
-                            />
+                            <div key={shape.id}>
+                                <Link
+                                    ref={el => {
+                                        if (el) linkRefs.current.set(shape.id, el);
+                                    }}
+                                    href={`/app/fields/${shape.id}`}
+                                    aria-hidden="true"
+                                    className="hidden"
+                                />
+                                <Polygon
+                                    positions={shape.positions}
+                                    pathOptions={baseStyle}
+                                    eventHandlers={{
+                                        click: () => (hidden ? focusField(shape) : linkRefs.current.get(shape.id)?.click()),
+                                        mouseover: e => {
+                                            setHoveredId(shape.id);
+                                            e.target.setStyle({ weight: 3, fillOpacity: 0.45, opacity: 1 });
+                                        },
+                                        mouseout: e => {
+                                            setHoveredId(null);
+                                            e.target.setStyle(baseStyle);
+                                        },
+                                    }}
+                                />
+                            </div>
                         );
                     })}
-                    {shapes.map(shape => (
-                        zoom !== null && polygonPixelSize(shape, zoom) < PIN_VISIBLE_BELOW_PX ? (
+                    {shapes.map(shape => {
+                        const hidden = zoom !== null && polygonPixelSize(shape, zoom) < PIN_VISIBLE_BELOW_PX;
+                        const showPin = hidden || hoveredId === shape.id;
+                        if (!showPin) return null;
+                        return (
                             <Marker
                                 key={shape.id}
                                 position={shape.center}
                                 icon={shape.pin}
                                 keyboard={false}
-                                eventHandlers={{ click: () => focusField(shape) }}
+                                interactive={hidden}
+                                eventHandlers={hidden ? { click: () => focusField(shape) } : undefined}
                             />
-                        ) : null
-                    ))}
+                        );
+                    })}
                 </MapContainer>
             )}
             {focusedId && (
