@@ -11,13 +11,11 @@ export function useHash(defaultHash : string) {
     }
 
     useEffect(() => {
-        const current = window.location.hash.slice(1)
-        setHash(current)
-
-        if (current == "" && defaultHash != "") {
-            updateHash(defaultHash)
-            setHash(defaultHash)
+        const effective = window.location.hash.slice(1) || defaultHash
+        if (effective) {
+            history.replaceState(history.state, "", `#${effective}`)
         }
+        setHash(effective)
 
         const updateHashConst = () => {
             setHash(window.location.hash.slice(1))
